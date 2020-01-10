@@ -5,6 +5,6 @@ articles:
   mdepriv_get_started: mdepriv_get_started.html
   what_is_different_from_stata: what_is_different_from_stata.html
 urls:
-  reference: http://docs.a-benini.org/mdepriv/reference
-  article: http://docs.a-benini.org/mdepriv/articles
+  reference: https://a-benini.github.io/mdepriv/reference
+  article: https://a-benini.github.io/mdepriv/articles
 
