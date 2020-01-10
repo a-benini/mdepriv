@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>http://docs.a-benini.org/mdepriv/index.html</loc>
+  </url>
+  <url>
+    <loc>http://docs.a-benini.org/mdepriv/reference/MSNA_HC.html</loc>
+  </url>
+  <url>
+    <loc>http://docs.a-benini.org/mdepriv/reference/corr_mat.html</loc>
+  </url>
+  <url>
+    <loc>http://docs.a-benini.org/mdepriv/reference/mdepriv.html</loc>
+  </url>
+  <url>
+    <loc>http://docs.a-benini.org/mdepriv/reference/simul_data.html</loc>
+  </url>
+  <url>
+    <loc>http://docs.a-benini.org/mdepriv/articles/mdepriv_get_started.html</loc>
+  </url>
+  <url>
+    <loc>http://docs.a-benini.org/mdepriv/articles/what_is_different_from_stata.html</loc>
+  </url>
+</urlset>

@@ -1,0 +1,10 @@
+pandoc: 2.7.3
+pkgdown: 1.4.1
+pkgdown_sha: ~
+articles:
+  mdepriv_get_started: mdepriv_get_started.html
+  what_is_different_from_stata: what_is_different_from_stata.html
+urls:
+  reference: http://docs.a-benini.org/mdepriv/reference
+  article: http://docs.a-benini.org/mdepriv/articles
+

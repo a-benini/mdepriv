@@ -1,0 +1,38 @@
+title: mdepriv
+url: http://docs.a-benini.org/mdepriv
+template:
+  params:
+    bootswatch: yeti
+reference:
+  - title: Functions
+    desc: ~
+    contents:
+      - '`mdepriv`'
+      - '`corr_mat`'
+  - title: Datasets
+    desc: ~
+    contents:
+      - '`MSNA_HC`'
+      - '`simul_data`'
+navbar:
+  type: inverse
+  left:
+    - icon: fa-home
+      href: index.html
+  right:
+    - text: "Vignettes"
+      icon: fas fa-book
+      menu:
+      -  text: Get Started with mdepriv
+         href: articles/mdepriv_get_started.html
+      -  text: What is different from Stata’s mdepriv?
+         href: articles/what_is_different_from_stata.html
+    - icon: fa-file-code-o
+      text: "Functions & Datasets"
+      href: reference/index.html
+    - icon: fa-newspaper-o
+      text: "News"
+      href: news/index.html
+    - icon: fa-github fa-lg
+      text: "github"
+      href: https://github.com/a-benini/mdepriv/
