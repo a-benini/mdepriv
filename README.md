@@ -89,7 +89,7 @@ arguments of the `mdepriv` package’s core function and four default
 output elements, which are gathered in a `list`. However, this function
 offers several more arguments and outputs. The vignette [Get Started
 with
-mdepriv](https://docs.a-benini.org/mdepriv/articles/mdepriv_get_started.html)
+mdepriv](https://a-benini.github.io/mdepriv/articles/mdepriv_get_started.html)
 walks one through these manifold options.
 
 ## References

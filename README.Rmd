@@ -53,7 +53,7 @@ mdepriv(data = simul_data,                  # a dataset ...
         method = "ds")                      # to be analyzed according to a chosen standard method (= weighting scheme)
 ```
 
-The above example demonstrates a simple case with four specified arguments of the `mdepriv` package's core function and four default output elements, which are gathered in a `list`. However, this function offers several more arguments and outputs. The vignette [Get Started with mdepriv](https://docs.a-benini.org/mdepriv/articles/mdepriv_get_started.html) walks one through these manifold options.
+The above example demonstrates a simple case with four specified arguments of the `mdepriv` package's core function and four default output elements, which are gathered in a `list`. However, this function offers several more arguments and outputs. The vignette [Get Started with mdepriv](https://a-benini.github.io/mdepriv/articles/mdepriv_get_started.html) walks one through these manifold options.
 
 ## References
 

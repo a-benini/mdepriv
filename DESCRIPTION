@@ -33,7 +33,7 @@ Suggests:
     testthat (>= 2.1.0),
     tidyverse,
     utils
-URL: https://github.com/a-benini/mdepriv, https://docs.a-benini.org/mdepriv
+URL: https://github.com/a-benini/mdepriv, https://a-benini.github.io/mdepriv
 BugReports: https://github.com/a-benini/mdepriv/issues
 VignetteBuilder: 
     knitr
