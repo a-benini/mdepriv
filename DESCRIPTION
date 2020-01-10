@@ -1,0 +1,42 @@
+Package: mdepriv
+Title: Synthetic Indicators of Multiple Deprivation
+Version: 0.0.0
+Authors@R: 
+    c(person(given = "Attilio",
+             family = "Benini",
+             role = c("aut", "cre"),
+             email = "attilio.benini@gmx.net"),
+      person(given = "Aldo",
+             family = "Benini",
+             role = "aut",
+             email = "aldobenini@gmail.com"))
+Author: Attilio Benini [aut, cre], Aldo Benini [aut]
+Maintainer: Attilio Benini <attilio.benini@gmx.net>
+Description: mdepriv is an R-adaptation of a same-named 
+    user-written Stata command for computing basic synthetic 
+    scores of multiple deprivation.
+License: GPL-3
+Depends: 
+    R (>= 3.1.0)
+Imports: 
+    stats (>= 3.6.1),
+    wCorr (>= 1.9.1),
+    Weighted.Desc.Stat (>= 1.0)
+Suggests: 
+    devtools,
+    graphics, 
+    httr,
+    kableExtra,
+    knitr,
+    readxl,
+    rmarkdown,
+    testthat (>= 2.1.0),
+    tidyverse,
+    utils
+URL: https://github.com/a-benini/mdepriv, https://docs.a-benini.org/mdepriv
+BugReports: https://github.com/a-benini/mdepriv/issues
+VignetteBuilder: 
+    knitr
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.0.2

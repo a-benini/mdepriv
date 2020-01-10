@@ -1,0 +1,17 @@
+#' Demonstration Dataset
+#'
+#' A dataset containing 100 simulated observations for the purpose of demonstrating the workings of the functions \code{\link{mdepriv}} and \code{\link{corr_mat}}.
+#'
+#' @format A data frame with 100 observations and 9 variables:
+#' \describe{
+#'   \item{id}{ID integer 1, ... , 100: a record identifier}
+#'   \item{y1}{binary data: 0 or 1: deprivation item}
+#'   \item{y2}{binary data: 0 or 1: deprivation item}
+#'   \item{y3}{binary data: 0 or 1: deprivation item}
+#'   \item{y4}{ordinal data, rescaled to the range [0, 1]: 0, 0.2, 0.4, 0.6, 0.8, 1: deprivation item}
+#'   \item{y5}{continuous data: range [0,1]: deprivation item}
+#'   \item{y6}{continuous data: range [0,1]: deprivation item}
+#'   \item{y7}{continuous data: range [0,1]: deprivation item}
+#'   \item{sampl_weights}{continuous data: sampling weights}
+#' }
+"simul_data"

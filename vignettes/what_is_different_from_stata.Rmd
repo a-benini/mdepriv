@@ -1,0 +1,143 @@
+---
+title: "What is different from Stata's mdepriv?"
+output:
+ rmarkdown::html_vignette:
+    keep_md: true
+self_contained: no
+vignette: >
+  %\VignetteIndexEntry{what_is_different_from_stata}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, echo=FALSE}
+# install.packages("mdepriv")
+library(mdepriv)
+```
+The `mdepriv` function is an adaptation in **_R_** of a homonymous user-written **_Stata_** command [(Pi Alperin & Van Kerm, 2009)](http://medim.ceps.lu/stata/mdepriv_v3.pdf) for computing basic synthetic scores of multiple deprivation from unidimensional indicators and/or basic items of deprivation. To facilitate orientation and usage of `mdepriv`, this **_R_** implementation follows the **_Stata_** features as closely as possible. There are only a small number of differences:
+
+* The options for the second factor of the double weighting schemes differ formally, but with virtually no practical consequences:
+  + In **_R_** as in **_Stata_**, if the second weighting factor is set to **_mixed_**, the correlation type for each pair of items is automatically determined by the following rules:
+    + **_pearson_**: both items have > 10 distinct values.
+    + **_polyserial_**: one item has $\le$ 10, the other > 10 distinct values.
+    + **_polychoric_**: both items have $\le$ 10 distinct values.
+  + In **_R_** **_tetrachoric_**, the appropriate correlation type for pairs of binary items, is not available as the second weighting factor. This is so because the **_R_** function [`weightedCorr`](https://CRAN.R-project.org/package=wCorr), on which the calculation of the second factor relies, treats **_tetrachoric_** correlations as **_polychoric_**. The different handling of **_tetrachoric_** correlations in **_R_** and **_Stata_** causes minuscule differences in the weights in models that include more than one binary item.
+  + In **_Stata_**, if **_polychoric_** is forced on (partly) continuous pairs of items, it switches under the hood to **_mixed_**. Thus **_polychoric_** in **_Stata_** is pointless as an enforecable option. `mdepriv` in **_R_** does not reproduce this spurious option.
+  + **_pearson_** is the only really enforceable correlation type in **_Stata_** and, therefore, it is maintained as such in **_R_**.
+  + **_diagonal_**, in both **_Stata_** and **_R_**, sets all off-diagonal elements to zero, making **_wb_** independent of any item correlations.
+
+```{r echo=FALSE, Fig_wa_wb_R, fig.height=7/2.54, fig.width=18/2.54}
+wa_wb_combi <- function(
+  wa = c("cz", "ds", "bv", "equal"),
+  wb = c("mixed", "pearson", "diagonal"),
+  xlim = c(-1.25, 11),
+  ylim = c(-0.5, 4.5),
+  col_double = "cornsilk",
+  col_single = "mistyrose",
+  col_method_wa = "lightcyan",
+  col_wb = "#C1FFC1A6", # rgb(t(col2rgb("darkseagreen1"))/255, alpha = 0.65)
+  col_bv_corr_type = "seagreen",
+  string_bv_corr_type = "bv_corr_type",
+  options = "argument options",
+  legend = TRUE
+  )
+{
+  wa    <- factor(wa, wa)
+  wb    <- factor(wb, wb)
+  combi <- merge(wa, wb)
+  names(combi) <- c("wa", "wb")
+  combi$method <- (combi$wa != "bv" & combi$wb == "diagonal") | (combi$wa == "bv" & combi$wb != "diagonal")
+  
+  plot(0, 0, type = "n", xlim = xlim, ylim = rev(ylim), asp = 1, axes = F, ann = F)
+  
+  x_mar   <- 0.5
+  xleft   <- x_mar
+  xright  <- length(wa) + x_mar
+  y_mar   <- x_mar
+  ybottom <- length(wb) + y_mar
+  ybreak  <- length(wb) - 1 + y_mar
+  ytop    <- y_mar
+  
+  rect(xleft, ybreak, xright, ytop, col = col_double, border = NA)
+  
+  rect(xleft, ybottom, xright, ybreak, col = col_single, border = NA)
+  
+  points(as.numeric(wb)~as.numeric(wa) , data = combi,
+         pch = ifelse(combi$method, 16, 1),
+         cex = 3)
+  
+  rect(xleft, ytop - 0.5*y_mar, xright, ytop - 1.5*y_mar, col = col_method_wa, border = NA)
+  
+  rect(xleft - 4*x_mar, ytop, xleft - 0.5*x_mar , ybottom, col = col_wb, border = NA)
+  
+  rect(xleft - 3.75*x_mar, ytop + 0.25*y_mar, xleft - 0.75*x_mar , ybreak, border = col_bv_corr_type, lwd = 2)
+  
+  text(as.numeric(wa), 0, wa, adj = c(0.5, 0.5))
+  text(-1.2, as.numeric(wb), wb, adj = 0)
+  
+  if(legend){
+    legend(xright + x_mar, ytop - 1.5*y_mar,
+           c("method option",
+             "only wa & wb option",
+             "double\nweighting schemes",
+             "effective single\nweighting schemes"),
+           pch = c(16, 1, 15, 15),
+           pt.cex = c(3, 3, 4.5, 4.5),
+           col = c("black", "black", "cornsilk", "mistyrose"),
+           bty = "n",
+           y.intersp = 2,
+           x.intersp = 2)
+    text(xright + x_mar, ytop - 1.5*y_mar, adj = c(0,1), "wa-wb-combinations", font = 3)
+    
+    legend(8.5, ytop - 1.5*y_mar,
+           c("method (default: cz)\nor wa",
+             paste0(string_bv_corr_type, "\n(default: mixed)"),
+             "wb"),
+           pch = c(15, 0, 15),
+           pt.cex = 4.5,
+           col = c( "lightcyan", "seagreen", col_wb),
+           bty = "n",
+           y.intersp = 2,
+           x.intersp = 2,
+           xpd = TRUE)
+    text(8.5, ytop - 1.5*y_mar, adj = c(0,1), options, font = 3)
+  }
+}
+
+par(mar = c(0,0,1,5.5), oma=c(0.5,0.5,0.5,0), cex = 0.8)
+wa_wb_combi()
+title("mdepriv in R: possible weighthing schemes", line = 0, adj = 0)
+```
+
+```{r echo=FALSE, Fig_wa_wb_Stata, fig.height=10/2.54, fig.width=18/2.54}
+par(mar = c(1,0,0,2.5), oma=c(0.5,0.5,0.5,0), cex = 0.8)
+wa_wb_combi(wb = c("mixed", "pearson", "tetrachoric", "polychoric", "diagonal"),
+            string_bv_corr_type = " bv sub-options corr. type",
+            options = "options")
+title("mdepriv in Stata: possible weighthing schemes", line = -2, adj = 0)
+```
+
+* `mdepriv` in **_R_** admits both non-integer and integer sampling weights for all **_method_**s. **_mdepriv_** in **_Stata_** admits integer frequency weights for all **_method_**s, as well as non-integer analytic weights for **_method_**s without double-weighting (which include **_method_** = **_cz_**, **_ds_** or **_equal_**). 
+
+* The option **_force_** allowing calculations in **_Stata_**, even if items are not limited to the [0, 1] range, is not implemented; such item sets produce invalid aggregate deprivation statistics. In **_R_** therefore, in preparation, any item with values on [0, max], where max > 1, has to be transformed. For more detailed information on suitable transformations have a look at the section 'Details' on `mepriv`'s help page. 
+```{r eval=TRUE}
+help("mdepriv")
+```
+
+* Differently from **_Stata_**, in **_R_** observations with missing item values have to be removed in preparation.
+
+* Models with double-weighting work with an internal parameter known as **_rhoH_**. **_rhoH_** is determined by the central point in the largest gap in the ordered sequence of distinct correlation coefficients between all item / indicator pairs. As such, by default, **_rhoH_** is a data-driven quantity. The user has the option to set a value for **_rhoH_**; this is rarely called for, except when a constant **_rhoH_** is desired for the comparison of several such models. The implementation between **_Stata_** and **_R_** differs:
+  + By default, **_Stata_** uses -2 as starting value for the computation of **_rhoH_**. In **_R_**, the default value is NA, causing `mdepriv` to calculate the data-driven value in models with double-weighting, or else leave it as NA.
+  + Optional values in **_Stata_** must fall in the interval [-$\infty$, +1]. In **_R_**, they are limited to [-1,+1], the range of correlation coefficients.
+
+* The **_Stata_** option **_vec_** for passing user-defined weights to items is called **_user_def_weights_** for a more intuitive argument in **_R_**.
+
+## References
+Pi Alperin, M. N. and Van Kerm, P. (2009), 'mdepriv - Synthetic indicators of multiple deprivation', v2.0 (revised March 2014), CEPS/INSTEAD, Esch/Alzette, Luxembourg. <http://medim.ceps.lu/stata/mdepriv_v3.pdf> (2020-01-02).

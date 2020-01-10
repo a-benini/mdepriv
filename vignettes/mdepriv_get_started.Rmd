@@ -1,0 +1,921 @@
+---
+title: "Get Started with mdepriv"
+output:
+ rmarkdown::html_vignette:
+    keep_md: true
+    toc: true
+self_contained: no
+vignette: >
+  %\VignetteIndexEntry{mdepriv_get_started}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Introduction
+
+The package mdepriv translates the homonymous Stata command [(Pi Alperin & Van Kerm, 2009)](http://medim.ceps.lu/stata/mdepriv_v3.pdf) for R users.
+
+mdepriv offers four methods to calculate synthetic scores of multiple deprivation from unidimensional indicators and/or basic items of deprivation. While it originated in the field of poverty research, it is equally suitable for measures of the severity of humanitarian conditions.
+
+The methods offered range from simple aggregation of equally weighted indicators to more involved ones that take into account desired traits of deprivation and severity indices. The user has the option to 1. penalize redundant items / indicators with lower weights and/or 2. to reward better discriminating ones with higher weights - or neither. All methods generate unit-level deprivation / severity scores that are linear combinations of the items / indicators, with their weights designed to sum to one. They return user-defined selections of output elements, with the aggregate deprivation level and a table of item / indicator means, weights and contributions to the aggregate deprivation / severity as the default.
+
+mdepriv accepts indicators and items standardized to the interval [0,1]. It does not accept arguments with missing values; such observations have to be removed from the dataframe or matrix input beforehand. All items / indicators have to be oriented negatively (higher values denote less desirable states).
+
+Fundamentally, the four methods
+
+* Equi-proportionate
+* Desai & Shah (1988)
+* Cerioli & Zani (1990)
+* Betti & Verma (1998)
+
+differ by their increasing sensitivity to deprivations / adverse conditions suffered by the poorest / most oppressed units (individuals, households, communities). The idea is to weight more strongly specific deprivations / adverse conditions that the more advantaged units have overcome, but which are still afflicting those at the bottom. Typically, in poverty studies, this makes good sense with durable household assets, which are observed as dichotomous "has / does not have" and recorded as binary (0/1) variables. 
+
+In humanitarian assessments it is less common that the severity of a lacking / suffering / threat is inversely proportionate to its prevalence. When prevalence-dependent weighting is not appropriate, mdepriv gives the user three options:
+
+1. Equi-proportionate weighting
+2. Unequal weights chosen for substantive considerations
+3. Switching off prevalence-sensitivity
+
+This third option is meaningful primarily in combination with the Betti-Verma method. This method deserves particular attention. Its defining feature is a double-weighting algorithm: 
+
+* The first weighting factor gauges the discriminating power of an item / indicator through its coefficient of variation (= standard deviation / mean). For dichotomous items / indicators, this implies high sensitivity to prevalence (the C.o.V. grows exponentially as the proportion tends towards zero). For continuous ones, higher C.o.V.s imply higher information content. 
+* The second weighting factor results from the correlations among the items / indicators. Those correlated strongly positively with most others are considered more highly redundant and are penalized with lower weights. Those with comparatively low positive or negative sums of correlation coefficients are considered capturing more unique aspects of deprivation / humanitarian conditions and are rewarded with higher weights.
+
+Betti-Verma is the only one among the four methods sensitive to the information content of continuous items / indicators. mdepriv automatically computes the weight of each item / indicator proportionate to the product of its two weighting factors.
+
+<a name="reason_wa_wb"></a>
+The `mdepriv` function makes the second weighting factor available also for the other three methods, but not all combinations are practically meaningful. `mdepriv` automatically recognizes the appropriate type of correlations between pairs of items / indicators, but the user can impose a particular type collectively on all pairs (rarely meaningful!).
+When the user opts for double-weighting (other than in Betti-Verma, where it is the default), the options have to be specified for both factors. `mdepriv` notation for the first factor is `wa`, for the second it is `wb`. However, not all combinations are practically meaningful. Recommended combinations depend on the analytic objective. Plausibly, the most relevant are:
+
+```{r echo=FALSE, results='asis', message=FALSE, purl = FALSE}
+library(knitr)
+library(kableExtra)
+
+ob <- c("Indifferent to prevalence (dichotomous items) and to information content (continuous). But controlling for redundancy is important.",
+        "Items are all dichotomous. Limited sensitivity to low prevalence desired. Not controlling for redundancy.",
+        "Items are all dichotomous. High sensitivity to low prevalence desired. Not controlling for redundancy.",
+        "All items are continuous, and controlling for redundancy is important.",
+        "Items are mixed dichotomous / continuous. Indifferent to prevalence of the dichotomous, but concerned for information content of the continuous. Redundancy control is important. i.e. Two-level deprivation / severity model:",
+        "Level 1: Combine all dichotomous items, save scores as one more continuous indicator for the second level.",
+        "Level 2: Combine continuous items and indicator saved from first level. Produces aggregate deprivation / severity statistic.")
+wa <- c("Equi-proportionate", "Desai-Shah", "Betti-Verma", "Betti-Verma", "", "Equi-proportionate", "Betti-Verma")
+wb <- c("on", "off", "off", "on", "", "on", "on")
+
+df    <- data.frame(ob, wa, wb, stringsAsFactors = FALSE, row.names = NULL)
+names(df) <- c('Objective', 'First weighting factor (wa)', 'Second weighting factor (wb)')
+
+knitr::kable(df, "html" , align = c("l", "l", "l")) %>%
+ kable_styling(font_size = 12, full_width = F)
+```
+
+The Cerioli-Zani model appears to be primarily of historic interest. It was one of the first to pursue the so-called fuzzy-set approach to multi-dimensional poverty measurement, which Betti and Verma subsequently deepened. The interested user may consult the reader edited by Lemmi and Betti (2006), but familiarity with fuzzy sets is not required for the understanding and application of mdepriv.
+
+As a final introductory remark, it should be said that the Betti-Verma method is particularly appropriate when a concept (deprivation, severity of conditions, etc.) has many aspects, its dimensionality is not well understood, and classical methods to unravel the dimensions (e.g., factor analysis) are likely distorted by redundancies among the available indicators.
+
+The following focuses on the technical handling of the `mdepriv` package. Context and rationale are not discussed here. The purpose is to walk the user through the manifold arguments and outputs of the core function `mdepriv`. Familiarity with the basics of R is presumed. Still, things are kept at a pretty low skill level so that users with little R experience can follow. The code provided is intended as copy-and-paste material, which users can modify for practice or for real-world data analysis.
+
+Chiefly we will use the simulated dataset `simul_data` with 100 observations, which are enough to demonstrate functionality. To showcase a [two-level deprivation model](#two-level-deprivation-model) we put the dataset `MSNA_HC` to use. Both datasets are part of the `mdepriv`-package; thus they do not require further sourcing.
+
+## Requirements
+
+Packages used in the following: 
+
+``` {r}
+# install.packages("devtools")
+# library(devtools)
+
+# devtools::install_github("a-benini/mdepriv")
+# install fast from GitHub without vignettes (not recommanded)
+
+# devtools::install_github("a-benini/mdepriv", build_vignettes = TRUE)
+# recommanded: installation at a slower pace from GitHub including vignettes
+
+library(mdepriv)
+help(package = "mdepriv") # mdepriv package documentation
+
+# install.packages("tidyverse")
+library(tidyverse) # includes packages for data handling and graphics
+```
+
+## A Minimalist Start
+
+When using the function `mdepriv` to calculate synthetic scores of multiple deprivations, at a minimum the first two of its arguments - `data` and `items` - need to be specified. The former is a `data.frame` or `matrix` containing the items as columns. The later contains the column headings of the items of interest as character strings.
+
+```{r }
+mdepriv(data = simul_data, items = c("y1", "y3", "y4", "y7"))
+```
+
+The above call generates four [default output elements](#what-mdepriv-can-return). The effective weighting scheme is flagged. The aggregate deprivation level is printed out to several digits; for comparisons two informative ones are usually enough. The summary by item is the key output. The index is the proportion of a binary item or the mean of a continuous one. The weights sum to one. The item-wise contributions are the products of the respective indices and weights. Their sum is the aggregate deprivation / severity level. The shares are the relative contributions, such that they sum to one. The summary scores returns minimal descriptive statistics of the [scores](#obtaining-the-scores), which are the unit-level synthetic deprivation values. The mean score, by design, is identical with the total of contributions and the aggregate deprivation level. 
+
+As long as the arguments are specified in the correct order, it's not necessary to write them out:
+```{r }
+tidy <- mdepriv(data = simul_data, items = c("y1", "y3", "y4", "y7"))
+lazy <- mdepriv(simul_data, c("y1", "y3", "y4", "y7"))
+all.equal(tidy, lazy)
+```
+
+## What mdepriv Can Return
+`mdepriv`'s returns can be selected by the multiple choice argument `output`. The `output` options `"view"` and `"all"` are wrappers for `output`-compilations (s. [below](#tab_output)), the former being `output`'s default setting. If `output` consists of a single element, a single object is returned as such. Multiple returns are gather in a named `list`. For more detailed information on the returns have a look at the section 'Value' on `mepriv`'s help page.
+
+```{r eval=TRUE}
+help("mdepriv")
+```
+
+<a name="tab_output"></a>
+```{r echo=FALSE, results='asis', message=FALSE, purl = FALSE}
+output_op   <- names(mdepriv(simul_data, list("y1", "y2"), output = "all"))
+view  <- names(mdepriv(simul_data, list("y1", "y2")))
+view  <- ifelse(output_op %in% view, "X", "" )
+view[output_op == "summary_by_dimension"] <- "X(*)"
+all <- ifelse(output_op == "summary_by_dimension", "X(*)", "X" )
+class <- c("single character string", "single numeric value", rep("data.frame", 3),
+           "numeric vector", "single numeric value", "data.frame", "list",
+           rep("single character string", 3), "single numeric value",
+           "list or single NA-value", "single character string")
+df    <- data.frame(output_op, view, all, class, c(rep("", 7),c(rep("X", 8))),
+                    stringsAsFactors = FALSE, row.names = NULL)
+names(df) <- c('possible output element', 'included in view', 'included in all', 'class / object type', 'useable as argument in other models')
+library(knitr)
+library(kableExtra)
+knitr::kable(df, "html", caption = "mdepriv output options", align = c("l", "c", "c", "l", "c")) %>%
+  kableExtra::column_spec(5, width = "1in", width_max = "5.5in") %>%
+  kable_styling(font_size = 12, full_width = F)
+```
+
+The output elements re-usable as arguments in subsequent models (s. [above](#tab_output)) retain the model settings effectively used, either by default or user-specified. How these settings are passed on to other models is shown by the examples [of `items`](#reuse_itmes) and [of `data`](#reuse_data). The `output` elements `"weighting_scheme"`, `"wa"`, `"wb"`, `"rhoH"` and `"user_def_weights"` can be used to [check the specifics of the applied weighting scheme](#check-the-weighting-scheme). Rationale and the how-to of recycling `"wa"`, `"wb"`, `"rhoH"` or `"user_def_weights"` are given [here](#re_use_weighting_scheme).
+
+X(*): Unless two or more [dimensions](#grouping-items-as-dimensions) have been specified, the `data.frame` `summary_by_dimension` is dropped from the `output`-compilations `"view"` and `"all"`. In these cases also the column `Dimension` is dropped from the `data.frame` `summary_by_item`. This makes the output more compact. However, when processing returns of several `mdepriv`-models, some with, others without dimension-specification, a homogenous output structure may be advantageous [(s. below)](#models_with_without_dim). The `summary_by_dimension`-table, respectively the column `Dimension` in the `summary_by_item`-table can be enforced by explicitly specifying `"summary_by_dimension"` as an `output`-element:
+```{r }
+mdepriv(simul_data, c("y1", "y2", "y3"), output = c("view", "summary_by_dimension"))
+```
+
+For a simple overview or for further processing with a narrow objective, specifying one or at most very few output-elements should suffice. When doing elaborated analysis it is most likely convenient to specify the `output` as `"all"` and to save the `mdepriv`-return which in this case is a `list`. Next the user can pick specific elements from the `list` in several ways:
+
+```{r}
+mdepriv_returns <- mdepriv(simul_data, c("y1", "y2", "y3", "y4", "y5", "y6", "y7"), output = "all")
+
+# 3 ways to pick an element as such from list
+mdepriv_returns$weighting_scheme 
+mdepriv_returns[["weighting_scheme"]]
+mdepriv_returns[[1]] # by index also works with unnamed lists
+```
+Warning: Don't confuse a `list` of only 1 element with the very element as such:
+```{r error=TRUE, purl = FALSE}
+mdepriv_returns["aggregate_deprivation_level"] # a list with only 1 element ...
+mdepriv_returns[["aggregate_deprivation_level"]] # ... and the very element as such ...
+# ... might look somewhat the same 
+mdepriv_returns["aggregate_deprivation_level"] == mdepriv_returns[["aggregate_deprivation_level"]]
+# but ... they are not
+round(mdepriv_returns["aggregate_deprivation_level"], 2) 
+round(mdepriv_returns[["aggregate_deprivation_level"]], 2)
+
+# if unsure about what you are dealing with: check! 
+class(mdepriv_returns["aggregate_deprivation_level"])
+class(mdepriv_returns[["aggregate_deprivation_level"]])
+```
+
+Working with the returns from multiple `mdepriv` models saved as a separate `list`s can become cumbersome. However, there is a convenient alternative. One can combine the returned `list`s in a `data.frame` where every model is a row and the different `output` elements are gathered as columns/variables (s. [Multiple Models in a data.frame](#multiple-models-in-a-data.frame)). 
+
+## Grouping Items as Dimensions
+
+The user may group items in separate dimensions. Each dimension is allocated a weight sum of $\frac{1}{K}$, K being the number of dimensions in the model. The item weights are calculated separately for each dimension; they too sum to $\frac{1}{K}$ for each dimension, thus keeping the sum total of weights = 1. The sum of item contributions (`Contri`) per dimension is reflected as dimension-wise contribution in the `summary_by_dimension`. The dimension indices are "backward-engineered", i.e. = $\frac{contribution}{weight}$. The deprivation scores, however, are computed in a unified way for the entire model, not for every dimension. If the user requires dimension-wise scores, then these must come from separate models.
+
+Grouping items / indicators by dimensions is appropriate when there are substantive or policy reasons to keep their weights independent and their weight sums identical across dimensions. This is the case when redundancy should be controlled for among items within each group, but not between items of different groups. There may be institutional considerations, e.g., when some items may be highly correlated between groups, but the importance (weight sum) of the groups should be kept equal. For example, water deprivation and sanitation deprivation are correlated, but the humanitarian sub-sectors looking into them may need to participate in the severity calculation with equal weight.
+
+Items are grouped in dimensions by placing them in vectors that are elements of a `list`:
+```{r }
+mdepriv(simul_data, list(c("y1", "y2", "y4"), c("y5", "y6")))
+```
+
+If not happy with the default labelling of dimensions, the user can customize it:
+
+```{r }
+mdepriv(simul_data, list('Group A' = c("y1", "y2", "y4"), 'Group B' = c("y5", "y6")),
+        output = c("summary_by_dimension", "summary_by_item"))
+```
+<a name="reuse_itmes"></a>
+The set of `items` can be taken from one model and passed on to another:
+```{r }
+ds <- mdepriv(simul_data, list('Group A' = c("y1", "y2", "y4"), 'Group B' = c("y5", "y6")),
+              method = "ds", output = "all")
+bv <- mdepriv(simul_data, ds$items, method = "bv", output = "all")
+all.equal(ds$items, bv$items)
+```
+
+The `output` element `items` is always returned as a `list`. This is true also when `items` were passed as a simple vector of characters strings, with no dimensions specified. The returned `items` remain a recyclable argument. 
+
+```{r }
+class(c("y1", "y2", "y4")) # items in character vector
+model_1 <- mdepriv(simul_data, c("y1", "y2", "y4"), output = "all")
+model_1$items # same items are return in a list with one dimension
+class(model_1$items)
+model_2 <- mdepriv(simul_data, model_1$items, output = "all")
+all.equal(model_1, model_2)
+# whether a 'one dimensional list' or a simple vector does not matter.
+```
+
+## Sampling Weights
+
+`mdepriv`'s third argument `sampling_weights` is optional. Its specification targets a numeric variable within the argument `data` by the character string corresponding to the very column heading. Integers as well as non-integers are admitted as sampling weights. By default the argument `sampling_weights` is set to NA, which means unspecified.
+
+```{r }
+head(simul_data, 3) # see what's included in the input data
+
+# if sampling_weights are specified the very specification 
+# and the sum of sampling weights are available as returns ...
+mdepriv(simul_data, c("y1", "y2", "y3"), "sampl_weights",
+         output = c("sampling_weights", "sum_sampling_weights"))
+
+# ... if unspecified, the outcome consequently is:
+mdepriv(simul_data, c("y1", "y2", "y3"),
+         output = c("sampling_weights", "sum_sampling_weights"))
+```
+
+## Standard Methods
+
+Four different standard `method`s for calculating synthetic scores of multiple deprivations are available: 
+
+* `"cz"`: &emsp; &nbsp; Cerioli & Zani (1990) weighting
+* `"ds"`: &emsp; &nbsp; Desai & Shah (1988) weighting
+* `"bv"`: &emsp; &nbsp; Betti & Verma (1998) weighting
+* `"equal"`: &nbsp; Equi-proportionate weighting
+
+We compare aggregated deprivation levels by `method` and by the use of the sampling weights or not.
+
+```{r Fig1, fig.height=4, fig.width=5.5}
+methods <- c("cz", "ds", "bv", "equal") # all available methods
+items_sel <- c("y1", "y2", "y3", "y4", "y5", "y6", "y7") # a selection of items
+
+# aggregate deprivation levels when no sampling weights are applied
+(without_s_w <- sapply(X = methods, function(X) mdepriv(simul_data, items_sel, method = X,
+                                                        output = "aggregate_deprivation_level")))
+
+# aggregate deprivation levels when sampling weights are applied
+(with_s_w <- sapply(X = methods, function(X) mdepriv(simul_data, items_sel, "sampl_weights",
+                                                     method = X, output = "aggregate_deprivation_level")))
+
+# channel the figures to a plot
+rbind(without_s_w, with_s_w) %>%
+  data.frame(sampling_weight = c(FALSE, TRUE)) %>%
+  gather(key = "method", value = "aggregate_deprivation_level", -sampling_weight) %>%
+  mutate(method = factor(method, c("cz", "ds", "bv", "equal"))) %>%
+         # methods as factor: to get them in a certain, non-alphabetical sequence in the plot
+  ggplot(aes(x = method, y = aggregate_deprivation_level, fill = sampling_weight)) +
+  geom_col(position = position_dodge()) +
+  theme_bw() +
+  ggtitle('method vs. aggregate deprivation level')
+```
+
+Lets investigate the differences of the `method`s not just based on the single figure `aggregate_deprivation_level`, but on a comparison of `summary_by_item`-tables.
+```{r ,warning=FALSE, Fig2, fig.height=8, fig.width=7.25}
+items_sel <- c("y1", "y2", "y3", "y4", "y5", "y6", "y7") # a selection of items
+methods <- c("cz", "ds", "bv", "equal") # all available methods
+sampling_weights <- c("sampl_weights", NA) # sampling weights specified/unspecified 
+
+methods <- rep(methods, length(sampling_weights))
+# repeat methods as many times as there are different (non-)specifications of sampling weights 
+sampling_weights <- rep(sampling_weights, each = n_distinct(methods))
+# repeat each different sampling weights (non-)specifications as many times as there are distinct methods
+
+# aggregate summary_by_item-tables and channel them to a plot
+lapply(X = seq_along(methods),
+       function(X) mdepriv(simul_data,
+                           items_sel,
+                           sampling_weights = sampling_weights[X],
+                           method = methods[X],
+                           output = "summary_by_item")) %>%
+  tibble(., # 'listed' summary_by_item-tables as variable
+         method = methods, # methods as varible
+         sampling_weight = !is.na(sampling_weights) # TRUE if sampl. weights applied else FALSE
+         ) %>%
+  unnest() %>%
+  filter(Item != "Total") %>% # filter out rows with the totals inherited from the summary_by_item-tables
+  gather("key", "value", -sampling_weight, -method, -Item) %>%
+  mutate(key = factor(key, c("Index", "Weight", "Contri", "Share")),
+         method = factor(method, c("cz", "ds", "bv", "equal"))) %>%
+  # change key & method to factor to get certain, non-alphabetical sequences in plot grid
+  # key (rows), method (colums)
+  ggplot(aes(x = Item, y = value, fill = sampling_weight)) +
+  geom_col(position = position_dodge()) +
+  facet_grid(rows = vars(key), col = vars(method), scales = "free_y") +
+  theme_bw() +
+  ggtitle('method vs. key figures from the summary by item') +
+  theme(legend.position = "top")
+```
+
+<a name="method_default_settings"></a>
+Different `method`s do matter as far as their result, but this should not be confused with the default argument settings of `mdepriv`:
+
+```{r }
+# The Cerioli & Zani (1990) weighting scheme is the default method and must not really be specified
+cz_default <- mdepriv(simul_data, c("y1", "y2", "y3"))
+cz_explicit <- mdepriv(simul_data, c("y1", "y2", "y3"), method = "cz")
+all.equal(cz_default, cz_explicit)
+
+# The Betti & Verma (1998) weighting scheme has to be chosen explicitly, ...
+bv_standard_lazy <- mdepriv(simul_data, c("y1", "y2", "y3"), method = "bv")
+# ... it is associated with two further arguments with default settings.
+bv_standard_explicit <- mdepriv(simul_data, c("y1", "y2", "y3"), method = "bv",
+                                bv_corr_type = "mixed", rhoH = NA)
+all.equal(bv_standard_lazy, bv_standard_explicit)
+```
+
+## Specification of the Betti-Verma Double Weighting
+
+As seen [above](#method_default_settings), the Betti & Verma's (1998) double-weighting `method` `"bv"` comes with default settings for the associated arguments `bv_corr_type` and `rhoH`. These arguments affect the second factor (`wb`) of the double-weighting and thus the overall outcome if `"bv"` is chosen as method.
+
+<a name="mixed_rule"></a>
+`bv_corr_type`'s default setting `"mixed"` detects automatically the appropriate correlation type for each pair of items by the following rules:
+
+* `"pearson"`: both items have > 10 distinct values.
+* `"polyserial"`: one item has $\le$ 10, the other > 10 distinct values.
+* `"polychoric"`: both items have $\le$ 10 distinct values.
+
+By choosing `"pearson"` as `bv_corr_type` this correlation type is forced on all combinations of items. Situations that would motivate `"pearson"` as a choice are rare and far-fetched. When ordinal indicators are present, and they are transformed to interval- or ratio-level variables (e.g., as ridits), forcing `"pearson"`-type correlations may make for more consistent redundancy reductions for all indicators.
+
+The `"mixed"` correlation-type default is not only convenient, but also appropriate for most indicator constellations. One may want to know the type that `"mixed"` selects for a given pair of items. The function `corr_mat`, besides calculating the coefficients, can also reveal the involved correlation types. `corr_mat`'s first three arguments are the same as those of `mdepriv`. The options of the fourth argument `corr_type` are analogue to those of the `mdepriv`'s argument `bv_corr_type`, where `"mixed"` is also the default setting.
+
+```{r}
+very_explicit <- corr_mat(data = simul_data, items = c("y1", "y4", "y6", "y7"), 
+                          sampling_weights = "sampl_weights", corr_type = "mixed", output = "both")
+rather_minimalistic <- corr_mat(simul_data, c("y1", "y4", "y6", "y7"), "sampl_weights", output = "both")
+all.equal(very_explicit, rather_minimalistic)
+rather_minimalistic
+```
+Note that `corr_mat`'s `output` is set by default to `"numeric"`. If desired `"type"` or `"both"` have to be specified.
+
+`mdepriv`'s argument `rhoH` distributes high and low coefficients of the triangular item correlation table to two factors. By default `rhoH` is set to NA, which causes its automatic calculation according to Betti & Verma's (1998) suggestion to divide the ordered set of correlation coefficients at the point of their largest gap (excluding the diagonal elements).
+
+```{r  echo=FALSE, warning=FALSE, Fig3, fig.height=9/2.54, fig.width=18/2.54}
+plot_corr_val_rhoH <- function(data      = simul_data,
+                               items     = c("y1", "y2", "y3", "y4", "y5", "y6", "y7"),
+                               sampling_weights = NA,
+                               corr_type = c("mixed", "pearson", "polychoric"),
+                               min_y = -0.2
+  ){
+  corr_type <- match.arg(corr_type)
+  corr_val <- corr_mat(data = data, items = items, sampling_weights = sampling_weights,  corr_type = corr_type) %>% sort() %>% unique()
+  rhoH <- mdepriv(data = data, items = items, sampling_weights = sampling_weights, method = "bv", bv_corr_type = corr_type, output = "rhoH")
+  dist_rhoH_corr <- abs(corr_val - rhoH)
+  at_largest_gap <- corr_val[near(dist_rhoH_corr, min(dist_rhoH_corr))]
+  at_largest_gap_x <- which(corr_val %in% at_largest_gap)*1.2
+
+  barplot(corr_val,
+          ylim = c(min_y,1),
+          ylab = "correlation value [-1,1]",
+          col = ifelse(corr_val %in% at_largest_gap, "black", "gray"),
+          border = NA,
+          main = paste0('bv_corr_type: "', corr_type,'"\nunique correlation values'))
+
+  segments(x0 = at_largest_gap_x, y0 = at_largest_gap, x1 = at_largest_gap_x - c(2.2, 3.4), lend = 1)
+
+  arrows(x0 = at_largest_gap_x[1] - 2.2, y0 = at_largest_gap[1], y1 = at_largest_gap[2], code = 3, angle = 20, length = 0.15)
+
+  abline(h = rhoH, col = "red", lwd = 1.5)
+  
+  text(at_largest_gap_x[1] - 3, at_largest_gap[1], paste0("largest gap = ", round(diff(at_largest_gap), 4)), adj = c(1, 0))
+
+  text(0, rhoH + 0.05, paste0("rhoH = ", round(rhoH, 4)), adj = c(0, 0), col = "red")
+
+  legend("bottomright",
+         "correlation values\nbounding largest gap",
+         pch = 15, pt.cex =  2, col = "black",
+         bty = "n", xpd = TRUE)
+  }
+
+par(mfrow=c(1,2), mar=c(1,4,4,1), oma=c(0.5,0.5,0.5,0), las = 2, cex = 0.8)
+plot_corr_val_rhoH()
+plot_corr_val_rhoH(corr_type = "pearson")
+```
+
+Alternatively, the user can set a fixed value for `rhoH` in the interval [-1, +1]. When `rhoH` is automatically calculated, the weights of items that overall are more weakly correlated with the other items turn out higher, compared to their weights when the user chooses a `rhoH` value far from the automatic version. Setting `rhoH` to -1 or +1 (the bounds of its range) causes all correlation coefficients to be assigned to one set only. However, in our experiments the item weight differences between models with automatically calculated vs. user-defined `rhoH` have been modest, rarely more than 10 percent up or down. Both variants - data-driven or user-defined - of `rhoH`, in combination with the chosen `bv_coor_type`, affect the outcome of the Betty-Verma double weighting model.
+
+```{r Fig4, fig.height=10/2.54, fig.width=18/2.54}
+items_sel <- c("y1", "y2", "y3", "y4", "y5", "y6", "y7") # a selection of items
+rhoHs <- c(-0.2, 0, 0.2, 0.4, 0.6, 0.8, 1, NA)
+# fixed rhoHs & NA (= default specification for data driven rhoH)
+bv_corr_types <- c("mixed", "pearson") # correlation types
+
+rhoHs <- rep(rhoHs, length(bv_corr_types))
+# repeat rhoHs as many times as there are different correlation types
+bv_corr_types <- rep(bv_corr_types, each = n_distinct(rhoHs))
+# repeat each different correlation type as many times as there are distinct values of rhoH 
+
+rhoH_type <- ifelse(is.na(rhoHs), "data driven", "fixed") # rhoH type / classification
+rhoH_type <- factor(rhoH_type, c("fixed", "data driven"))
+# factorize for non-alphabetical sequence in plot
+
+# get and plot the (under the hood) applied rhoHs and aggregate_deprivation_level
+lapply(X = seq_along(rhoHs),
+       function(X) mdepriv(simul_data,
+                           items_sel,
+                           method = "bv",
+                           bv_corr_type = bv_corr_types[X],
+                           rhoH = rhoHs[X],
+                           output = c("aggregate_deprivation_level", "rhoH"))) %>%
+  bind_rows() %>%
+  mutate(bv_corr_type = bv_corr_types,
+         rhoH_type = rhoH_type) %>%
+  ggplot(aes(x = rhoH,
+             y = aggregate_deprivation_level,
+             col = bv_corr_type,
+             shape = rhoH_type)) +
+  geom_point(size = 3) +
+  theme_bw() +
+  scale_x_continuous(breaks = seq(-0.2,1,0.2), limits = c(-0.25, 1.05)) +
+  ggtitle("aggregate deprivation level vs. fixed and data driven rhoH")
+```
+
+As far as this model with simulated data is representative of the behavior of `rhoH`, it would appear that the maximum aggregate deprivation level is at or near the one obtained when `rhoH` is entirely data-driven.
+
+Setting a fixed value for `rhoH` by the user is rarely called for, except when a constant `rhoH` is required for the comparison of several [models with double-weighting](#wa_wb_comination).
+
+As a technicality, it may be noted that, if the user chooses more than one dimension, `rhoH` is common for all. If this is the case and `rhoH` is data-driven, rhoH might not equal the correlation coefficient between any of the items pairs within the dimensions. Instead the correlation coefficient at the upper bound of the greatest gap may be between two items that belong to different dimensions. This definition is necessary in order to avoid the breakdown of the Betti-Verma formula in models in which some dimension(s) has/have only one element. The technicality is of no practical consequence for the user.
+
+## Flexible Double Weighting Schemes beyond Betti-Verma
+
+Although historically Betti and Verma devised double-weighting for the method named after them, `mdepriv` makes it available in the other methods as well. That is, additionally to the [standard `method`s](#standard-methods) the arguments `wa` and `wb` provide alternative, more flexible ways to select the weighting schemes. Weights are computed as the product of two terms as in the Betti-Verma scheme. `wa` selects the form of the first factor and is one of `"cz"`, `"ds"`, `"bv"` or `"equal"`. `wb` selects the form of the second factor and is one of `"mixed"`, `"pearson"` or `"diagonal"`, where the latter sets all off-diagonal correlations to zero. Any true double-weighting scheme involves `rhoH` as does the [Betti-Verma method](#specification-of-the-betti-verma-double-weighting), either as data-driven (the default) or fixed by specification. 
+
+<a name="wa_wb_comination"></a>
+```{r echo=FALSE, Fig5, fig.height=7/2.54, fig.width=18/2.54}
+wa_wb_combi <- function(
+  wa = c("cz", "ds", "bv", "equal"),
+  wb = c("mixed", "pearson", "diagonal"),
+  xlim = c(-1.25, 11),
+  ylim = c(-0.5, 4.5),
+  col_double = "cornsilk",
+  col_single = "mistyrose",
+  col_method_wa = "lightcyan",
+  col_wb = "#C1FFC1A6", # rgb(t(col2rgb("darkseagreen1"))/255, alpha = 0.65)
+  col_bv_corr_type = "seagreen",
+  legend = TRUE
+  )
+{
+  wa    <- factor(wa, wa)
+  wb    <- factor(wb, wb)
+  combi <- merge(wa, wb)
+  names(combi) <- c("wa", "wb")
+  combi$method <- (combi$wa != "bv" & combi$wb == "diagonal") | (combi$wa == "bv" & combi$wb != "diagonal")
+  
+  plot(0, 0, type = "n", xlim = xlim, ylim = rev(ylim), asp = 1, axes = F, ann = F)
+  
+  x_mar   <- 0.5
+  xleft   <- x_mar
+  xright  <- length(wa) + x_mar
+  y_mar   <- x_mar
+  ybottom <- length(wb) + y_mar
+  ybreak  <- length(wb) - 1 + y_mar
+  ytop    <- y_mar
+  
+  rect(xleft, ybreak, xright, ytop, col = col_double, border = NA)
+  
+  rect(xleft, ybottom, xright, ybreak, col = col_single, border = NA)
+  
+  points(as.numeric(wb)~as.numeric(wa) , data = combi,
+         pch = ifelse(combi$method, 16, 1),
+         cex = 3)
+  
+  rect(xleft, ytop - 0.5*y_mar, xright, ytop - 1.5*y_mar, col = col_method_wa, border = NA)
+  
+  rect(xleft - 3.75*x_mar, ytop, xleft - 0.5*x_mar , ybottom, col = col_wb, border = NA)
+  
+  rect(xleft - 3.5*x_mar, ytop + 0.25*y_mar, xleft - 0.75*x_mar , ybreak, border = col_bv_corr_type, lwd = 2)
+  
+  text(as.numeric(wa), 0, wa, adj = c(0.5, 0.5))
+  text(-1.1, as.numeric(wb), wb, adj = 0)
+  
+  if(legend){
+    legend(xright + x_mar, ytop - 1.5*y_mar,
+           c("method option",
+             "only wa & wb option",
+             "double\nweighting schemes",
+             "effective single\nweighting schemes"),
+           pch = c(16, 1, 15, 15),
+           pt.cex = c(3, 3, 4.5, 4.5),
+           col = c("black", "black", "cornsilk", "mistyrose"),
+           bty = "n",
+           y.intersp = 2,
+           x.intersp = 2)
+    text(xright + x_mar, ytop - 1.5*y_mar, adj = c(0,1), "wa-wb-combinations", font = 3)
+    
+    legend(8.5, ytop - 1.5*y_mar,
+           c("method (default: cz)\nor wa",
+             "bv_corr_type\n(default: mixed)",
+             "wb"),
+           pch = c(15, 0, 15),
+           pt.cex = 4.5,
+           col = c( "lightcyan", "seagreen", col_wb),
+           bty = "n",
+           y.intersp = 2,
+           x.intersp = 2)
+    text(8.5, ytop - 1.5*y_mar, adj = c(0,1), "argument options", font = 3)
+  }
+}
+
+par(mar = c(0,0,0,1), cex = 0.8)
+wa_wb_combi()
+```
+
+Thus applying `"diagonal"` to `wb` and specifying `wa` as `"cz"`, `"ds"` or `"equal"` basically delivers the same result as when choosing the corresponding named `method`. Only the first `output` element differs:
+```{r }
+ds <- mdepriv(simul_data, c("y1", "y2", "y3"), method = "ds")
+ds[1]
+ds_diagonal <- mdepriv(simul_data, c("y1", "y2", "y3"), wa = "ds", wb = "diagonal")
+ds_diagonal[1] 
+all.equal(ds[-1], ds_diagonal[-1])
+```
+Betti & Verma (1998) weighting schemes also have lookalikes among the `wa`-`wb`-combinations:
+```{r }
+bv <- mdepriv(simul_data, c("y1", "y2", "y3"), method = "bv", bv_corr_type = "pearson", rhoH = 0.3)
+bv[1]
+bv_pearson <- mdepriv(simul_data, c("y1", "y2", "y3"), wa = "bv", wb = "pearson", rhoH = 0.3)
+bv_pearson[1] 
+all.equal(bv[-1], bv_pearson[-1])
+```
+
+So lets have a look at the items weights of some non-standard `wa`-`wb`-weighting schemes:
+```{r ,warning=FALSE, Fig6, fig.height=12/2.54, fig.width=18/2.54}
+items_sel <- c("y1", "y2", "y3", "y4", "y5", "y6", "y7") # a selection of items
+
+# wa-wb-combinations
+wa <- c("cz", "ds", "equal", "bv")
+wb <- c(rep("mixed", 3), "diagonal")
+data.frame(wa, wb)
+
+# list with summaries by items for each wa-wb-combination
+summary_by_item <- lapply(X = seq_along(wa),
+                          function(X) mdepriv(simul_data, items_sel, wa = wa[X], wb = wb[X],
+                                              output = "summary_by_item"))
+
+# channel figures to a plot
+tibble(wa, wb, summary_by_item) %>% # gather (variated) arguments & output in a tibble (i.e. data.frame)
+  unnest() %>%
+  filter(Item != "Total") %>% # filter out rows with the totals inherited from the summary_by_item-tables
+  ggplot(aes(x = Item, y = Weight, fill = Item)) +
+  geom_col(position = position_dodge()) +
+  facet_wrap(vars(wa, wb), ncol = 2) +
+  theme_bw() +
+  ggtitle('Item Weight from User Defined Double Weighting Schemes')
+
+```
+
+The largest differences in weights are between the `"bv"`-`"diagonal"` model vs. the three others, for all of which `wb` as set to `"mixed"`. In the former, the correlations among items have no effect on the weights because of `wb` = `"diagonal"`. In the latter, they take full effect, due to `wb` =  "`mixed"`. Note that for each of the seven items, the Desai-Shaw weight is in the interval defined by the respective Cerioli-Zani and equi-proportionate weights. This is so because Desai-Shaw's sensitivity to the means of items is less than that of Cerioli-Zani; it is higher than in the equi-proportionate method, which is indifferent to the item means. [The remarks and table above](#reason_wa_wb) give reasons for selecting particular wa-wb-combinations in reference to analytic objectives.
+
+## Expertise-Based Weights for Items
+
+Instead of a data-driven weighting scheme users can pass expertise-based weights to items. This is done by structuring the argument `user_def_weights` analogously to the `items`' argument. For each of the [dimensions](#grouping-items-as-dimensions) (= group of items) the user-defined weights must sum up to 1. When returned as an output user_def_weights inherits the dimensions' labelling specified by the `items`' argument.
+
+```{r }
+mdepriv(simul_data,
+        items = list('Group A' = c("y1", "y2"), 'Group B' = c("y5", "y6")),
+        user_def_weights = list(c(0.65, 0.35), c(0.8, 0.2)),
+        output = c("weighting_scheme",
+                   "summary_by_dimension",
+                   "summary_by_item",
+                   "items",
+                   "user_def_weights"))
+```
+
+## Check the Weighting Scheme
+
+The `mdepriv` arguments `method`, `bv_corr_type`, `wa`, `wb`, `rhoH` and/or `user_def_weights` set the weighting scheme. `method`, `bv_corr_type` and `rhoH` have default values. Any setting of `bv_corr_type` is bypassed if `method` is not `"bv"` and both `wa` and `wb` are unspecified. Any `rhoH` setting is bypassed if an [effective single weighting scheme](#wa_wb_comination) is applied. If `user_def_weights` is specified, the arguments `method`, `bv_corr_type`, `wa`, `wb` and `rhoH` do not matter. If that is confusing, the `output` elements `"weighting_scheme"`, `"wa"`, `"wb"`, `"rhoH"` and `"user_def_weights"` can always be relied upon to tell the specifics of the weighting scheme effectively applied. 
+
+What's going on under the hood if ...
+
+... no `method` is specified?
+```{r}
+mdepriv(simul_data, c("y1", "y2", "y3"),
+        output = c("weighting_scheme", "wa", "wb", "rhoH", "user_def_weights"))
+```
+... `bv` as `method` and else nothing with relevance for the weighing scheme is specified?
+```{r}
+mdepriv(simul_data, c("y1", "y2", "y3"),  method = "bv",
+        output = c("weighting_scheme", "wa", "wb", "rhoH", "user_def_weights"))
+```
+... `bv` as `method` + the associated `bv_corr_type` and `rhoH` are specified?
+```{r}
+mdepriv(simul_data, c("y1", "y2", "y3"),  method = "bv", bv_corr_type = "pearson", rhoH = 0.3,
+        output = c("weighting_scheme", "wa", "wb", "rhoH", "user_def_weights"))
+```
+... an effective single weighting `method` + meaningless `bv_corr_type` and `rhoH` are specified?
+```{r}
+mdepriv(simul_data, c("y1", "y2", "y3"),  method = "ds", bv_corr_type = "pearson", rhoH = 0.3,
+        output = c("weighting_scheme", "wa", "wb", "rhoH", "user_def_weights"))
+```
+... user defined effective single weighting scheme and some meaningless `rhoH` specification are applied?
+```{r}
+mdepriv(simul_data, c("y1", "y2", "y3"),  wa = "bv", wb = "diagonal", rhoH = 0.7,
+        output = c("weighting_scheme", "wa", "wb", "rhoH", "user_def_weights"))
+```
+... user defined double weighting scheme with + `rhoH` specification kick in?
+```{r}
+mdepriv(simul_data, c("y1", "y2", "y3"),  wa = "equal", wb = "mixed", rhoH = 0.5,
+        output = c("weighting_scheme", "wa", "wb", "rhoH", "user_def_weights"))
+```
+... expertise-base weighting scheme and an ignored `method` are applied?
+```{r}
+mdepriv(simul_data, list(c("y1", "y2"), c("y3", "y4")), method = "cz",
+        user_def_weights = list(c(0.3, 0.7), c(0.45, 0.55)), 
+        output = c("weighting_scheme", "wa", "wb", "rhoH", "user_def_weights"))
+```
+
+<a name="re_use_weighting_scheme"></a>
+[As shown above](#check-the-weighting-scheme) the `output` elements `"weighting_scheme"`, `"wa"`, `"wb"`, `"rhoH"` and `"user_def_weights"` tell reliably the specifics of the weighting scheme effectively applied. With the exception of `"weighting_scheme"`, those `output` elements can be re-used as specifications for homonymous arguments in another model.
+```{r}
+model <- mdepriv(simul_data, c("y1", "y2", "y3"), output = "all")
+model$wa
+model$wb
+other_model <- mdepriv(simul_data, c("y1", "y2", "y3"), wa = model$wa, wb = model$wb, output = "all")
+
+all.equal(model, other_model) # is there a difference? ...
+# ... expect for weighting_scheme all outputs are the same
+model$weighting_scheme
+other_model$weighting_scheme
+```
+
+`"wa"` can be applied also to the argument `method` of another model:
+
+```{r}
+model <- mdepriv(simul_data, c("y1", "y2", "y3"), output = "all")
+other_model <- mdepriv(simul_data, c("y1", "y2", "y3"), method = model$wa, output = "all")
+all.equal(model, other_model) # no difference
+```
+
+Whereas `"wb"` can be applied only to the argument `bv_corr_type`, and only if it is not `"diagonal"`:
+```{r}
+model <- mdepriv(simul_data, c("y1", "y2", "y3"), method = "bv", bv_corr_type = "pearson", output = "all")
+other_model <- mdepriv(simul_data, c("y1", "y2", "y3"), method = model$wa, bv_corr_type = model$wb, output = "all")
+all.equal(model, other_model) # no difference
+```
+Note that situations where recycling of `outputs` as specifications for setting weighting schemes make sense are rare. This is the case if a certain weighting scheme should be run on different datasets or different selections of items. Except for data driven `rhoH`s and specified `user_def_weights`, which are cumbersome to re-type (with every digit) there is not much practical use for doing so.
+
+## Obtaining the Scores
+
+The scores are the individual deprivation values, calculated as the vector products of the individual item values and the weights returned by `mdepriv`.
+
+The score summary is obtained via the `output` option `"summary_scores"`:
+
+```{r}
+items_sel <- c("y1", "y2", "y3", "y4", "y5", "y6", "y7") # a selection of items
+mdepriv(simul_data, items_sel, method = "ds", output = "summary_scores")
+```
+The `output` option `"score_i"` provides direct access to the vector of scores for their immediate further use:
+```{r Fig7, fig.height=3.5, fig.width=9}
+items_sel <- c("y1", "y2", "y3", "y4", "y5", "y6", "y7") # a selection of items
+
+bv_diagonal_scores <- mdepriv(simul_data, items_sel, "sampl_weights",
+                              wa = "bv", wb = "diagonal", output = "score_i")
+eq_mixed_scores <- mdepriv(simul_data, items_sel, "sampl_weights",
+                           wa = "equal", wb = "mixed", output = "score_i")
+
+par(mfrow=c(1,3), mar=c(4,4,4,1), oma=c(0.5,0.5,0.5,0), las = 1)
+
+hist(bv_diagonal_scores, ylim = c(0, 15), breaks = seq(0,1,0.05),
+     xlab = "",  main = "scores: wa: bv & wb: diagonal", col = "gray")
+
+hist(eq_mixed_scores , ylim = c(0, 15), breaks = seq(0,1,0.05),
+     xlab = "", main = "scores: wa = equal & wb = mixed", col = "gray")
+
+plot(bv_diagonal_scores, eq_mixed_scores, xlim = c(0, 1), ylim = c(0, 1),
+     xlab = "scores: wa: bv & wb: diagonal",
+     ylab = "scores: wa: equal & wb: mixed", 
+     main = "scores: bv/diagonal vs. equal/mixed")
+abline(0, 1, lty = 2, lwd = 2, col = "red")
+```
+These scores are also merged to the `output` element `"data"`:
+```{r}
+# default heading of score column
+mdepriv(simul_data, items_sel, output = "data") %>%  head(3)
+
+# user-defined heading of score column
+mdepriv(simul_data, items_sel, score_i_heading = "score_i_user_name", output = "data") %>%  head(3)
+```
+<a name="reuse_data"></a>
+Thus the scores are twofold accessible:
+```{r}
+items_sel <- c("y1", "y2", "y3", "y4", "y5", "y6", "y7") # a selection of items
+model <- mdepriv(simul_data, items_sel, output = "all") # method (default) = "cz"
+all.equal(model$score_i, model$data$score_i)
+```
+The score column heading effects the ability of the `output` element `"data"` being used as input `data` in another model:
+```{r error=TRUE, purl = FALSE}
+new_model <- mdepriv(model$data, items_sel, method = "ds", output = "all")
+```
+Note: `"score_i"` is the default setting of the argument `score_i_heading`. By distinguishing the score columns using the argument `score_i_heading` in a cascade of models, the `output` element `"data"` can be re-used multiple times.
+```{r}
+new_model <- mdepriv(model$data, items_sel, method = "ds", score_i_heading = "new_score_i", output = "all")
+head(new_model$data, 3) %>% mutate_if(is.double, function(x) round(x,3))
+```
+If the purpose is to gather the scores columns from a cascade of models, and in order to avoid confusion, it is expedient to name each scores column with reference to its very model:
+```{r}
+model_1 <- mdepriv(simul_data, items_sel, method = "bv",
+                   score_i_heading = "score_i_1", output = "all")
+model_2 <- mdepriv(model_1$data, items_sel, method = "ds",
+                   score_i_heading = "score_i_2", output = "all")
+model_3 <- mdepriv(model_2$data, items_sel, wa = "cz", wb = "mixed",
+                   score_i_heading = "score_i_3", output = "all")
+head(model_3$data, 3) %>% mutate_if(is.double, function(x) round(x,3))
+```
+
+## Two-Level Deprivation Model
+To demonstrate a two-level deprivation model with the Betti-Verma double weighting rule operating at both levels we use the dataset `MSNA_HC`.
+```{r eval=TRUE}
+help("MSNA_HC")
+```
+Check the data set structure...
+```{r}
+str(MSNA_HC)
+```
+<a name="msna_hc_items_distribution"></a>
+... and the items distrubutions.
+```{r Fig8, fig.height=15/2.54, fig.width=18/2.54}
+items <- MSNA_HC %>% select(ls_1_food:sanit_4) %>% names() # all items
+
+MSNA_HC %>% 
+  select(items) %>% 
+  gather(key = "item", value = "value") %>% 
+  ggplot(aes(value)) + 
+  geom_histogram(breaks = seq(0, 1, 0.05)) +
+  facet_wrap(~item, ncol = 3) +
+  theme_bw() +
+  ggtitle("Items Distributions")
+```
+
+At the lower level (`level_1`), the seven binary WASH (Water, Sanitation and Hygiene) items will be aggregated to a continuous WASH deprivation indicator, `ls_4_WASH`. To equalize subsector contributions, water (prefix `water_`) and sanitation (prefix `sanit_`) items are grouped in different dimensions.
+
+
+```{r}
+# grouping items in dimensions
+items_level_1 <- list('water' = str_subset(items, "water_"), 'sanit' = str_subset(items, "sanit_"))
+```
+<a name="corr_wash_items"></a>
+
+Check correlation type of items pairs according to the [`mixed`-rule](#mixed_rule)
+
+```{r}
+corr_mat(MSNA_HC, items_level_1, output = "type") # corr_type (default) = "mixed"
+
+# all correlation type are "polychoric"
+```
+In this humanitarian context, there is no basis to consider one or the other water or sanitation problem more or less important on the basis of their different prevalence. Therefore, in aggregating the seven binary water and sanitation items, for the first weighting factor we set the argument `wa` = `"equal"`. However, we keep redundancy control active. That is, the second weighting factor `wb` = `"mixed"` has the effect of reducing weights on more redundant items. (Note that because [all WASH items are binary 0 or 1](#msna_hc_items_distribution), choosing [`"mixed"` results in `"polychoric"` for all item pairs](#corr_wash_items). `wb` = `"diagonal"` would be neutral to redundancy; and `wb` = `"pearson"` would underrate the strength of correlations between binary items).
+
+This model returns the deprivation scores as a column `"ls_4_WASH"` (argument `score_i_heading`) merged to the `output` element `"data"`:
+
+```{r}
+model_level_1 <- mdepriv(MSNA_HC, items_level_1, "sampl_weights", wa = "equal", wb = "mixed",
+                         score_i_heading = "ls_4_WASH", output = "all")
+
+# check structure of output element data
+model_level_1$data %>% str()
+```
+
+At the second level (`level_2`), in the aggregation of the four continuous living-standards-indicators (`ls_1_food`, `ls_2_livelihood`, `ls_3_shelter`, `ls_4_WASH`), the default Betti-Verma method is used, by setting `method` = `"bv"`. This activates both mechanisms of the double-weighting scheme - rewarding more discriminating indicators with higher weights, and penalizing redundant ones with lower weights.
+
+```{r}
+# save the "data" return by the lower level model
+MSNA_HC_2 <- model_level_1$data
+# save all column headings with prefix ls_ (living standards) as items of the higher level
+(items_level_2 <- names(MSNA_HC_2) %>% str_subset("ls_"))
+# save higher level model
+model_level_2 <- mdepriv(MSNA_HC_2, items_level_2, method = "bv", output = "all")
+```
+
+Compare the items and scores of the second level:
+
+```{r Fig9, fig.height = 14/2.54, fig.width = 18/2.54}
+model_level_2$data %>%
+  select(c("score_i", "hhh_gender", items_level_2)) %>% # dplyr::select()
+  gather(key = "item", value = "value", -"score_i", -"hhh_gender") %>%
+  ggplot(aes(x = value, y = score_i, col = hhh_gender)) +
+  geom_point(pch = 1, alpha = 0.5) +
+  facet_wrap(~item, ncol = 2) +
+  scale_x_continuous(breaks = seq(0,1,0.2), limits = c(0,1)) +
+  scale_y_continuous(breaks = seq(0,1,0.2), limits = c(0,1)) +
+  theme_bw() +
+  ggtitle("ls model (2nd level): items vs. score_i") +
+  labs(col = "gender of\nhousehold\nhead")
+```
+
+Since the scores are returned merged to the original data it is easy to compare them to variables with potential explanatory value. Thus, we ask: Do union (commune) and gender of household head have any predictive value for the distribution of deprivation scores?
+
+```{r Fig10, fig.height = 12/2.54, fig.width = 18/2.54}
+model_level_2$data %>% 
+  ggplot(aes(x = union, y = score_i, fill = hhh_gender))  +
+  stat_boxplot(geom ='errorbar', width = 0.5, position=position_dodge(0.7)) +
+  geom_boxplot(width = 0.6, position=position_dodge(0.7)) +
+  theme_bw() +
+  scale_y_continuous(breaks = seq(0,1,0.2), limits = c(0,1)) +
+  ggtitle("union (commune), gender of household head vs. score_i")  +
+  labs(fill = "gender of\nhousehold\nhead", x = "union (commune)") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  annotate("text", x = 1, y = 1, hjust = 0,
+           label = paste0("female: n = ", sum(model_level_2$data$hhh_gender == "female"))) +
+  annotate("text", x = 1, y = 0.95, hjust = 0,
+           label = paste0("male: n = ", sum(model_level_2$data$hhh_gender == "male")))
+```
+
+Of particular note are the gender differences (much higher median deprivation scores for female-headed households) in Palong Khali Union and in the Teknaf Upazila headquarter Union (Paurashava).
+
+## Multiple Models in a data.frame
+The handling of returns of multiple `mdepriv` models, which each comes as a `list`, can become cumbersome. We make this more convenient by combining the `list`s in a `data.frame`. Every model becomes a row and the different `output` elements are gathered as columns/variables.
+
+Saving some models' `output`s as `list`s:
+<a name="models_with_without_dim"></a>
+```{r}
+outputs     <- c("all", "summary_by_dimension")
+# explicitly add the "summary_by_dimension" table so it's included also if no dimensions are specified
+items_sel   <- c("y1", "y2", "y3", "y4", "y5", "y6", "y7") # a selection of items
+dim         <- list(c("y1", "y2"), c("y3", "y4"), c("y5", "y6", "y7"))
+# a grouping of items in dimensions
+w_expertise <- list(c(0.4, 0.6), c(0.7, 0.3), c(0.45, 0.3, 0.25))
+# expertise-base weights for (grouped) items
+
+# models with no dimensions specified
+bv            <- mdepriv(simul_data, items_sel, method = "bv", output = outputs)
+equal         <- mdepriv(simul_data, items_sel, method = "equal", output = outputs)
+bv_diagonal   <- mdepriv(simul_data, items_sel, wa = "bv", wb = "diagonal", output = outputs)
+equal_mixed   <- mdepriv(simul_data, items_sel, wa = "equal", wb = "mixed", output = outputs)
+# models with dimension specification
+bv_dim        <- mdepriv(simul_data, dim, method = "bv", output = outputs)
+expertise_dim <- mdepriv(simul_data, dim, user_def_weights = w_expertise, output = outputs)
+```
+Combining the `list`s to a `data.frame`:
+```{r}
+l <- list(bv, equal, bv_diagonal, equal_mixed, bv_dim, expertise_dim)
+# gather all the models' returns in one list
+names(l) <- c("bv", "equal", "bv_diagonal", "equal_mixed",  "bv_dim", "expertise_dim")
+# name the list with reference to the models
+
+mat <- do.call(rbind, l)
+# turn each model-output / list-element into a row of a matrix
+is(mat)
+
+df <- as_tibble(mat) # turn the matrix into a data.frame/tibble
+df$model <- factor(names(l), level = names(l))
+# add a column for model identification as factor with non-alphabetical order
+is(df)
+```
+For more insight into this `data.frame` use this code:
+```{r}
+data.frame(
+  class_of_variable = map_chr(df, function(x) class(x)),
+  classes_within_variable = sapply(X = names(df),
+                                   function(X)
+                                     (map_chr(df[[X]], function(x) class(x))) %>%
+                                      unique() %>%
+                                      paste(collapse = " or ")
+                                   ))
+```
+Except for `"model"`, all variables are of the class `list`. [As expected](#tab_output), only the columns/outputs `"user_def_weights"` and `"user_def_weights"` are at their core `list`s, respectively `list`s or single logical NAs. The rest consists either of single values, of vectors or of `data.frame`s, which are easy to compile to an overall `data.frames` with `dplyr::bind_rows()` and `tidyr::unnest()`.
+
+Select and use model returns of interest saved in the `data.frame`:
+```{r ,warning=FALSE, Fig11, fig.height=3, fig.width=5.25}
+# compile a single column/variable consisting at its core of data.frames
+bind_rows(df$summary_scores)
+
+# compile several variables to a data.frame ...
+df %>% select("model", "wa", "wb", "rhoH", "summary_scores") %>% unnest()
+
+# compile and plot
+par(cex = 0.65) # reduce plotting text
+df %>%
+  select("model", "aggregate_deprivation_level") %>%
+  unnest() %>%
+  barplot(aggregate_deprivation_level ~ model, data = .)
+```
+
+```{r ,warning=FALSE, Fig12, fig.height=12/2.54, fig.width=18/2.54}
+# and once again compile and plot
+df %>%
+  select(c("model", "score_i")) %>%
+  unnest() %>%
+  ggplot(aes(score_i)) +
+  geom_histogram(breaks = seq(0, 1, 0.05)) +
+  facet_wrap(~model, ncol = 3) +
+  theme_bw() +
+  ggtitle("Scores' Distribution")
+```
+
+## Acknowledgement
+We thank Philippe Van Kerm, who, together with Maria Noel Pi Alperin,  both with the Luxembourg Institute of Socio-Economic Research (LISER, formerly CEPS/INSTEAD, Luxembourg), wrote the code and documentation of the Stata command -mdepriv-, for encouraging us to translate it to R. We thank Patrice Chataigner, OkularAnalytics, Geneva, for moral and financial support.
+
+## References
+
+Betti, G. & Verma, V. K. (1998), 'Measuring the degree of poverty in a dynamic and comparative context: a multi-dimensional approach using fuzzy set theory', Working Paper 22, Dipartimento di Metodi Quantitativi, Universita di Siena.
+[A similar version is available at <https://www.researchgate.net/profile/Gianni_Betti/publication/241227568_Measuring_the_degree_of_poverty_in_a_dynamic_and_comparative_context_A_multi-dimensional_approach_using_fuzzy_set_theory/links/00b49533307370c675000000/Measuring-the-degree-of-poverty-in-a-dynamic-and-comparative-context-A-multi-dimensional-approach-using-fuzzy-set-theory.pdf> (2019-12-05)]
+
+Cerioli, A. and S. Zani (1990). A fuzzy approach to the measurement of poverty. Income and wealth distribution, inequality and poverty. C. Dagum and M. Zenga. Urdorf, Switzerland, Springer: 272-284.
+
+Desai, M. & Shah, A. (1988), 'An econometric approach to the measurement of poverty', Oxford Economic Papers, 40(3):505-522.
+
+Lemmi, A. A. and G. Betti, Eds. (2006). Fuzzy set approach to multidimensional poverty measurement, Springer Science & Business Media.
+
+Pi Alperin, M. N. & Van Kerm, P. (2009), 'mdepriv - Synthetic indicators of multiple deprivation', v2.0 (revised March 2014), CEPS/INSTEAD, Esch/Alzette, Luxembourg. <http://medim.ceps.lu/stata/mdepriv_v3.pdf> (2020-01-02).
+
