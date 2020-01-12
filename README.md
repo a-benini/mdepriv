@@ -3,15 +3,14 @@
 
 ## Purpose
 
-mdepriv is an open-source R-library for combining binary, continuous and
-suitably transformed ordinal items/indicators of deprivation into
-synthetic measures of deprivation. As such, it is a tool of poverty
-analysis. It is suitable also for generating composite measures of
-severity and vulnerability in the humanitarian realm. The R
-implementation translates the original Stata version by [Pi Alperin &
-Van Kerm (2009)](http://medim.ceps.lu/stata/mdepriv_v3.pdf), with
-additional features (notably, non-integer sampling weights are
-admitted).
+`mdepriv` is a R package for combining binary, continuous and suitably
+transformed ordinal items/indicators of deprivation into synthetic
+measures of deprivation. As such, it is a tool of poverty analysis. It
+is suitable also for generating composite measures of severity and
+vulnerability in the humanitarian realm. The R implementation translates
+the original Stata version by [Pi Alperin & Van Kerm
+(2009)](http://medim.ceps.lu/stata/mdepriv_v3.pdf), with additional
+features (notably, non-integer sampling weights are admitted).
 
 mdepriv returns unit-level synthetic scores of multiple deprivation and
 their statistical summaries. It offers several methods for determining
