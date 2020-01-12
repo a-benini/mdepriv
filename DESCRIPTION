@@ -12,7 +12,7 @@ Authors@R:
              email = "aldobenini@gmail.com"))
 Author: Attilio Benini [aut, cre], Aldo Benini [aut]
 Maintainer: Attilio Benini <attilio.benini@gmx.net>
-Description: mdepriv is an R-adaptation of a same-named 
+Description: mdepriv is a R-adaptation of a same-named 
     user-written Stata command for computing basic synthetic 
     scores of multiple deprivation.
 License: GPL-3
