@@ -80,7 +80,7 @@ Several alternative weighting methods are available, notably Betti &amp;amp; Ver
         <li>
   <a href="../index.html">
     <span class="fa fa-home"></span>
-     
+
   </a>
 </li>
       </ul>
@@ -88,9 +88,9 @@ Several alternative weighting methods are available, notably Betti &amp;amp; Ver
         <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     <span class="fas fa fas fa-book"></span>
-     
+
     Vignettes
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
@@ -105,31 +105,31 @@ Several alternative weighting methods are available, notably Betti &amp;amp; Ver
 <li>
   <a href="../reference/index.html">
     <span class="fa fa-file-code-o"></span>
-     
+
     Functions &amp; Datasets
   </a>
 </li>
 <li>
   <a href="../news/index.html">
     <span class="fa fa-newspaper-o"></span>
-     
+
     News
   </a>
 </li>
 <li>
   <a href="https://github.com/a-benini/mdepriv/">
     <span class="fa fa-github fa-lg"></span>
-     
+
     github
   </a>
 </li>
       </ul>
-      
+
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header>
 
@@ -301,7 +301,7 @@ for computing synthetic scores of multiple deprivation from unidimensional indic
 The underlying literature and algebra are not recapitulated here.
 They are documented in <a href='http://medim.ceps.lu/stata/mdepriv_v3.pdf'>Pi Alperin &amp; Van Kerm (2009)</a>.
 There are minor differences vis-a-vis the predecessor in Stata, pointed out in the
-<a href='../doc/what_is_different_from_stata.html'><code>vignette("what_is_different_from_stata.html")</code></a>.</p>
+<a href='../articles/what_is_different_from_stata.html'><code>vignette("what_is_different_from_stata.html")</code></a>.</p>
 <p>The scores are weighted sums of the individual indicators / items.
 Both the items and the scores are limited to the [0, 1] range, and the item weights automatically sum to 1.
 As customary in deprivation research, all indicators / items require negative orientation
@@ -365,7 +365,7 @@ this correlation type is forced on all item pairs.</p>
 <p>Pi Alperin, M. N. &amp; Van Kerm, P. (2009), 'mdepriv - Synthetic indicators of multiple deprivation', v2.0 (revised March 2014), CEPS/INSTEAD, Esch/Alzette, Luxembourg. <a href='http://medim.ceps.lu/stata/mdepriv_v3.pdf'>http://medim.ceps.lu/stata/mdepriv_v3.pdf</a> (2019-MM-DD).</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><a href='../doc/mdepriv_get_started.html'><code>vignette("mdepriv_get_started.html")</code></a></p></div>
+    <div class='dont-index'><p><a href='../articles/mdepriv_get_started.html'><code>vignette("mdepriv_get_started.html")</code></a></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>simul_data</span>, <span class='fl'>3</span>) <span class='co'># data used for demonstration</span></div><div class='output co'>#&gt;   id y1 y2 y3  y4    y5    y6    y7 sampl_weights
@@ -375,10 +375,10 @@ this correlation type is forced on all item pairs.</p>
 <span class='co'># least possible specification: data &amp; items:</span>
 <span class='fu'>mdepriv</span>(<span class='no'>simul_data</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"y1"</span>, <span class='st'>"y2"</span>, <span class='st'>"y3"</span>, <span class='st'>"y4"</span>, <span class='st'>"y5"</span>, <span class='st'>"y6"</span>, <span class='st'>"y7"</span>))</div><div class='output co'>#&gt; $weighting_scheme
 #&gt; [1] "Cerioli &amp; Zani (1990) weighting scheme"
-#&gt; 
+#&gt;
 #&gt; $aggregate_deprivation_level
 #&gt; [1] 0.3719576
-#&gt; 
+#&gt;
 #&gt; $summary_by_item
 #&gt;    Item   Index     Weight     Contri     Share
 #&gt; 1    y1 0.16000 0.31261773 0.05001884 0.1344746
@@ -389,23 +389,23 @@ this correlation type is forced on all item pairs.</p>
 #&gt; 6    y6 0.50004 0.11822945 0.05911945 0.1589414
 #&gt; 7    y7 0.49918 0.11852309 0.05916435 0.1590621
 #&gt; 8 Total      NA 1.00000000 0.37195759 1.0000000
-#&gt; 
+#&gt;
 #&gt; $summary_scores
 #&gt;   N_Obs.      Mean Std._Dev.       Min       Max
 #&gt; 1    100 0.3719576 0.2120671 0.0654181 0.9521171
 #&gt; </div><div class='input'><span class='co'># group items in dimensions:</span>
 <span class='fu'>mdepriv</span>(<span class='no'>simul_data</span>, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"y1"</span>, <span class='st'>"y2"</span>, <span class='st'>"y3"</span>, <span class='st'>"y4"</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"y5"</span>, <span class='st'>"y6"</span>, <span class='st'>"y7"</span>)))</div><div class='output co'>#&gt; $weighting_scheme
 #&gt; [1] "Cerioli &amp; Zani (1990) weighting scheme"
-#&gt; 
+#&gt;
 #&gt; $aggregate_deprivation_level
 #&gt; [1] 0.4202786
-#&gt; 
+#&gt;
 #&gt; $summary_by_dimension
 #&gt;     Dimension N_Item     Index Weight    Contri     Share
 #&gt; 1 Dimension 1      4 0.3003002    0.5 0.1501501 0.3572632
 #&gt; 2 Dimension 2      3 0.5402570    0.5 0.2701285 0.6427368
 #&gt; 3       Total      7        NA    1.0 0.4202786 1.0000000
-#&gt; 
+#&gt;
 #&gt; $summary_by_item
 #&gt;     Dimension Item   Index     Weight     Contri      Share
 #&gt; 1 Dimension 1   y1 0.16000 0.22286104 0.03565777 0.08484317
@@ -416,23 +416,23 @@ this correlation type is forced on all item pairs.</p>
 #&gt; 6 Dimension 2   y6 0.50004 0.19795550 0.09898567 0.23552393
 #&gt; 7 Dimension 2   y7 0.49918 0.19844715 0.09906085 0.23570282
 #&gt; 8       Total &lt;NA&gt;      NA 1.00000000 0.42027859 1.00000000
-#&gt; 
+#&gt;
 #&gt; $summary_scores
 #&gt;   N_Obs.      Mean Std._Dev.       Min      Max
 #&gt; 1    100 0.4202786 0.1815342 0.1095317 0.919828
 #&gt; </div><div class='input'><span class='co'># customized labelling of dimensions:</span>
 <span class='fu'>mdepriv</span>(<span class='no'>simul_data</span>, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='st'>'Group A'</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"y1"</span>, <span class='st'>"y2"</span>, <span class='st'>"y3"</span>, <span class='st'>"y4"</span>), <span class='st'>'Group B'</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"y5"</span>, <span class='st'>"y6"</span>, <span class='st'>"y7"</span>)))</div><div class='output co'>#&gt; $weighting_scheme
 #&gt; [1] "Cerioli &amp; Zani (1990) weighting scheme"
-#&gt; 
+#&gt;
 #&gt; $aggregate_deprivation_level
 #&gt; [1] 0.4202786
-#&gt; 
+#&gt;
 #&gt; $summary_by_dimension
 #&gt;   Dimension N_Item     Index Weight    Contri     Share
 #&gt; 1   Group A      4 0.3003002    0.5 0.1501501 0.3572632
 #&gt; 2   Group B      3 0.5402570    0.5 0.2701285 0.6427368
 #&gt; 3     Total      7        NA    1.0 0.4202786 1.0000000
-#&gt; 
+#&gt;
 #&gt; $summary_by_item
 #&gt;   Dimension Item   Index     Weight     Contri      Share
 #&gt; 1   Group A   y1 0.16000 0.22286104 0.03565777 0.08484317
@@ -443,7 +443,7 @@ this correlation type is forced on all item pairs.</p>
 #&gt; 6   Group B   y6 0.50004 0.19795550 0.09898567 0.23552393
 #&gt; 7   Group B   y7 0.49918 0.19844715 0.09906085 0.23570282
 #&gt; 8     Total &lt;NA&gt;      NA 1.00000000 0.42027859 1.00000000
-#&gt; 
+#&gt;
 #&gt; $summary_scores
 #&gt;   N_Obs.      Mean Std._Dev.       Min      Max
 #&gt; 1    100 0.4202786 0.1815342 0.1095317 0.919828
@@ -480,13 +480,13 @@ this correlation type is forced on all item pairs.</p>
 <span class='co'># return sum and specification of sampling weights if applied ...</span>
 <span class='no'>with_s_w</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"sum_sampling_weights"</span>, <span class='st'>"sampling_weights"</span>)]</div><div class='output co'>#&gt; $sum_sampling_weights
 #&gt; [1] 100.237
-#&gt; 
+#&gt;
 #&gt; $sampling_weights
 #&gt; [1] "sampl_weights"
 #&gt; </div><div class='input'><span class='co'># if not, NA's are returned:</span>
 <span class='no'>without_s_w</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"sum_sampling_weights"</span>, <span class='st'>"sampling_weights"</span>)]</div><div class='output co'>#&gt; $sum_sampling_weights
 #&gt; [1] NA
-#&gt; 
+#&gt;
 #&gt; $sampling_weights
 #&gt; [1] NA
 #&gt; </div><div class='input'>
@@ -495,13 +495,13 @@ this correlation type is forced on all item pairs.</p>
 <span class='fu'>mdepriv</span>(<span class='no'>simul_data</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"y1"</span>, <span class='st'>"y2"</span>, <span class='st'>"y3"</span>), <span class='kw'>output</span> <span class='kw'>=</span> <span class='st'>"weighting_scheme"</span>)</div><div class='output co'>#&gt; [1] "Cerioli &amp; Zani (1990) weighting scheme"</div><div class='input'>
 <span class='no'>methods</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"cz"</span>, <span class='st'>"ds"</span>, <span class='st'>"bv"</span>, <span class='st'>"equal"</span>) <span class='co'># 4 standard weighting schemes availble</span>
 <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>sapply</a></span>(<span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>methods</span>, <span class='kw'>function</span>(<span class='no'>X</span>) <span class='fu'>mdepriv</span>(<span class='no'>simul_data</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"y1"</span>, <span class='st'>"y2"</span>, <span class='st'>"y3"</span>),
-                                        <span class='kw'>method</span> <span class='kw'>=</span> <span class='no'>X</span>, <span class='kw'>output</span> <span class='kw'>=</span> <span class='st'>"weighting_scheme"</span>))</div><div class='output co'>#&gt;                                       cz 
-#&gt; "Cerioli &amp; Zani (1990) weighting scheme" 
-#&gt;                                       ds 
-#&gt;   "Desai &amp; Shah (1988) weighting scheme" 
-#&gt;                                       bv 
-#&gt;  "Betti &amp; Verma (1998) weighting scheme" 
-#&gt;                                    equal 
+                                        <span class='kw'>method</span> <span class='kw'>=</span> <span class='no'>X</span>, <span class='kw'>output</span> <span class='kw'>=</span> <span class='st'>"weighting_scheme"</span>))</div><div class='output co'>#&gt;                                       cz
+#&gt; "Cerioli &amp; Zani (1990) weighting scheme"
+#&gt;                                       ds
+#&gt;   "Desai &amp; Shah (1988) weighting scheme"
+#&gt;                                       bv
+#&gt;  "Betti &amp; Verma (1998) weighting scheme"
+#&gt;                                    equal
 #&gt;    "Equi-proportionate weighting scheme" </div><div class='input'>
 <span class='co'># alternative, more flexible ways to select (double) weighting schemes</span>
 <span class='fu'>mdepriv</span>(<span class='no'>simul_data</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"y1"</span>, <span class='st'>"y2"</span>, <span class='st'>"y3"</span>), <span class='kw'>wa</span> <span class='kw'>=</span> <span class='st'>"cz"</span>, <span class='kw'>wb</span> <span class='kw'>=</span> <span class='st'>"mixed"</span>, <span class='kw'>output</span> <span class='kw'>=</span> <span class='st'>"weighting_scheme"</span>)</div><div class='output co'>#&gt; [1] "User-defined weighting scheme: wa = “cz”, wb = “mixed”."</div><div class='input'><span class='co'># some of the double weighting specification are almost lookalikes of the standard weight methods</span>
@@ -520,51 +520,51 @@ this correlation type is forced on all item pairs.</p>
 <span class='no'>bv</span> <span class='kw'>&lt;-</span> <span class='fu'>mdepriv</span>(<span class='no'>simul_data</span>, <span class='no'>items_sel</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"bv"</span>, <span class='kw'>output</span> <span class='kw'>=</span> <span class='st'>"all"</span>)
 <span class='no'>bv</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"weighting_scheme"</span>, <span class='st'>"wa"</span>, <span class='st'>"wb"</span>, <span class='st'>"rhoH"</span>)]</div><div class='output co'>#&gt; $weighting_scheme
 #&gt; [1] "Betti &amp; Verma (1998) weighting scheme"
-#&gt; 
+#&gt;
 #&gt; $wa
 #&gt; [1] "bv"
-#&gt; 
+#&gt;
 #&gt; $wb
 #&gt; [1] "mixed"
-#&gt; 
+#&gt;
 #&gt; $rhoH
 #&gt; [1] 0.6563016
 #&gt; </div><div class='input'><span class='no'>ds</span> <span class='kw'>&lt;-</span> <span class='fu'>mdepriv</span>(<span class='no'>simul_data</span>, <span class='no'>items_sel</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"ds"</span>, <span class='kw'>output</span> <span class='kw'>=</span> <span class='st'>"all"</span>)
 <span class='no'>ds</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"weighting_scheme"</span>, <span class='st'>"wa"</span>, <span class='st'>"wb"</span>, <span class='st'>"rhoH"</span>)]</div><div class='output co'>#&gt; $weighting_scheme
 #&gt; [1] "Desai &amp; Shah (1988) weighting scheme"
-#&gt; 
+#&gt;
 #&gt; $wa
 #&gt; [1] "ds"
-#&gt; 
+#&gt;
 #&gt; $wb
 #&gt; [1] "diagonal"
-#&gt; 
+#&gt;
 #&gt; $rhoH
 #&gt; [1] NA
 #&gt; </div><div class='input'><span class='no'>equal_pearson</span> <span class='kw'>&lt;-</span> <span class='fu'>mdepriv</span>(<span class='no'>simul_data</span>, <span class='no'>items_sel</span>, <span class='kw'>wa</span> <span class='kw'>=</span> <span class='st'>"equal"</span>,
                          <span class='kw'>wb</span> <span class='kw'>=</span> <span class='st'>"pearson"</span>, <span class='kw'>output</span> <span class='kw'>=</span> <span class='st'>"all"</span>)
 <span class='no'>equal_pearson</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"weighting_scheme"</span>, <span class='st'>"wa"</span>, <span class='st'>"wb"</span>, <span class='st'>"rhoH"</span>)]</div><div class='output co'>#&gt; $weighting_scheme
 #&gt; [1] "User-defined weighting scheme: wa = “equal”, wb = “pearson”."
-#&gt; 
+#&gt;
 #&gt; $wa
 #&gt; [1] "equal"
-#&gt; 
+#&gt;
 #&gt; $wb
 #&gt; [1] "pearson"
-#&gt; 
+#&gt;
 #&gt; $rhoH
 #&gt; [1] 0.3445555
 #&gt; </div><div class='input'><span class='no'>equal_pearson_rhoH_fixed</span> <span class='kw'>&lt;-</span> <span class='fu'>mdepriv</span>(<span class='no'>simul_data</span>, <span class='no'>items_sel</span>, <span class='kw'>wa</span> <span class='kw'>=</span> <span class='st'>"equal"</span>,
                                     <span class='kw'>wb</span> <span class='kw'>=</span> <span class='st'>"pearson"</span>, <span class='kw'>rhoH</span> <span class='kw'>=</span> <span class='fl'>0.3</span> , <span class='kw'>output</span> <span class='kw'>=</span> <span class='st'>"all"</span>)
 <span class='no'>equal_pearson_rhoH_fixed</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"weighting_scheme"</span>, <span class='st'>"wa"</span>, <span class='st'>"wb"</span>, <span class='st'>"rhoH"</span>)]</div><div class='output co'>#&gt; $weighting_scheme
 #&gt; [1] "User-defined weighting scheme: wa = “equal”, wb = “pearson”."
-#&gt; 
+#&gt;
 #&gt; $wa
 #&gt; [1] "equal"
-#&gt; 
+#&gt;
 #&gt; $wb
 #&gt; [1] "pearson"
-#&gt; 
+#&gt;
 #&gt; $rhoH
 #&gt; [1] 0.3
 #&gt; </div><div class='input'>
@@ -577,23 +577,23 @@ this correlation type is forced on all item pairs.</p>
 <span class='co'># check weighting settings ...</span>
 <span class='no'>model_expertise</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"weighting_scheme"</span>, <span class='st'>"wa"</span>, <span class='st'>"wb"</span>, <span class='st'>"rhoH"</span>, <span class='st'>"user_def_weights"</span>)]</div><div class='output co'>#&gt; $weighting_scheme
 #&gt; [1] "Item-wise user-defined weighting scheme"
-#&gt; 
+#&gt;
 #&gt; $wa
 #&gt; [1] NA
-#&gt; 
+#&gt;
 #&gt; $wb
 #&gt; [1] NA
-#&gt; 
+#&gt;
 #&gt; $rhoH
 #&gt; [1] NA
-#&gt; 
+#&gt;
 #&gt; $user_def_weights
 #&gt; $user_def_weights$`Group A`
 #&gt; [1] 0.50 0.25 0.25
-#&gt; 
+#&gt;
 #&gt; $user_def_weights$`Group B`
 #&gt; [1] 0.40 0.45 0.15
-#&gt; 
+#&gt;
 #&gt; </div><div class='input'><span class='co'># ... wa, wb and rhoH are not involved, when expertise weights are applied,</span>
 <span class='co'># and therefore returned as NA's.</span>
 <span class='co'># user-defined names of dimensions are inherited from the argument items.</span>
@@ -693,10 +693,8 @@ this correlation type is forced on all item pairs.</p>
       </footer>
    </div>
 
-  
+
 
 
   </body>
 </html>
-
-
