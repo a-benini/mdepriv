@@ -911,7 +911,7 @@ df %>%
 ```
 
 ## Acknowledgement
-We thank Philippe Van Kerm, who, together with Maria Noel Pi Alperin,  both with the Luxembourg Institute of Socio-Economic Research (LISER, formerly CEPS/INSTEAD, Luxembourg), wrote the code and documentation of the Stata command -mdepriv-, for encouraging us to translate it to R. We thank Patrice Chataigner, OkularAnalytics, Geneva, for moral and financial support.
+We thank Philippe Van Kerm, who, together with Maria Noel Pi Alperin,  both with the Luxembourg Institute of Socio-Economic Research (LISER, formerly CEPS/INSTEAD, Luxembourg), wrote the code and documentation of the Stata command -mdepriv-, for encouraging us to translate it to R. We thank Patrice Chataigner, OkularAnalytics, Geneva, for moral and financial support. We thank Edouard Legoupil, UNHCR, for moral and technical support.
 
 ## References
 

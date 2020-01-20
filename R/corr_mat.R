@@ -142,8 +142,8 @@ corr_mat <- function(data,
     stop(paste0("The argument ", sQuote("data"), " is neither of the class ", dQuote("data.frame"), " nor of the class ", dQuote("matrix"), "."),
          call. = TRUE)
   }
-  # in case the input data is a matrix, it's turn into a data.frame
-  if(is.matrix(data)){data <- as.data.frame(data)}
+  # in any case including a matrix or a tibble, the input data is turned into an ordinary data.frame
+  data <- as.data.frame(data)
   # ------------------------------------------------------------------------
   if(!((is.vector(items) & is.character(items)) | (is.list(items) & all(unlist(lapply(X = seq_along(items), function(X) is.character(items[[X]]))))))){
     stop(paste0("The argument ", sQuote("items"), " is neither a vector nor a list of vectors constisting fully of character elements."),

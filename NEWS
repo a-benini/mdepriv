@@ -1,3 +1,6 @@
+version 0.0.1
+- fixed bug: tibble in addition to ordinary data.frame or matrix as argument data: enabled in functions mdepriv and corr_mat.
+
 version 0.0.0
 - 1st release on GitHub
 - 2 functions: mdepriv, corr_mat
