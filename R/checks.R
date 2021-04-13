@@ -502,3 +502,40 @@ check_score_i_heading_in_data_ <- function(score_i_heading, data) {
   }
 }
 # ------------------------------------------------------------------------
+check_output_class_ <- function(output, output_op) {
+  if (class(output) != "character") {
+    stop(
+      paste0(
+        "The argument ",
+        sQuote("output"),
+        " is not of the class ",
+        dQuote("character"),
+        ". It should be one or several of ",
+        paste0(dQuote(output_op), collapse = ", "),
+        "."
+      ),
+      call. = FALSE
+    )
+  }
+}
+# ------------------------------------------------------------------------
+check_output_in_output_op_ <- function(output, output_op) {
+  if (any(!output %in% output_op)) {
+    output_false <- output[!output %in% output_op]
+    stop(
+      paste0(
+        "Invalid specification of the argument ",
+        sQuote("output"),
+        ": ",
+        paste0(dQuote(output_false), collapse = ", "),
+        ". The argument ",
+        sQuote("output"),
+        " should be one or several of ",
+        paste0(dQuote(output_op), collapse = ", "),
+        "."
+      ),
+      call. = FALSE
+    )
+  }
+}
+# ------------------------------------------------------------------------

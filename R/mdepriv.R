@@ -451,25 +451,18 @@ mdepriv <- function(data,
   check_score_i_heading_length_(score_i_heading)
   check_score_i_heading_in_data_(score_i_heading, data)
   # ------------------------------------------------------------------------
-  output_op <- c("view", "all", "weighting_scheme", "aggregate_deprivation_level",
-                 "summary_by_dimension", "summary_by_item", "summary_scores", "score_i",
-                 "sum_sampling_weights", "data", "items", "sampling_weights", "wa",  "wb",
-                 "rhoH", "user_def_weights", "score_i_heading")
-  if(class(output) != "character"){
-    stop(paste0("The argument ", sQuote("output"), " is not of the class ", dQuote("character"),
-                ". It should be one or several of ", paste0(dQuote(output_op), collapse = ", "), "."),
-         call. = TRUE)
-  }
-  if(any(!output %in% output_op)){
-    output_false <- output[!output %in% output_op]
-    stop(paste0("Invalid specification of the argument ", sQuote("output"), ": ",
-                paste0(dQuote(output_false), collapse = ", "),
-                ". The argument ", sQuote("output"), " should be one or several of ",
-                paste0(dQuote(output_op), collapse = ", "), "."),
-         call. = TRUE)
-  }
-  if(length(output) == length(output_op)){
-    if(all(output == output_op)){
+  output_op <- c(
+    "view", "all", "weighting_scheme", "aggregate_deprivation_level",
+    "summary_by_dimension", "summary_by_item", "summary_scores", "score_i",
+    "sum_sampling_weights", "data", "items", "sampling_weights", "wa", "wb",
+    "rhoH", "user_def_weights", "score_i_heading"
+  )
+
+  check_output_class_(output, output_op)
+  check_output_in_output_op_(output, output_op)
+
+  if (length(output) == length(output_op)) {
+    if (all(output == output_op)) {
       output <- match.arg(output)
     }
   }
