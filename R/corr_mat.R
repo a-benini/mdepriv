@@ -192,42 +192,6 @@ corr_mat <- function(data,
   if(output == "both"){output <- c("numeric", "type")}
   output_arg <- output
   # ------------------------------------------------------------------------
-  CORR_MAT_TYPE <- function(data, items, corr_type){
-    Corr_Type <- function(x, y, corr_type){
-      n_distinct_x <- length(unique(x))
-      n_distinct_y <- length(unique(y))
-
-      if(n_distinct_x < n_distinct_y){
-        x_temp <- x
-        y_temp <- y
-        x <- y_temp
-        y <- x_temp
-        rm(x_temp, y_temp)
-        n_distinct_x <- length(unique(x))
-        n_distinct_y <- length(unique(y))
-      }
-
-      if(corr_type == "mixed"){
-        if(n_distinct_x <= 10 & n_distinct_y <= 10){
-          corr_type <- "polychoric"
-        } else if(n_distinct_x > 10 & n_distinct_y <= 10){
-          corr_type <- "polyserial"
-        } else {
-          corr_type <- "pearson"}
-      }
-
-      corr_type
-    }
-
-    CORR_MAT_TYPE <- matrix(NA, length(items), length(items), dimnames = list(items, items))
-    for(i in items){
-      for(j in items){
-        CORR_MAT_TYPE[i,j] <- Corr_Type(x = data[ ,i], y = data[ ,j], corr_type = corr_type)
-      }
-    }
-    CORR_MAT_TYPE
-  }
-  # ------------------------------------------------------------------------
   numeric <- lapply(
     seq_along(dim),
     function(x) {
@@ -243,10 +207,16 @@ corr_mat <- function(data,
   names(numeric) <- names(dim)
   if(length(numeric) == 1){numeric <- numeric[[1]]}
   # ------------------------------------------------------------------------
-  type <- lapply(X = seq_along(dim),
-                 function(X) CORR_MAT_TYPE(data      = data,
-                                           items     = dim[[X]],
-                                           corr_type = corr_type))
+  type <- lapply(
+    seq_along(dim),
+    function(x) {
+      corr_mat_type_(
+        data      = data,
+        items     = dim[[x]],
+        corr_type = corr_type
+      )
+    }
+  )
   # ------------------------------------------------------------------------
   names(type) <- names(dim)
   if(length(type) == 1){type <- type[[1]]}

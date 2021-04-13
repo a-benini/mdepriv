@@ -43,3 +43,40 @@ corr_mat_ <- function(data, items, corr_type, sampling_weights) {
   corr_mat
 }
 # ------------------------------------------------------------------------
+corr_mat_type_ <- function(data, items, corr_type) {
+  corr_type_ <- function(x, y, corr_type) {
+    n_distinct_x <- length(unique(x))
+    n_distinct_y <- length(unique(y))
+
+    if (n_distinct_x < n_distinct_y) {
+      x_temp <- x
+      y_temp <- y
+      x <- y_temp
+      y <- x_temp
+      rm(x_temp, y_temp)
+      n_distinct_x <- length(unique(x))
+      n_distinct_y <- length(unique(y))
+    }
+
+    if (corr_type == "mixed") {
+      if (n_distinct_x <= 10 & n_distinct_y <= 10) {
+        corr_type <- "polychoric"
+      } else if (n_distinct_x > 10 & n_distinct_y <= 10) {
+        corr_type <- "polyserial"
+      } else {
+        corr_type <- "pearson"
+      }
+    }
+
+    corr_type
+  }
+
+  corr_mat_type <- matrix(NA, length(items), length(items), dimnames = list(items, items))
+  for (i in items) {
+    for (j in items) {
+      corr_mat_type[i, j] <- corr_type_(x = data[, i], y = data[, j], corr_type = corr_type)
+    }
+  }
+  corr_mat_type
+}
+# ------------------------------------------------------------------------
