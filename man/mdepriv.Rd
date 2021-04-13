@@ -217,16 +217,18 @@ mdepriv(simul_data, c("y1", "y2", "y3", "y4", "y5", "y6", "y7"))
 # group items in dimensions:
 mdepriv(simul_data, list(c("y1", "y2", "y3", "y4"), c("y5", "y6", "y7")))
 # customized labelling of dimensions:
-mdepriv(simul_data, list('Group A' = c("y1", "y2", "y3", "y4"), 'Group B' = c("y5", "y6", "y7")))
+mdepriv(simul_data, list("Group A" = c("y1", "y2", "y3", "y4"), "Group B" = c("y5", "y6", "y7")))
 
 # available outputs
 no_dim_specified <- mdepriv(simul_data, c("y1", "y2", "y3", "y4", "y5", "y6", "y7"), output = "all")
 two_dim <- mdepriv(simul_data, list(c("y1", "y2", "y3", "y4"), c("y5", "y6", "y7")), output = "all")
 length(no_dim_specified)
 length(two_dim)
-data.frame(row.names = names(two_dim),
-           no_or_1_dim_specified = ifelse(names(two_dim) \%in\% names(no_dim_specified), "X", ""),
-           at_least_2_dim_speicified = "X")
+data.frame(
+  row.names = names(two_dim),
+  no_or_1_dim_specified = ifelse(names(two_dim) \%in\% names(no_dim_specified), "X", ""),
+  at_least_2_dim_speicified = "X"
+)
 setdiff(names(two_dim), names(no_dim_specified))
 # if no dimensions are specified, "summary_by_dimension" is dropped from the two output wrappers
 # (output = "view" (default), output = "all")
@@ -245,9 +247,10 @@ without_s_w[c("sum_sampling_weights", "sampling_weights")]
 # the default weighting scheme is "Cerioli & Zani": method = "cz"
 mdepriv(simul_data, c("y1", "y2", "y3"), output = "weighting_scheme")
 
-methods <- c("cz", "ds", "bv", "equal") # 4 standard weighting schemes availble
-sapply(X = methods, function(X) mdepriv(simul_data, c("y1", "y2", "y3"),
-                                        method = X, output = "weighting_scheme"))
+methods <- c("cz", "ds", "bv", "equal") # 4 standard weighting schemes available
+sapply(methods,
+      function(x) mdepriv(simul_data, c("y1", "y2", "y3"), method = x, output = "weighting_scheme")
+      )
 
 # alternative, more flexible ways to select (double) weighting schemes
 mdepriv(simul_data, c("y1", "y2", "y3"), wa = "cz", wb = "mixed", output = "weighting_scheme")
@@ -275,17 +278,17 @@ bv <- mdepriv(simul_data, items_sel, method = "bv", output = "all")
 bv[c("weighting_scheme", "wa", "wb", "rhoH")]
 ds <- mdepriv(simul_data, items_sel, method = "ds", output = "all")
 ds[c("weighting_scheme", "wa", "wb", "rhoH")]
-equal_pearson <- mdepriv(simul_data, items_sel, wa = "equal",
-                         wb = "pearson", output = "all")
+equal_pearson <- mdepriv(simul_data, items_sel,
+                         wa = "equal", wb = "pearson", output = "all")
 equal_pearson[c("weighting_scheme", "wa", "wb", "rhoH")]
-equal_pearson_rhoH_fixed <- mdepriv(simul_data, items_sel, wa = "equal",
-                                    wb = "pearson", rhoH = 0.3 , output = "all")
+equal_pearson_rhoH_fixed <- mdepriv(simul_data, items_sel,
+                                    wa = "equal", wb = "pearson", rhoH = 0.3, output = "all")
 equal_pearson_rhoH_fixed[c("weighting_scheme", "wa", "wb", "rhoH")]
 
 # pass expertise-base weights to the items
-dim <- list('Group A' = c("y1", "y2", "y3"), 'Group B' = c("y4", "y5", "y6"))
+dim <- list("Group A" = c("y1", "y2", "y3"), "Group B" = c("y4", "y5", "y6"))
 # 'expertise weights' structured as dimensions
-w_expertise  <- list(c(0.5, 0.25, 0.25), c(0.4, 0.45, 0.15))
+w_expertise <- list(c(0.5, 0.25, 0.25), c(0.4, 0.45, 0.15))
 model_expertise <- mdepriv(simul_data, items = dim,
                            user_def_weights = w_expertise, output = "all")
 # check weighting settings ...
@@ -304,15 +307,16 @@ barplot(Weight ~ Item, data = by_item_no_total)
 
 model_1$summary_scores
 hist(model_1$score_i,
-     main = 'model: method = "bv", bv_corr_type = "mixed" (default)',
-     xlab = "scores")
+  main = 'model: method = "bv", bv_corr_type = "mixed" (default)',
+  xlab = "scores"
+)
 
 # output data ...
 head(model_1$data, 3)
 # ... compare to input data ...
 head(simul_data, 3)
 # ... only the scores have been merged to the (input) data
-all.equal(model_1$data[ ,names(model_1$data) != "score_i"], simul_data)
+all.equal(model_1$data[, names(model_1$data) != "score_i"], simul_data)
 # scores are twofold accessible
 all.equal(model_1$score_i, model_1$data$score_i)
 
@@ -323,9 +327,10 @@ model_2 <- mdepriv(simul_data, items = model_1$items, method = "ds", output = "a
 all.equal(model_1$items, model_2$items)
 # how do the scores of the 2 models differ?
 plot(model_1$score_i, model_2$score_i,
-     xlab = model_1$weighting_scheme, ylab = model_2$weighting_scheme,
-     xlim = c(0,1), ylim = c(0,1),
-     asp = 1, main = "same item grouping")
+  xlab = model_1$weighting_scheme, ylab = model_2$weighting_scheme,
+  xlim = c(0, 1), ylim = c(0, 1),
+  asp = 1, main = "same item grouping"
+)
 abline(0, 1, col = "red", lty = 2, lwd = 2)
 
 # accumulating scores from different models in the output data
@@ -333,7 +338,8 @@ abline(0, 1, col = "red", lty = 2, lwd = 2)
 # this code will throw an error message with a hint on how to handle the re-use ...
 # ... of 'data' output as agrument. so run it and read!
 model_3 <- mdepriv(model_1$data, items = model_1$items,
-                   wa = "cz", wb = "mixed", output = "all")}
+                   wa = "cz", wb = "mixed", output = "all")
+}
 model_3 <- mdepriv(model_1$data, items = model_1$items,
                    wa = "cz", wb = "mixed", output = "all",
                    score_i_heading = "score_i_model_3")

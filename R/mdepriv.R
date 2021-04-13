@@ -200,16 +200,18 @@
 #' # group items in dimensions:
 #' mdepriv(simul_data, list(c("y1", "y2", "y3", "y4"), c("y5", "y6", "y7")))
 #' # customized labelling of dimensions:
-#' mdepriv(simul_data, list('Group A' = c("y1", "y2", "y3", "y4"), 'Group B' = c("y5", "y6", "y7")))
+#' mdepriv(simul_data, list("Group A" = c("y1", "y2", "y3", "y4"), "Group B" = c("y5", "y6", "y7")))
 #'
 #' # available outputs
 #' no_dim_specified <- mdepriv(simul_data, c("y1", "y2", "y3", "y4", "y5", "y6", "y7"), output = "all")
 #' two_dim <- mdepriv(simul_data, list(c("y1", "y2", "y3", "y4"), c("y5", "y6", "y7")), output = "all")
 #' length(no_dim_specified)
 #' length(two_dim)
-#' data.frame(row.names = names(two_dim),
-#'            no_or_1_dim_specified = ifelse(names(two_dim) %in% names(no_dim_specified), "X", ""),
-#'            at_least_2_dim_speicified = "X")
+#' data.frame(
+#'   row.names = names(two_dim),
+#'   no_or_1_dim_specified = ifelse(names(two_dim) %in% names(no_dim_specified), "X", ""),
+#'   at_least_2_dim_speicified = "X"
+#' )
 #' setdiff(names(two_dim), names(no_dim_specified))
 #' # if no dimensions are specified, "summary_by_dimension" is dropped from the two output wrappers
 #' # (output = "view" (default), output = "all")
@@ -228,9 +230,10 @@
 #' # the default weighting scheme is "Cerioli & Zani": method = "cz"
 #' mdepriv(simul_data, c("y1", "y2", "y3"), output = "weighting_scheme")
 #'
-#' methods <- c("cz", "ds", "bv", "equal") # 4 standard weighting schemes availble
-#' sapply(X = methods, function(X) mdepriv(simul_data, c("y1", "y2", "y3"),
-#'                                         method = X, output = "weighting_scheme"))
+#' methods <- c("cz", "ds", "bv", "equal") # 4 standard weighting schemes available
+#' sapply(methods,
+#'       function(x) mdepriv(simul_data, c("y1", "y2", "y3"), method = x, output = "weighting_scheme")
+#'       )
 #'
 #' # alternative, more flexible ways to select (double) weighting schemes
 #' mdepriv(simul_data, c("y1", "y2", "y3"), wa = "cz", wb = "mixed", output = "weighting_scheme")
@@ -258,17 +261,17 @@
 #' bv[c("weighting_scheme", "wa", "wb", "rhoH")]
 #' ds <- mdepriv(simul_data, items_sel, method = "ds", output = "all")
 #' ds[c("weighting_scheme", "wa", "wb", "rhoH")]
-#' equal_pearson <- mdepriv(simul_data, items_sel, wa = "equal",
-#'                          wb = "pearson", output = "all")
+#' equal_pearson <- mdepriv(simul_data, items_sel,
+#'                          wa = "equal", wb = "pearson", output = "all")
 #' equal_pearson[c("weighting_scheme", "wa", "wb", "rhoH")]
-#' equal_pearson_rhoH_fixed <- mdepriv(simul_data, items_sel, wa = "equal",
-#'                                     wb = "pearson", rhoH = 0.3 , output = "all")
+#' equal_pearson_rhoH_fixed <- mdepriv(simul_data, items_sel,
+#'                                     wa = "equal", wb = "pearson", rhoH = 0.3, output = "all")
 #' equal_pearson_rhoH_fixed[c("weighting_scheme", "wa", "wb", "rhoH")]
 #'
 #' # pass expertise-base weights to the items
-#' dim <- list('Group A' = c("y1", "y2", "y3"), 'Group B' = c("y4", "y5", "y6"))
+#' dim <- list("Group A" = c("y1", "y2", "y3"), "Group B" = c("y4", "y5", "y6"))
 #' # 'expertise weights' structured as dimensions
-#' w_expertise  <- list(c(0.5, 0.25, 0.25), c(0.4, 0.45, 0.15))
+#' w_expertise <- list(c(0.5, 0.25, 0.25), c(0.4, 0.45, 0.15))
 #' model_expertise <- mdepriv(simul_data, items = dim,
 #'                            user_def_weights = w_expertise, output = "all")
 #' # check weighting settings ...
@@ -287,15 +290,16 @@
 #'
 #' model_1$summary_scores
 #' hist(model_1$score_i,
-#'      main = 'model: method = "bv", bv_corr_type = "mixed" (default)',
-#'      xlab = "scores")
+#'   main = 'model: method = "bv", bv_corr_type = "mixed" (default)',
+#'   xlab = "scores"
+#' )
 #'
 #' # output data ...
 #' head(model_1$data, 3)
 #' # ... compare to input data ...
 #' head(simul_data, 3)
 #' # ... only the scores have been merged to the (input) data
-#' all.equal(model_1$data[ ,names(model_1$data) != "score_i"], simul_data)
+#' all.equal(model_1$data[, names(model_1$data) != "score_i"], simul_data)
 #' # scores are twofold accessible
 #' all.equal(model_1$score_i, model_1$data$score_i)
 #'
@@ -306,9 +310,10 @@
 #' all.equal(model_1$items, model_2$items)
 #' # how do the scores of the 2 models differ?
 #' plot(model_1$score_i, model_2$score_i,
-#'      xlab = model_1$weighting_scheme, ylab = model_2$weighting_scheme,
-#'      xlim = c(0,1), ylim = c(0,1),
-#'      asp = 1, main = "same item grouping")
+#'   xlab = model_1$weighting_scheme, ylab = model_2$weighting_scheme,
+#'   xlim = c(0, 1), ylim = c(0, 1),
+#'   asp = 1, main = "same item grouping"
+#' )
 #' abline(0, 1, col = "red", lty = 2, lwd = 2)
 #'
 #' # accumulating scores from different models in the output data
@@ -316,7 +321,8 @@
 #' # this code will throw an error message with a hint on how to handle the re-use ...
 #' # ... of 'data' output as agrument. so run it and read!
 #' model_3 <- mdepriv(model_1$data, items = model_1$items,
-#'                    wa = "cz", wb = "mixed", output = "all")}
+#'                    wa = "cz", wb = "mixed", output = "all")
+#' }
 #' model_3 <- mdepriv(model_1$data, items = model_1$items,
 #'                    wa = "cz", wb = "mixed", output = "all",
 #'                    score_i_heading = "score_i_model_3")
@@ -341,12 +347,12 @@ mdepriv <- function(data,
                     wb               = NA,
                     user_def_weights = NA,
                     score_i_heading  = "score_i",
-                    output           = c("view", "all", "weighting_scheme", "aggregate_deprivation_level",
-                                         "summary_by_dimension", "summary_by_item", "summary_scores", "score_i",
-                                         "sum_sampling_weights", "data", "items", "sampling_weights", "wa",  "wb",
-                                         "rhoH", "user_def_weights", "score_i_heading")
-)
-{
+                    output           = c(
+                      "view", "all", "weighting_scheme", "aggregate_deprivation_level",
+                      "summary_by_dimension", "summary_by_item", "summary_scores", "score_i",
+                      "sum_sampling_weights", "data", "items", "sampling_weights", "wa", "wb",
+                      "rhoH", "user_def_weights", "score_i_heading"
+                    )) {
   # ------------------------------------------------------------------------
   # check if input data is a data.frame or a matrix, otherwise stop
   check_data_(data)
@@ -362,9 +368,7 @@ mdepriv <- function(data,
     dim <- list(items)
   }
 
-  if (is.null(names(dim))) {
-    names(dim) <- paste0("Dimension ", seq_along(dim))
-  }
+  if (is.null(names(dim))) {names(dim) <- paste0("Dimension ", seq_along(dim))}
 
   check_dim_(dim)
 
@@ -470,22 +474,24 @@ mdepriv <- function(data,
   # ------------------------------------------------------------------------
   w_scheme <- NULL
   # ------------------------------------------------------------------------
-  if(is.null(wa) & is.null(wb)){
-    if(method == "cz"){
+  if (is.null(wa) & is.null(wb)) {
+    if (method == "cz") {
       w_scheme <- "Cerioli & Zani (1990) weighting scheme"
-    } else if(method == "ds"){
+    } else if (method == "ds") {
       w_scheme <- "Desai & Shah (1988) weighting scheme"
-    } else if(method == "bv"){
+    } else if (method == "bv") {
       w_scheme <- "Betti & Verma (1998) weighting scheme"
-    } else if(method == "equal"){
+    } else if (method == "equal") {
       w_scheme <- "Equi-proportionate weighting scheme"
     }
     wa <- method
-    if(method == "bv"){wb <- bv_corr_type}else{wb <- "diagonal"}
+    if (method == "bv") {wb <- bv_corr_type} else {wb <- "diagonal"}
   }
   # ------------------------------------------------------------------------
-  if(is.null(user_def_weights )){
-    if(is.null(w_scheme)){w_scheme  <- paste0("User-defined weighting scheme: wa = ", dQuote(wa), ", wb = ", dQuote(wb), ".")}
+  if (is.null(user_def_weights)) {
+    if (is.null(w_scheme)) {
+      w_scheme <- paste0("User-defined weighting scheme: wa = ", dQuote(wa), ", wb = ", dQuote(wb), ".")
+    }
     # ------------------------------------------------------------------------
     if (wa == "cz") {
       WA <- vapply(items, function(x) {log(1 / Weighted.Desc.Stat::w.mean(data[[x]], mu = sampling_weights))}, numeric(1))
@@ -497,19 +503,19 @@ mdepriv <- function(data,
       WA <- rep(1 / length(items), length(items))
     }
 
-    if(is.null(rhoH) & wb != "diagonal"){
+    if (is.null(rhoH) & wb != "diagonal") {
       corr_mat_all_items <- corr_mat_(data = data, items = items, corr_type = wb, sampling_weights = sampling_weights)
       diag(corr_mat_all_items) <- NA
       corr_values <- unique(sort(corr_mat_all_items))
-      if(length(corr_values) == 1){
+      if (length(corr_values) == 1) {
         rhoH <- corr_values
-      }else{
+      } else {
         diff <- diff(corr_values)
         rhoH <- mean(corr_values[which(diff == max(diff)) + c(0, 1)])
       }
     }
 
-    if(wb == "diagonal"){rhoH <- NA_real_}
+    if (wb == "diagonal") {rhoH <- NA_real_}
 
     WB <- unlist(
       lapply(
@@ -526,9 +532,9 @@ mdepriv <- function(data,
       )
     )
 
-    w  <- WA * WB
+    w <- WA * WB
     # ------------------------------------------------------------------------
-  }else{
+  } else {
     w_scheme <- "Item-wise user-defined weighting scheme"
     w        <- unlist(user_def_weights)
     wa       <- NA_character_
@@ -570,52 +576,58 @@ mdepriv <- function(data,
   score_i <- as.matrix(data[, items]) %*% Weight
   score_i <- as.vector(score_i)
 
-  data[ ,score_i_heading] <- score_i
+  data[, score_i_heading] <- score_i
 
-  summary_scores <- data.frame(N_Obs.    = nrow(data),
-                               Mean      = mean(score_i),
-                               Std._Dev. = stats::sd(score_i),
-                               Min       = min(score_i),
-                               Max       = max(score_i))
+  summary_scores <- data.frame(
+    N_Obs.    = length(score_i),
+    Mean      = mean(score_i),
+    Std._Dev. = stats::sd(score_i),
+    Min       = min(score_i),
+    Max       = max(score_i)
+  )
 
-  if(!is.na(sampling_weights_arg)){
+  if (!is.na(sampling_weights_arg)) {
     sum_sampling_weights <- sum(sampling_weights)
-  } else{
+  } else {
     sum_sampling_weights <- NA_real_
-    }
+  }
 
-  if(is.null(user_def_weights)){user_def_weights <- NA}
+  if (is.null(user_def_weights)) {user_def_weights <- NA}
+  # ------------------------------------------------------------------------
+  output <- list(
+    w_scheme,
+    aggregate_deprivation_level,
+    summary_by_dimension,
+    summary_by_item,
+    summary_scores,
+    score_i,
+    sum_sampling_weights,
+    data,
+    dim,
+    sampling_weights_arg,
+    wa,
+    wb,
+    rhoH,
+    user_def_weights,
+    score_i_heading
+  )
+  names(output) <- output_op[-c(1, 2)]
 
-  output <- list(w_scheme,
-                 aggregate_deprivation_level,
-                 summary_by_dimension,
-                 summary_by_item,
-                 summary_scores,
-                 score_i,
-                 sum_sampling_weights,
-                 data,
-                 dim,
-                 sampling_weights_arg,
-                 wa,
-                 wb,
-                 rhoH,
-                 user_def_weights,
-                 score_i_heading)
-  names(output) <- output_op[-c(1,2)]
-
-  if(K == 1 & !"summary_by_dimension" %in% output_arg){
+  if (K == 1 & !"summary_by_dimension" %in% output_arg) {
     output[["summary_by_dimension"]] <- NULL
-    output[["summary_by_item"]][ ,"Dimension"] <- NULL
+    output[["summary_by_item"]][, "Dimension"] <- NULL
     output[["summary_by_item"]][nrow(output[["summary_by_item"]]), "Item"] <- "Total"
   }
-  if("all" %in% output_arg){all <- names(output)}else{all <- NULL}
-  if("view" %in% output_arg){
+  if ("all" %in% output_arg) {all <- names(output)} else {all <- NULL}
+  if ("view" %in% output_arg) {
     view <- c("weighting_scheme", "aggregate_deprivation_level", "summary_by_dimension", "summary_by_item", "summary_scores")
-  }else{view <- NULL}
+  } else {
+    view <- NULL
+  }
   output_arg <- c(all, view, output_arg[!output_arg %in% c("all", "view")])
 
   output <- output[names(output) %in% output_arg]
-  if(length(output) == 1){output <- output[[1]]}
+  if (length(output) == 1) {output <- output[[1]]}
   output
   # ------------------------------------------------------------------------
 } # end of function
