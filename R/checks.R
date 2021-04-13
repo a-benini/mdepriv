@@ -402,3 +402,27 @@ check_sampling_weights_values_ <- function(sampling_weights, sampling_weights_ar
   }
 }
 # ------------------------------------------------------------------------
+check_rhoH_ <- function(rhoH) {
+  if (!is.numeric(rhoH)) {
+    stop(
+      paste0("The argument ", sQuote("rhoH"), " is not numeric."),
+      call. = FALSE
+    )
+  } else if (length(rhoH) > 1) {
+    stop(
+      paste0(
+        "The argument ", sQuote("rhoH"), " has a length of ", length(rhoH),
+        ". It must be NA or a single numeric value in the [-1,+1] range."
+      ),
+      call. = FALSE
+    )
+  } else if (rhoH < -1 | rhoH > 1) {
+    stop(
+      paste0(
+        "The argument ", sQuote("rhoH"), " is outside the allowed [-1,+1] range."
+      ),
+      call. = FALSE
+    )
+  }
+}
+# ------------------------------------------------------------------------

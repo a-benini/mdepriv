@@ -420,23 +420,13 @@ mdepriv <- function(data,
   check_sampling_weights_NA_(sampling_weights, sampling_weights_arg)
   check_sampling_weights_values_(sampling_weights, sampling_weights_arg)
   # ------------------------------------------------------------------------
-  if(!is.null(rhoH)){
-    if(all(is.na(rhoH) & length(rhoH) == 1 & class(rhoH) %in% c("logical", "numeric"))){
+  if (!is.null(rhoH)) {
+    if (all(is.na(rhoH) & length(rhoH) == 1 & class(rhoH) %in% c("logical", "numeric"))) {
       rhoH <- NULL
     }
   }
-  if(!is.null(rhoH)){
-    if(!is.numeric(rhoH)){
-      stop(paste0("The argument ", sQuote("rhoH"), " is not numeric."),
-           call. = TRUE)
-    } else if(length(rhoH) > 1){
-      stop(paste0("The argument ", sQuote("rhoH"), " has a length of ", length(rhoH),
-                  ". It must be NA or a single numeric value in the [-1,+1] range."),
-           call. = TRUE)
-    } else if(rhoH < -1 | rhoH > 1){
-      stop(paste0("The argument ", sQuote("rhoH"), " is outside the allowed [-1,+1] range."),
-           call. = TRUE)
-    }
+  if (!is.null(rhoH)) {
+    check_rhoH_(rhoH)
   }
   # ------------------------------------------------------------------------
   method       <- match.arg(method)
