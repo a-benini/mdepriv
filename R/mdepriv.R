@@ -1,6 +1,7 @@
 #' @title Synthetic Indicators of Multiple Deprivation
 #'
 #' @description calculates synthetic scores of multiple deprivation from unidimensional indicators and/or basic items of deprivation.
+#' The indicators / items all have to be negatively oriented, meaning: higher values are less desirable.
 #' The scores are weighted sums of the individual indicators / items taking values on the [0,1] range.
 #' Several alternative weighting methods are available, notably Betti & Verma's (1998) double-weighting method.
 #'
@@ -545,7 +546,7 @@ mdepriv <- function(data,
   w <- w / sum(w)
   # normalize weights
   names(w) <- items
-  # make sure the weigths are all labeled
+  # make sure the weights are all labeled
   # ------------------------------------------------------------------------
   K         <- length(dim)
   Dimension <- rep(names(dim), lengths(dim))
