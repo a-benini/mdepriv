@@ -15,6 +15,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
 ```{r setup, echo=FALSE}
@@ -34,29 +35,26 @@ The `mdepriv` function is an adaptation in **_R_** of a homonymous user-written 
   + **_diagonal_**, in both **_Stata_** and **_R_**, sets all off-diagonal elements to zero, making **_wb_** independent of any item correlations.
 
 ```{r echo=FALSE, Fig_wa_wb_R, fig.height=7/2.54, fig.width=18/2.54}
-wa_wb_combi <- function(
-  wa = c("cz", "ds", "bv", "equal"),
-  wb = c("mixed", "pearson", "diagonal"),
-  xlim = c(-1.25, 11),
-  ylim = c(-0.5, 4.5),
-  col_double = "cornsilk",
-  col_single = "mistyrose",
-  col_method_wa = "lightcyan",
-  col_wb = "#C1FFC1A6", # rgb(t(col2rgb("darkseagreen1"))/255, alpha = 0.65)
-  col_bv_corr_type = "seagreen",
-  string_bv_corr_type = "bv_corr_type",
-  options = "argument options",
-  legend = TRUE
-  )
-{
-  wa    <- factor(wa, wa)
-  wb    <- factor(wb, wb)
+wa_wb_combi <- function(wa = c("cz", "ds", "bv", "equal"),
+                        wb = c("mixed", "pearson", "diagonal"),
+                        xlim = c(-1.25, 11),
+                        ylim = c(-0.5, 4.5),
+                        col_double = "cornsilk",
+                        col_single = "mistyrose",
+                        col_method_wa = "lightcyan",
+                        col_wb = "#C1FFC1A6", # rgb(t(col2rgb("darkseagreen1"))/255, alpha = 0.65)
+                        col_bv_corr_type = "seagreen",
+                        string_bv_corr_type = "bv_corr_type",
+                        options = "argument options",
+                        legend = TRUE) {
+  wa <- factor(wa, wa)
+  wb <- factor(wb, wb)
   combi <- merge(wa, wb)
   names(combi) <- c("wa", "wb")
   combi$method <- (combi$wa != "bv" & combi$wb == "diagonal") | (combi$wa == "bv" & combi$wb != "diagonal")
-  
+
   plot(0, 0, type = "n", xlim = xlim, ylim = rev(ylim), asp = 1, axes = F, ann = F)
-  
+
   x_mar   <- 0.5
   xleft   <- x_mar
   xright  <- length(wa) + x_mar
@@ -64,63 +62,73 @@ wa_wb_combi <- function(
   ybottom <- length(wb) + y_mar
   ybreak  <- length(wb) - 1 + y_mar
   ytop    <- y_mar
-  
+
   rect(xleft, ybreak, xright, ytop, col = col_double, border = NA)
-  
+
   rect(xleft, ybottom, xright, ybreak, col = col_single, border = NA)
-  
-  points(as.numeric(wb)~as.numeric(wa) , data = combi,
-         pch = ifelse(combi$method, 16, 1),
-         cex = 3)
-  
-  rect(xleft, ytop - 0.5*y_mar, xright, ytop - 1.5*y_mar, col = col_method_wa, border = NA)
-  
-  rect(xleft - 4*x_mar, ytop, xleft - 0.5*x_mar , ybottom, col = col_wb, border = NA)
-  
-  rect(xleft - 3.75*x_mar, ytop + 0.25*y_mar, xleft - 0.75*x_mar , ybreak, border = col_bv_corr_type, lwd = 2)
-  
+
+  points(as.numeric(wb) ~ as.numeric(wa),
+    data = combi,
+    pch = ifelse(combi$method, 16, 1),
+    cex = 3
+  )
+
+  rect(xleft, ytop - 0.5 * y_mar, xright, ytop - 1.5 * y_mar, col = col_method_wa, border = NA)
+
+  rect(xleft - 4 * x_mar, ytop, xleft - 0.5 * x_mar, ybottom, col = col_wb, border = NA)
+
+  rect(xleft - 3.75 * x_mar, ytop + 0.25 * y_mar, xleft - 0.75 * x_mar, ybreak, border = col_bv_corr_type, lwd = 2)
+
   text(as.numeric(wa), 0, wa, adj = c(0.5, 0.5))
   text(-1.2, as.numeric(wb), wb, adj = 0)
-  
-  if(legend){
-    legend(xright + x_mar, ytop - 1.5*y_mar,
-           c("method option",
-             "only wa & wb option",
-             "double\nweighting schemes",
-             "effective single\nweighting schemes"),
-           pch = c(16, 1, 15, 15),
-           pt.cex = c(3, 3, 4.5, 4.5),
-           col = c("black", "black", "cornsilk", "mistyrose"),
-           bty = "n",
-           y.intersp = 2,
-           x.intersp = 2)
-    text(xright + x_mar, ytop - 1.5*y_mar, adj = c(0,1), "wa-wb-combinations", font = 3)
-    
-    legend(8.5, ytop - 1.5*y_mar,
-           c("method (default: cz)\nor wa",
-             paste0(string_bv_corr_type, "\n(default: mixed)"),
-             "wb"),
-           pch = c(15, 0, 15),
-           pt.cex = 4.5,
-           col = c( "lightcyan", "seagreen", col_wb),
-           bty = "n",
-           y.intersp = 2,
-           x.intersp = 2,
-           xpd = TRUE)
-    text(8.5, ytop - 1.5*y_mar, adj = c(0,1), options, font = 3)
+
+  if (legend) {
+    legend(xright + x_mar, ytop - 1.5 * y_mar,
+      c(
+        "method option",
+        "only wa & wb option",
+        "double\nweighting schemes",
+        "effective single\nweighting schemes"
+      ),
+      pch = c(16, 1, 15, 15),
+      pt.cex = c(3, 3, 4.5, 4.5),
+      col = c("black", "black", "cornsilk", "mistyrose"),
+      bty = "n",
+      y.intersp = 2,
+      x.intersp = 2
+    )
+    text(xright + x_mar, ytop - 1.5 * y_mar, adj = c(0, 1), "wa-wb-combinations", font = 3)
+
+    legend(8.5, ytop - 1.5 * y_mar,
+      c(
+        "method (default: cz)\nor wa",
+        paste0(string_bv_corr_type, "\n(default: mixed)"),
+        "wb"
+      ),
+      pch = c(15, 0, 15),
+      pt.cex = 4.5,
+      col = c("lightcyan", "seagreen", col_wb),
+      bty = "n",
+      y.intersp = 2,
+      x.intersp = 2,
+      xpd = TRUE
+    )
+    text(8.5, ytop - 1.5 * y_mar, adj = c(0, 1), options, font = 3)
   }
 }
 
-par(mar = c(0,0,1,5.5), oma=c(0.5,0.5,0.5,0), cex = 0.8)
+par(mar = c(0, 0, 1, 5.5), oma = c(0.5, 0.5, 0.5, 0), cex = 0.8)
 wa_wb_combi()
 title("mdepriv in R: possible weighthing schemes", line = 0, adj = 0)
 ```
 
 ```{r echo=FALSE, Fig_wa_wb_Stata, fig.height=10/2.54, fig.width=18/2.54}
-par(mar = c(1,0,0,2.5), oma=c(0.5,0.5,0.5,0), cex = 0.8)
-wa_wb_combi(wb = c("mixed", "pearson", "tetrachoric", "polychoric", "diagonal"),
-            string_bv_corr_type = " bv sub-options corr. type",
-            options = "options")
+par(mar = c(1, 0, 0, 2.5), oma = c(0.5, 0.5, 0.5, 0), cex = 0.8)
+wa_wb_combi(
+  wb = c("mixed", "pearson", "tetrachoric", "polychoric", "diagonal"),
+  string_bv_corr_type = " bv sub-options corr. type",
+  options = "options"
+)
 title("mdepriv in Stata: possible weighthing schemes", line = -2, adj = 0)
 ```
 
