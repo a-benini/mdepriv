@@ -349,10 +349,7 @@ mdepriv <- function(data,
 {
   # ------------------------------------------------------------------------
   # check if input data is a data.frame or a matrix, otherwise stop
-  if(!(is.data.frame(data) | is.matrix(data))){
-    stop(paste0("The argument ", sQuote("data"), " is neither of the class ", dQuote("data.frame"), " nor of the class ", dQuote("matrix"), "."),
-         call. = TRUE)
-  }
+  check_data_(data)
   # in any case including a matrix or a tibble, the input data is turned into an ordinary data.frame
   data <- as.data.frame(data)
   # ------------------------------------------------------------------------
