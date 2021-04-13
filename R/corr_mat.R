@@ -45,6 +45,7 @@
 #' @export
 #'
 #' @importFrom wCorr weightedCorr
+#'
 #' @examples head(simul_data, 3) # data used for demonstration
 #'
 #' corr_mat(simul_data, c("y1", "y4", "y5", "y6")) # default output: numeric
@@ -191,40 +192,42 @@ corr_mat <- function(data,
   # ------------------------------------------------------------------------
   output <- match.arg(output)
   if (output == "both") {output <- c("numeric", "type")}
-  output_arg <- output
   # ------------------------------------------------------------------------
-  numeric <- lapply(
-    seq_along(dim),
-    function(x) {
-      corr_mat_(
-        data             = data,
-        items            = dim[[x]],
-        corr_type        = corr_type,
-        sampling_weights = sampling_weights
-      )
-    }
-  )
+  if ("numeric" %in% output) {
+    numeric <- lapply(
+      seq_along(dim),
+      function(x) {
+        corr_mat_(
+          data             = data,
+          items            = dim[[x]],
+          corr_type        = corr_type,
+          sampling_weights = sampling_weights
+        )
+      }
+    )
+    names(numeric) <- names(dim)
+    if (length(numeric) == 1) {numeric <- numeric[[1]]}
+  }
   # ------------------------------------------------------------------------
-  names(numeric) <- names(dim)
-  if (length(numeric) == 1) {numeric <- numeric[[1]]}
+  if ("type" %in% output) {
+    type <- lapply(
+      seq_along(dim),
+      function(x) {
+        corr_mat_type_(
+          data      = data,
+          items     = dim[[x]],
+          corr_type = corr_type
+        )
+      }
+    )
+    names(type) <- names(dim)
+    if (length(type) == 1) {type <- type[[1]]}
+  }
   # ------------------------------------------------------------------------
-  type <- lapply(
-    seq_along(dim),
-    function(x) {
-      corr_mat_type_(
-        data      = data,
-        items     = dim[[x]],
-        corr_type = corr_type
-      )
-    }
-  )
-  # ------------------------------------------------------------------------
-  names(type) <- names(dim)
-  if (length(type) == 1) {type <- type[[1]]}
-  # ------------------------------------------------------------------------
-  output <- list(numeric = numeric, type = type)
-  output <- output[names(output) %in% output_arg]
-  if (length(output) == 1) {output <- output[[1]]}
-  output
+  if (length(output) == 1) {
+    get(output)
+  } else {
+    list(numeric = numeric, type = type)
+  }
   # ------------------------------------------------------------------------
 } # end of function
