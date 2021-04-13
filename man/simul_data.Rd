@@ -4,7 +4,8 @@
 \name{simul_data}
 \alias{simul_data}
 \title{Demonstration Dataset}
-\format{A data frame with 100 observations and 9 variables:
+\format{
+A data frame with 100 observations and 9 variables:
 \describe{
   \item{id}{ID integer 1, ... , 100: a record identifier}
   \item{y1}{binary data: 0 or 1: deprivation item}
@@ -15,7 +16,8 @@
   \item{y6}{continuous data: range [0,1]: deprivation item}
   \item{y7}{continuous data: range [0,1]: deprivation item}
   \item{sampl_weights}{continuous data: sampling weights}
-}}
+}
+}
 \usage{
 simul_data
 }

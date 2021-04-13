@@ -4,7 +4,8 @@
 \name{MSNA_HC}
 \alias{MSNA_HC}
 \title{Data Related to Living Standards in Host Communities Adjacent to the Rohingya Refugee Camps in Bangladesh, 2018}
-\format{A data frame with 2855 obs. in 15 variables:
+\format{
+A data frame with 2855 obs. in 15 variables:
 \describe{
   \item{id}{Household ID: integer}
   \item{sampl_weights}{Sampling weights: float, 11 distinct values (1 per Union), range: [0.5694934, 1.396798]}
@@ -41,7 +42,8 @@
   \item{sanit_2}{Faeces visible: binary / 0 or 1}
   \item{sanit_3}{Stagnant water visible: binary / 0 or 1}
   \item{sanit_4}{Household members defecate outside home: binary / 0 or 1}
-}}
+}
+}
 \source{
 ISCG (Inter Sector Coordination Group) / REACH / ACAPS-NPM, Cox Bazar, Bangladesh, December 2018,
 published with the provision: "This tool is made available to all staff and partners of the ISCG,
