@@ -205,3 +205,80 @@ check_items_range_ <- function(items, data) {
   }
 }
 # ------------------------------------------------------------------------
+check_user_def_weights_numeric_ <- function(user_def_weights) {
+  if (!(
+    (is.vector(user_def_weights) & is.numeric(user_def_weights)) |
+    (is.list(user_def_weights) & all(vapply(user_def_weights, is.numeric, logical(1))))
+  )
+  ) {
+    stop(paste0(
+      "The argument ",
+      sQuote("user_def_weights"),
+      " is neither a vector nor a list of vectors consisting entirely of numeric elements."
+    ),
+    call. = FALSE
+    )
+  }
+}
+# ------------------------------------------------------------------------
+check_user_def_weights_str_ <- function(user_def_weights, dim) {
+  if (any(length(user_def_weights) != length(dim))) {
+    stop(
+      paste0(
+        "The number of dimension in the argument ",
+        sQuote("user_def_weights"),
+        " does not match the number of dimensions specified in the argument ",
+        sQuote("items"),
+        "."
+      ),
+      call. = FALSE
+    )
+  } else if (any(lengths(user_def_weights) != lengths(dim))) {
+    stop(
+      paste0(
+        "The number of elements per dimension in the argument ",
+        sQuote("user_def_weights"),
+        " does not match the number of elements per dimension in the argument ",
+        sQuote("items"),
+        "."
+      ),
+      call. = FALSE
+    )
+  } else if (anyNA(unlist(user_def_weights))) {
+    stop(
+      paste0(
+        "At least for one of the items the argument ",
+        sQuote("user_def_weights"),
+        " is specified with a NA-value. If specified, the argument ",
+        sQuote("user_def_weights"),
+        " has be numeric and defined for each item."
+      ),
+      call. = FALSE
+    )
+  } else if (any(unlist(lapply(user_def_weights, sum)) != 1)) {
+    stop(
+      paste0(
+        "At least for one dimension in the argument ",
+        sQuote("user_def_weights"),
+        " the elements do not sum up to 1."
+      ),
+      call. = FALSE
+    )
+  }
+}
+# ------------------------------------------------------------------------
+check_user_def_weights_names_ <- function(user_def_weights, dim) {
+  if (any(names(user_def_weights) != c(names(dim)))) {
+    stop(
+      paste0(
+        "The labelling of the dimensions in the argument ",
+        sQuote("user_def_weights"),
+        " does not match the labelling of the dimensions in the argument ",
+        sQuote("items"),
+        "."
+      ),
+      call. = FALSE
+    )
+  }
+}
+# ------------------------------------------------------------------------

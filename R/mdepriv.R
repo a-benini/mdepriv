@@ -380,45 +380,25 @@ mdepriv <- function(data,
 
   check_items_range_(items, data)
   # ------------------------------------------------------------------------
-  if(!is.null(user_def_weights)){
-    if(all(is.na(user_def_weights) & length(user_def_weights) == 1 & class(user_def_weights) == "logical")){
+  if (!is.null(user_def_weights)) {
+    if (all(is.na(user_def_weights) & length(user_def_weights) == 1 & class(user_def_weights) == "logical")) {
       user_def_weights <- NULL
     }
   }
-  if(!is.null(user_def_weights)){
-    if(!((is.vector(user_def_weights ) & is.numeric(user_def_weights )) | (is.list(user_def_weights ) &
-                                                                           all(unlist(lapply(X = seq_along(user_def_weights ),
-                                                                                             function(X) is.numeric(user_def_weights [[X]]))))))){
-      stop(paste0("The argument ", sQuote("user_def_weights"),
-                  " is neither a vector nor a list of vectors consisting entirely of numeric elements."),
-           call. = TRUE)
-    } else if(!is.list(user_def_weights )){
-      user_def_weights  <- list(user_def_weights)}
-    if(any(length(user_def_weights ) != length(dim))){
-      stop(paste0("The number of dimension in the argument ", sQuote("user_def_weights"),
-                  " does not match the number of dimensions specified in the argument ", sQuote("items") ,"."),
-           call. = TRUE)
-    } else if(any(lengths(user_def_weights) != lengths(dim))){
-      stop(paste0("The number of elements per dimension in the argument ", sQuote("user_def_weights"),
-                  " does not match the number of elements per dimension in the argument ", sQuote("items") ,"."),
-           call. = TRUE)
-    } else if(anyNA(unlist(user_def_weights))){
-      stop(paste0("At least for one of the items the argument ",
-                  sQuote("user_def_weights"), " is specified with a NA-value.",
-                  " If specified, the argument ", sQuote("user_def_weights"),
-                  " has be numeric and defined for each item."),
-           call. = TRUE)
-    } else if(any(unlist(lapply(user_def_weights, sum)) != 1)){
-      stop(paste0("At least for one dimension in the argument ",
-                  sQuote("user_def_weights"), " the elements do not sum up to 1."),
-           call. = TRUE)
-    } else if(is.null(names(user_def_weights))){
-      names(user_def_weights) <- names(dim)
-    } else if(any(names(user_def_weights ) != c(names(dim)))){
-      stop(paste0("The labelling of the dimensions in the argument ", sQuote("user_def_weights"),
-                  " does not match the labelling of the dimensions in the argument " , sQuote("items"), "."),
-           call. = TRUE)
+  if (!is.null(user_def_weights)) {
+    check_user_def_weights_numeric_(user_def_weights)
+
+    if (!is.list(user_def_weights)) {
+      user_def_weights <- list(user_def_weights)
     }
+
+    check_user_def_weights_str_(user_def_weights, dim)
+
+    if (is.null(names(user_def_weights))) {
+      names(user_def_weights) <- names(dim)
+    }
+
+    check_user_def_weights_names_(user_def_weights, dim)
   }
   # ------------------------------------------------------------------------
   if(is.null(sampling_weights)){
