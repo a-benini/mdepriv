@@ -484,22 +484,6 @@ mdepriv <- function(data,
     if(method == "bv"){wb <- bv_corr_type}else{wb <- "diagonal"}
   }
   # ------------------------------------------------------------------------
-  wb_general <- function(data, items, corr_type, sampling_weights, rhoH){
-    if(corr_type != "diagonal" & length(items) > 1){
-      CORR_MAT <- corr_mat_(data = data, items = items, corr_type = corr_type, sampling_weights = sampling_weights)
-
-      wb_j <- function(x, rhoH){
-        sum_l <- 1 + sum(x[x < rhoH])
-        sum_h <- sum(x[x >= rhoH])
-        1/(sum_l * sum_h)
-      }
-
-      apply(CORR_MAT, 2, wb_j, rhoH = rhoH)
-    } else{
-      rep(1, length(items))
-    }
-  }
-  # ------------------------------------------------------------------------
   if(is.null(user_def_weights )){
     if(is.null(w_scheme)){w_scheme  <- paste0("User-defined weighting scheme: wa = ", dQuote(wa), ", wb = ", dQuote(wb), ".")}
     # ------------------------------------------------------------------------
@@ -527,12 +511,21 @@ mdepriv <- function(data,
 
     if(wb == "diagonal"){rhoH <- NA_real_}
 
-    WB <- unlist(lapply(X = seq_along(dim),
-                        function(X) wb_general(data             = data,
-                                               items            = dim[[X]],
-                                               corr_type        = wb,
-                                               sampling_weights = sampling_weights,
-                                               rhoH             = rhoH)))
+    WB <- unlist(
+      lapply(
+        seq_along(dim),
+        function(x) {
+          wb_general_(
+            data             = data,
+            items            = dim[[x]],
+            corr_type        = wb,
+            sampling_weights = sampling_weights,
+            rhoH             = rhoH
+          )
+        }
+      )
+    )
+
     w  <- WA * WB
     # ------------------------------------------------------------------------
   }else{

@@ -80,3 +80,19 @@ corr_mat_type_ <- function(data, items, corr_type) {
   corr_mat_type
 }
 # ------------------------------------------------------------------------
+wb_general_ <- function(data, items, corr_type, sampling_weights, rhoH) {
+  if (corr_type != "diagonal" & length(items) > 1) {
+    corr_mat__ <- corr_mat_(data = data, items = items, corr_type = corr_type, sampling_weights = sampling_weights)
+
+    wb_j <- function(x, rhoH) {
+      sum_l <- 1 + sum(x[x < rhoH])
+      sum_h <- sum(x[x >= rhoH])
+      1 / (sum_l * sum_h)
+    }
+
+    apply(corr_mat__, 2, wb_j, rhoH = rhoH)
+  } else {
+    rep(1, length(items))
+  }
+}
+# ------------------------------------------------------------------------
