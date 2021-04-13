@@ -432,31 +432,20 @@ mdepriv <- function(data,
   method       <- match.arg(method)
   bv_corr_type <- match.arg(bv_corr_type)
 
-  if(!is.null(wa)){
-    if(all(is.na(wa) & length(wa) == 1 & class(wa) %in% c("logical", "character"))){
+  if (!is.null(wa)) {
+    if (all(is.na(wa) & length(wa) == 1 & class(wa) %in% c("logical", "character"))) {
       wa <- NULL
     }
   }
-  if(!is.null(wa)){wa <- match.arg(wa, c("cz", "ds", "bv", "equal"))}
-  if(!is.null(wb)){
-    if(all(is.na(wb) & length(wb) == 1 & class(wb) %in% c("logical", "character"))){
+  if (!is.null(wa)) {wa <- match.arg(wa, c("cz", "ds", "bv", "equal"))}
+  if (!is.null(wb)) {
+    if (all(is.na(wb) & length(wb) == 1 & class(wb) %in% c("logical", "character"))) {
       wb <- NULL
     }
   }
-  if(!is.null(wb)){wb <- match.arg(wb, c("mixed", "pearson", "diagonal"))}
+  if (!is.null(wb)) {wb <- match.arg(wb, c("mixed", "pearson", "diagonal"))}
 
-  if(!is.null(wa) & is.null(wb)){
-    stop(paste0("The argument ", sQuote("wa"), ' is specified as ', dQuote(wa), ', whereas the argument ', sQuote("wb"),
-                " is unspecified. Possible options for ", sQuote("wb"), " are: ",
-                dQuote("mixed"), ", " ,dQuote("pearson"), " or ", dQuote("diagonal"), "."),
-         call. = TRUE)
-  }
-  if(is.null(wa) & !is.null(wb)){
-    stop(paste0("The argument ", sQuote("wb"), ' is specified as ', dQuote(wb), ', whereas the argument ', sQuote("wa"),
-                " is unspecified. Possible options for ",sQuote("wa"), " are: ",
-                dQuote("cz"), ", ", dQuote("ds"), ", ", dQuote("bv"), " or ", dQuote("equal"), "."),
-         call. = TRUE)
-  }
+  check_wa_wb_(wa, wb)
   # ------------------------------------------------------------------------
   if(class(score_i_heading) != "character"){
     stop(paste0("The argument ", sQuote("score_i_heading"),  " is not of the class ", dQuote("character"), ".",

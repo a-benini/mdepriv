@@ -426,3 +426,28 @@ check_rhoH_ <- function(rhoH) {
   }
 }
 # ------------------------------------------------------------------------
+check_wa_wb_ <- function(wa, wb) {
+  if (!is.null(wa) & is.null(wb)) {
+    stop(
+      paste0(
+        "The argument ", sQuote("wa"), " is specified as ", dQuote(wa),
+        ", whereas the argument ", sQuote("wb"),
+        " is unspecified. Possible options for ", sQuote("wb"), " are: ",
+        dQuote("mixed"), ", ", dQuote("pearson"), " or ", dQuote("diagonal"), "."
+      ),
+      call. = FALSE
+    )
+  }
+  if (is.null(wa) & !is.null(wb)) {
+    stop(
+      paste0(
+        "The argument ", sQuote("wb"), " is specified as ", dQuote(wb),
+        ", whereas the argument ", sQuote("wa"),
+        " is unspecified. Possible options for ", sQuote("wa"), " are: ",
+        dQuote("cz"), ", ", dQuote("ds"), ", ", dQuote("bv"), " or ", dQuote("equal"), "."
+      ),
+      call. = FALSE
+    )
+  }
+}
+# ------------------------------------------------------------------------
