@@ -24,13 +24,14 @@ Imports:
     Weighted.Desc.Stat (>= 1.0)
 Suggests: 
     devtools,
-    graphics, 
+    graphics,
     httr,
     kableExtra,
     knitr,
     readxl,
     rmarkdown,
     testthat (>= 2.1.0),
+    tibble,
     tidyverse,
     utils
 URL: https://github.com/a-benini/mdepriv, https://a-benini.github.io/mdepriv
