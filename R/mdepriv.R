@@ -353,110 +353,32 @@ mdepriv <- function(data,
   # in any case including a matrix or a tibble, the input data is turned into an ordinary data.frame
   data <- as.data.frame(data)
   # ------------------------------------------------------------------------
-  if(!((is.vector(items) & is.character(items)) | (is.list(items) & all(unlist(lapply(X = seq_along(items), function(X) is.character(items[[X]]))))))){
-    stop(paste0("The argument ", sQuote("items"), " is neither a vector nor a list of vectors constisting fully of character elements."),
-         call. = TRUE)
+  check_items_(items)
+
+  if (is.list(items)) {
+    dim <- items
+    items <- unlist(items)
+  } else {
+    dim <- list(items)
   }
 
-  if(is.list(items)){dim <- items; items <- unlist(items)}else{dim <- list(items)}
-
-  if(is.null(names(dim))){names(dim) <- paste0("Dimension ", seq_along(dim))}else{
-    if(any(names(dim) == "")){
-      stop(paste0("The argument ", sQuote("items"),
-                  " has been labelled with dimension names, but incompletely. Either all dimensions or strictly none must be labelled."),
-           call. = TRUE)
-    } else if(any(duplicated(names(dim)))){
-      stop(paste0("The argument ", sQuote("items"),
-                  " contains duplicates among the labelled dimension names. If labelled, dimensions names must be unique."),
-           call. = TRUE)
-    }
+  if (is.null(names(dim))) {
+    names(dim) <- paste0("Dimension ", seq_along(dim))
   }
 
-  items_check <- !items %in% names(data)
-  if(sum(items_check) > 0){
-    items_false <- items[items_check]
-    if(length(items_false) == 1){
-      stop(paste0("The argument ", sQuote("data"), " does not contain the following variable: ", dQuote(items_false),
-                  ". The argument ", sQuote("items"), " may only include variables that are part of the argument ", sQuote("data"), "."),
-           call. = TRUE)
-    }else{
-      stop(paste0("The argument ", sQuote("data"), " does not contain the following variables: ",
-                  paste0(dQuote(items_false[-length(items_false)]), collapse = ", "), " and ",
-                  dQuote(items_false[length(items_false)]), ". The argument ", sQuote("items"),
-                  " may only include variables that are part of the argument ", sQuote("data"), "."),
-           call. = TRUE)
-    }
-  }
+  check_dim_(dim)
 
-  items_duplicated <- unique(items[duplicated(items)])
-  if(length(items_duplicated) > 0){
-    if(length(items_duplicated) == 1){
-      stop(paste0("The argument ", sQuote("items"), " contains repeatedly the following variable: ", dQuote(items_duplicated), "."),
-           call. = TRUE)
-    }else{
-      stop(paste0("The argument ", sQuote("items"), " contains repeatedly the following variables: ",
-                  paste0(dQuote(items_duplicated[-length(items_duplicated)]), collapse = ", "), " and ",
-                  dQuote(items_duplicated[length(items_duplicated)]), "."),
-           call. = TRUE)
-    }
-  }
+  check_items_in_data_(items, data)
 
-  if(length(items) == 1){
-    stop(paste0("The argument ", sQuote("items"), " has a length of 1. The argument ", sQuote("items"),
-                " has to include at least 2 variables contained in the argument ", sQuote("data"), "."),
-         call. = TRUE)
-  }
+  check_items_duplicate_(items)
 
-  items_check_numeric <- vapply(X = items, function(X) !is.numeric(data[ ,X]), logical(1))
-  if(sum(items_check_numeric) > 0){
-    items_not_numeric <- items[items_check_numeric]
-    if(length(items_not_numeric) == 1){
-      stop(paste0("The argument ", sQuote("items"), " contains the following non-numeric variable: ",
-                  dQuote(items_not_numeric), ". The argument ", sQuote("items"),
-                  " only allows numeric variables contained in the argument ", sQuote("data"), "."),
-           call. = TRUE)
-    }else{
-      stop(paste0("The argument ", sQuote("items"), " contains the following non-numeric variables: ",
-                  paste0(dQuote(items_not_numeric[-length(items_not_numeric)]), collapse = ", "), " and ",
-                  dQuote(items_not_numeric[length(items_not_numeric)]), ". The argument ", sQuote("items"),
-                  " only allows numeric variables contained in the argument ", sQuote("data"), "."),
-           call. = TRUE)
-    }
-  }
+  check_items_length_(items)
 
-  items_check_NA  <- apply(as.matrix(data[ ,items]), 2, anyNA)
-  if(sum(items_check_NA) > 0){
-    items_NA <- items[items_check_NA]
-    if(length(items_NA) == 1){
-      stop(paste0("The argument ", sQuote("items"), " contains the following variable with NA: ",
-                  dQuote(items_NA), ". The argument ", sQuote("items"), " does not allow any NA-values."),
-           call. = TRUE)
-    }else{
-      stop(paste0("The argument ", sQuote("items"), " contains the following variables with NA: ",
-                  paste0(dQuote(items_NA[-length(items_NA)]), collapse = ", "), " and ",
-                  dQuote(items_NA[length(items_NA)]), ". The argument ", sQuote("items"), " does not allow any NA-values."),
-           call. = TRUE)
-    }
-  }
+  check_items_numeric_(items, data)
 
-  items_check_range <- apply(as.matrix(data[ ,items]), 2, function(x){any(x < 0 | x > 1)})
-  if(sum(items_check_range) > 0){
-    items_outside_range <- items[items_check_range]
-    if(length(items_outside_range) == 1){
-      stop(paste0("The argument ", sQuote("items"),
-                  " contains the following variable with values outside of the [0,1] range: ",
-                  dQuote(items_outside_range), ". All variables in ", sQuote("items"),
-                  " must be within the range [0,1]."),
-           call. = TRUE)
-    }else{
-      stop(paste0("The argument ", sQuote("items"),
-                  " contains the following variables with values outside of the [0,1] range: ",
-                  paste0(dQuote(items_outside_range[-length(items_outside_range)]), collapse = ", "),
-                  " and ", dQuote(items_outside_range[length(items_outside_range)]),
-                  ". All variables in ", sQuote("items"), " must be within the range [0,1]."),
-           call. = TRUE)
-    }
-  }
+  check_items_NA_(items, data)
+
+  check_items_range_(items, data)
   # ------------------------------------------------------------------------
   if(!is.null(user_def_weights)){
     if(all(is.na(user_def_weights) & length(user_def_weights) == 1 & class(user_def_weights) == "logical")){
