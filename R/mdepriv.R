@@ -487,14 +487,14 @@ mdepriv <- function(data,
   if(is.null(user_def_weights )){
     if(is.null(w_scheme)){w_scheme  <- paste0("User-defined weighting scheme: wa = ", dQuote(wa), ", wb = ", dQuote(wb), ".")}
     # ------------------------------------------------------------------------
-    if(wa == "cz"){
-      WA <- apply(as.matrix(data[ ,items]), 2, function(x){log(1 / Weighted.Desc.Stat::w.mean(x, mu = sampling_weights))})
-    } else if(wa == "ds"){
-      WA <- apply(as.matrix(data[ ,items]), 2, function(x){(1 - Weighted.Desc.Stat::w.mean(x, mu = sampling_weights))})
-    } else if(wa == "bv"){
-      WA <- apply(as.matrix(data[ ,items]), 2, Weighted.Desc.Stat::w.cv, mu = sampling_weights)
-    } else if(wa == "equal"){
-      WA <- rep(1/length(items), length(items))
+    if (wa == "cz") {
+      WA <- vapply(items, function(x) {log(1 / Weighted.Desc.Stat::w.mean(data[[x]], mu = sampling_weights))}, numeric(1))
+    } else if (wa == "ds") {
+      WA <- vapply(items, function(x) {(1 - Weighted.Desc.Stat::w.mean(data[[x]], mu = sampling_weights))}, numeric(1))
+    } else if (wa == "bv") {
+      WA <- vapply(items, function(x) {Weighted.Desc.Stat::w.cv(data[[x]], mu = sampling_weights)}, numeric(1))
+    } else if (wa == "equal") {
+      WA <- rep(1 / length(items), length(items))
     }
 
     if(is.null(rhoH) & wb != "diagonal"){
@@ -543,7 +543,7 @@ mdepriv <- function(data,
   # ------------------------------------------------------------------------
   K         <- length(dim)
   Dimension <- unlist(lapply(X = seq_along(dim), function(X) rep(names(dim)[X], length(dim[[X]]))))
-  Index     <- apply(as.matrix(data[ ,items]), 2, function(x) Weighted.Desc.Stat::w.mean(x, mu = sampling_weights))
+  Index     <- vapply(items, function(x) {Weighted.Desc.Stat::w.mean(data[[x]], mu = sampling_weights)}, numeric(1))
   Weight    <- unlist(lapply(X = seq_along(dim), function(X) {w[dim[[X]]] / sum(w[dim[[X]]]) / K}))
   Contri    <- Index * Weight
   aggregate_deprivation_level <- sum(Contri)
