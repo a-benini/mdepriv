@@ -20,4 +20,4 @@ test_that("corr_mat: argument output", {
   diff <- diff(corr_val)
   rhoH <- mdepriv(simul_data, items_sel, method = "bv", bv_corr_type = "pearson", output = "rhoH")
   expect_equal(rhoH, mean(corr_val[which(diff == max(diff)) + c(0, 1)]))
-  })
+})
