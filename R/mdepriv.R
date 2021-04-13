@@ -542,26 +542,29 @@ mdepriv <- function(data,
   # make sure the weigths are all labeled
   # ------------------------------------------------------------------------
   K         <- length(dim)
-  Dimension <- unlist(lapply(X = seq_along(dim), function(X) rep(names(dim)[X], length(dim[[X]]))))
+  Dimension <- rep(names(dim), lengths(dim))
   Index     <- vapply(items, function(x) {Weighted.Desc.Stat::w.mean(data[[x]], mu = sampling_weights)}, numeric(1))
-  Weight    <- unlist(lapply(X = seq_along(dim), function(X) {w[dim[[X]]] / sum(w[dim[[X]]]) / K}))
+  Weight    <- unlist(lapply(seq_along(dim), function(x) {w[dim[[x]]] / sum(w[dim[[x]]]) / K}))
   Contri    <- Index * Weight
   aggregate_deprivation_level <- sum(Contri)
   Share     <- Contri / aggregate_deprivation_level
-  summary_by_item <- data.frame(Dimension, Item = items, Index, Weight, Contri, Share, stringsAsFactors = F, row.names = NULL)
+  summary_by_item <- data.frame(Dimension, Item = items, Index, Weight, Contri, Share, stringsAsFactors = FALSE, row.names = NULL)
 
-  summary_by_dimension <- stats::aggregate(cbind(Weight, Contri, Share) ~ Dimension, data = summary_by_item, sum)
-  summary_by_dimension <- data.frame(Dimension = summary_by_dimension$Dimension,
-                                     N_Item    = lengths(dim),
-                                     Index     = summary_by_dimension$Contri / summary_by_dimension$Weight,
-                                     summary_by_dimension[ ,c("Weight", "Contri", "Share")],
-                                     stringsAsFactors = F, row.names = NULL)
+  aggregate_by_dimension <- stats::aggregate(cbind(Weight, Contri, Share) ~ Dimension, data = summary_by_item, sum)
+  summary_by_dimension <- data.frame(
+    Dimension = names(dim),
+    N_Item    = lengths(dim),
+    Index     = aggregate_by_dimension$Contri / aggregate_by_dimension$Weight,
+    aggregate_by_dimension[, c("Weight", "Contri", "Share")],
+    stringsAsFactors = FALSE,
+    row.names  = NULL
+  )
   sum_up_col <- c("N_Item", "Weight", "Contri", "Share")
-  summary_by_dimension[nrow(summary_by_dimension) + 1, sum_up_col] <- colSums(summary_by_dimension[ ,sum_up_col])
+  summary_by_dimension[nrow(summary_by_dimension) + 1, sum_up_col] <- colSums(summary_by_dimension[, sum_up_col])
   summary_by_dimension[nrow(summary_by_dimension), "Dimension"] <- "Total"
 
   sum_up_col <- sum_up_col[-1]
-  summary_by_item[nrow(summary_by_item) + 1, sum_up_col] <- colSums(summary_by_item[ ,sum_up_col])
+  summary_by_item[nrow(summary_by_item) + 1, sum_up_col] <- colSums(summary_by_item[, sum_up_col])
   summary_by_item[nrow(summary_by_item), "Dimension"] <- "Total"
 
   score_i <- as.matrix(data[, items]) %*% Weight
