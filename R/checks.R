@@ -451,3 +451,54 @@ check_wa_wb_ <- function(wa, wb) {
   }
 }
 # ------------------------------------------------------------------------
+check_score_i_heading_class_ <- function(score_i_heading) {
+  if (class(score_i_heading) != "character") {
+    stop(
+      paste0(
+        "The argument ",
+        sQuote("score_i_heading"),
+        " is not of the class ",
+        dQuote("character"),
+        ". It must be a single character string giving the heading to the scores column of the output ",
+        dQuote("data"),
+        "."
+      ),
+      call. = FALSE
+    )
+  }
+}
+# ------------------------------------------------------------------------
+check_score_i_heading_length_ <- function(score_i_heading) {
+  if (length(score_i_heading) != 1) {
+    stop(
+      paste0(
+        "The argument ",
+        sQuote("score_i_heading"),
+        " must be a single character string giving the heading to the scores' column of the output ",
+        dQuote("data"),
+        "."
+      ),
+      call. = FALSE
+    )
+  }
+}
+# ------------------------------------------------------------------------
+check_score_i_heading_in_data_ <- function(score_i_heading, data) {
+  if (score_i_heading %in% names(data)) {
+    stop(
+      paste0(
+        dQuote(score_i_heading),
+        " is not valid as argument ",
+        sQuote("score_i_heading"),
+        " for the current model. For the argument ",
+        sQuote("data"),
+        " already includes a column by this name, possibly as the result of a previous mdepriv model.",
+        " Therefore, give a different name for the scores column in the output data by specifying the argument ",
+        sQuote("score_i_heading"),
+        "."
+      ),
+      call. = FALSE
+    )
+  }
+}
+# ------------------------------------------------------------------------

@@ -447,22 +447,9 @@ mdepriv <- function(data,
 
   check_wa_wb_(wa, wb)
   # ------------------------------------------------------------------------
-  if(class(score_i_heading) != "character"){
-    stop(paste0("The argument ", sQuote("score_i_heading"),  " is not of the class ", dQuote("character"), ".",
-                " It must be a single character string giving the heading to the scores column of the output ", dQuote("data"), "."),
-         call. = TRUE)
-  } else if(length(score_i_heading) != 1){
-    stop(paste0("The argument ", sQuote("score_i_heading"), " must be a single character string",
-                " giving the heading to the scores' column of the output ", dQuote("data"), "."),
-         call. = TRUE)
-  } else if(score_i_heading %in% names(data)){
-    stop(paste0(dQuote(score_i_heading), " is not valid as argument ", sQuote("score_i_heading"),
-                " for the current model. For the argument ",
-                sQuote("data"), " already includes a column by this name, possibly as the result of a previous mdepriv model.",
-                " Therefore, give a different name for the scores column in the output data by specifying the argument ",
-                sQuote("score_i_heading"), "."),
-         call. = TRUE)
-  }
+  check_score_i_heading_class_(score_i_heading)
+  check_score_i_heading_length_(score_i_heading)
+  check_score_i_heading_in_data_(score_i_heading, data)
   # ------------------------------------------------------------------------
   output_op <- c("view", "all", "weighting_scheme", "aggregate_deprivation_level",
                  "summary_by_dimension", "summary_by_item", "summary_scores", "score_i",
