@@ -282,3 +282,123 @@ check_user_def_weights_names_ <- function(user_def_weights, dim) {
   }
 }
 # ------------------------------------------------------------------------
+check_sampling_weights_class_ <- function(sampling_weights) {
+  if (class(sampling_weights) != "character") {
+    stop(
+      paste0(
+        "The argument ",
+        sQuote("sampling_weights"),
+        " is not of the class ",
+        dQuote("character"),
+        ". The argument ",
+        sQuote("sampling_weights"),
+        " accepts only a single character string specifying a numeric variable within the argument ",
+        sQuote("data"),
+        "."
+      ),
+      call. = FALSE
+    )
+  }
+}
+# ------------------------------------------------------------------------
+check_sampling_weights_length_ <- function(sampling_weights) {
+  if (length(sampling_weights) != 1) {
+    stop(paste0(
+      "The argument ",
+      sQuote("sampling_weights"),
+      " is a character vector with a length of ",
+      length(sampling_weights),
+      ". The argument ",
+      sQuote("sampling_weights"),
+      " accepts only a single character string specifying a numeric variable within the argument ",
+      sQuote("data"),
+      "."
+    ),
+    call. = FALSE
+    )
+  }
+}
+# ------------------------------------------------------------------------
+check_sampling_weights_in_data_ <- function(sampling_weights, data) {
+  if (!sampling_weights %in% names(data)) {
+    stop(
+      paste0(
+        "The argument ",
+        sQuote("sampling_weights"),
+        " is a character string, as required; however, it does not match any variable within the argument ",
+        sQuote("data"),
+        "."
+      ),
+      call. = FALSE
+    )
+  }
+}
+# ------------------------------------------------------------------------
+check_sampling_weights_numeric_ <- function(sampling_weights, data) {
+  if (!is.numeric(data[[sampling_weights]])) {
+    stop(
+      paste0(
+        "The argument ",
+        sQuote("sampling_weights"),
+        ", which is specified as variable ",
+        dQuote(sampling_weights),
+        " and included in the argument ",
+        sQuote("data"),
+        ", is not a numeric vector."
+      ),
+      call. = FALSE
+    )
+  }
+}
+# ------------------------------------------------------------------------
+check_sampling_weights_in_items_ <- function(sampling_weights, items) {
+  if (sampling_weights %in% items) {
+    stop(
+      paste0(
+        "The argument ",
+        sQuote("sampling_weights"),
+        ", which is specified as variable ",
+        dQuote(sampling_weights),
+        " is already among the variables selected with the argument ",
+        sQuote("items"),
+        "."
+      ),
+      call. = FALSE
+    )
+  }
+}
+# ------------------------------------------------------------------------
+check_sampling_weights_NA_ <- function(sampling_weights, sampling_weights_arg) {
+  if (anyNA(sampling_weights) & !is.na(sampling_weights_arg)) {
+    stop(
+      paste0(
+        "The argument ",
+        sQuote("sampling_weights"),
+        ", which is specified as variable ",
+        dQuote(sampling_weights_arg),
+        " and included in the argument ",
+        sQuote("data"),
+        ", is a numeric vector including NA-values. NA is not valid as sampling weight."
+      ),
+      call. = FALSE
+    )
+  }
+}
+# ------------------------------------------------------------------------
+check_sampling_weights_values_ <- function(sampling_weights, sampling_weights_arg) {
+  if (any(sampling_weights <= 0) & !is.na(sampling_weights_arg)) {
+    stop(
+      paste0(
+        "The argument ",
+        sQuote("sampling_weights"),
+        ", which is specified as variable ",
+        dQuote(sampling_weights_arg),
+        " and included in the argument ",
+        sQuote("data"),
+        " contains values =< 0. Only positive values are valid as sampling weights."
+      ),
+      call. = FALSE
+    )
+  }
+}
+# ------------------------------------------------------------------------
