@@ -105,7 +105,7 @@
 #' The underlying literature and algebra are not recapitulated here.
 #' They are documented in \href{http://medim.ceps.lu/stata/mdepriv_v3.pdf}{Pi Alperin & Van Kerm (2009)}.
 #' There are minor differences vis-a-vis the predecessor in Stata, pointed out in the
-#' \href{../doc/what_is_different_from_stata.html}{\code{vignette("what_is_different_from_stata.html")}}.
+#' \href{../doc/what_is_different_from_stata.html}{\code{vignette("what_is_different_from_stata")}}.
 #'
 #' The scores are weighted sums of the individual indicators / items.
 #' Both the items and the scores are limited to the [0, 1] range, and the item weights automatically sum to 1.
@@ -176,7 +176,7 @@
 #' When \code{bv_corr_type} respectively \code{wb} is set to \code{"pearson"}
 #' this correlation type is forced on all item pairs.
 #'
-#' @seealso \href{../doc/mdepriv_get_started.html}{\code{vignette("mdepriv_get_started.html")}}
+#' @seealso \href{../doc/mdepriv_get_started.html}{\code{vignette("mdepriv_get_started")}}
 #'
 #' @references Betti, G. & Verma, V. K. (1998), 'Measuring the degree of poverty in a dynamic and comparative context: a multi-dimensional approach using fuzzy set theory', Working Paper 22, Dipartimento di Metodi Quantitativi, Universit`a di Siena.
 #'

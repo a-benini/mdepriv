@@ -138,7 +138,7 @@ for computing synthetic scores of multiple deprivation from unidimensional indic
 The underlying literature and algebra are not recapitulated here.
 They are documented in \href{http://medim.ceps.lu/stata/mdepriv_v3.pdf}{Pi Alperin & Van Kerm (2009)}.
 There are minor differences vis-a-vis the predecessor in Stata, pointed out in the
-\href{../doc/what_is_different_from_stata.html}{\code{vignette("what_is_different_from_stata.html")}}.
+\href{../doc/what_is_different_from_stata.html}{\code{vignette("what_is_different_from_stata")}}.
 
 The scores are weighted sums of the individual indicators / items.
 Both the items and the scores are limited to the [0, 1] range, and the item weights automatically sum to 1.
@@ -359,5 +359,5 @@ Desai, M. & Shah, A. (1988), 'An econometric approach to the measurement of pove
 Pi Alperin, M. N. & Van Kerm, P. (2009), 'mdepriv - Synthetic indicators of multiple deprivation', v2.0 (revised March 2014), CEPS/INSTEAD, Esch/Alzette, Luxembourg. \url{http://medim.ceps.lu/stata/mdepriv_v3.pdf} (2019-MM-DD).
 }
 \seealso{
-\href{../doc/mdepriv_get_started.html}{\code{vignette("mdepriv_get_started.html")}}
+\href{../doc/mdepriv_get_started.html}{\code{vignette("mdepriv_get_started")}}
 }
