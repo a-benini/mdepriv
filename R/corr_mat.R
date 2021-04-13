@@ -58,18 +58,18 @@
 #' corr_mat_default <- corr_mat(simul_data, c("y1", "y4", "y5", "y6"))
 #' corr_mat_mixed <- corr_mat(simul_data, c("y1", "y4", "y5", "y6"), corr_type = "mixed")
 #' all.equal(corr_mat_default, corr_mat_mixed) # "mixed is corr_type's default
-# force a correlation type on all pair of items
+#' # force a correlation type on all pairs of items
 #' corr_mat(simul_data, c("y1", "y4", "y5", "y6"), corr_type = "pearson")
 #'
 #' # grouping items in dimensions
 #' corr_mat(simul_data, list(c("y1", "y4", "y5", "y6"), c("y2", "y3", "y7")))
 #' # customized group / dimension labels
-#' corr_mat(simul_data, list('Group A' = c("y1", "y4", "y5", "y6"),
-#'                           'Group B' = c("y2", "y3", "y7")))
+#' corr_mat(simul_data, list("Group A" = c("y1", "y4", "y5", "y6"),
+#'                           "Group B" = c("y2", "y3", "y7")))
 #'
 #' # mdepriv output / returns as template for corr_mat arguments
 #' # items grouped as dimensions
-#' dim <- list('Group X' = c("y1", "y4", "y5", "y6"), 'Group Z' = c("y2", "y3", "y7"))
+#' dim <- list("Group X" = c("y1", "y4", "y5", "y6"), "Group Z" = c("y2", "y3", "y7"))
 #'
 #' # model: betti-verma ("bv"): correlation type = pearson, rhoH = NA (data driven)
 #' bv_pearson <- mdepriv(simul_data, dim, "sampl_weights",
@@ -95,7 +95,8 @@
 #' # use model output as arguments
 #' \dontrun{
 #' corr_mat(bv_diagonal$data, bv_diagonal$items, bv_diagonal$sampling_weights,
-#'          corr_type = bv_diagonal$wb, output = "both")}
+#'          corr_type = bv_diagonal$wb, output = "both")
+#' }
 #' # would trigger an error because:
 #' bv_diagonal$wb
 #' # if corr_type left as the default or set to a valid option, then ...
@@ -117,25 +118,25 @@
 #' corr_val_col   <- ifelse(bounding_rhoH, "black", "gray") # colors for corr. values
 #'
 #' barplot(corr_val,
-#'         col = corr_val_col,
-#'         border = NA,
-#'         ylim = c(-0.2,1),
-#'         ylab = "correlation value [-1,+1]",
-#'         main = "sorted unique correlation values and rhoH"
-#'         )
+#'   col = corr_val_col,
+#'   border = NA,
+#'   ylim = c(-0.2, 1),
+#'   ylab = "correlation value [-1,+1]",
+#'   main = "sorted unique correlation values and rhoH"
+#' )
 #'
 #' abline(h = rhoH, col = "red", lwd = 1.5)
 #' text(0, rhoH + 0.05, paste0("rhoH = ", round(rhoH, 4)), adj = 0, col = "red")
 #'
 #' legend("left",
-#'        "correlation values\nbounding largest gap",
-#'        col = "black", pch = 15, pt.cex = 2, bty = "n")
+#'   "correlation values\nbounding largest gap",
+#'   col = "black", pch = 15, pt.cex = 2, bty = "n"
+#' )
 corr_mat <- function(data,
                      items,
                      sampling_weights = NA,
-                     corr_type        = c("mixed", "pearson"),
-                     output           = c("numeric", "type", "both"))
-{
+                     corr_type = c("mixed", "pearson"),
+                     output = c("numeric", "type", "both")) {
   # ------------------------------------------------------------------------
   # check if input data is a data.frame or a matrix, otherwise stop
   check_data_(data)
@@ -189,7 +190,7 @@ corr_mat <- function(data,
   corr_type <- match.arg(corr_type)
   # ------------------------------------------------------------------------
   output <- match.arg(output)
-  if(output == "both"){output <- c("numeric", "type")}
+  if (output == "both") {output <- c("numeric", "type")}
   output_arg <- output
   # ------------------------------------------------------------------------
   numeric <- lapply(
@@ -205,7 +206,7 @@ corr_mat <- function(data,
   )
   # ------------------------------------------------------------------------
   names(numeric) <- names(dim)
-  if(length(numeric) == 1){numeric <- numeric[[1]]}
+  if (length(numeric) == 1) {numeric <- numeric[[1]]}
   # ------------------------------------------------------------------------
   type <- lapply(
     seq_along(dim),
@@ -219,11 +220,11 @@ corr_mat <- function(data,
   )
   # ------------------------------------------------------------------------
   names(type) <- names(dim)
-  if(length(type) == 1){type <- type[[1]]}
+  if (length(type) == 1) {type <- type[[1]]}
   # ------------------------------------------------------------------------
   output <- list(numeric = numeric, type = type)
   output <- output[names(output) %in% output_arg]
-  if(length(output) == 1){output <- output[[1]]}
+  if (length(output) == 1) {output <- output[[1]]}
   output
   # ------------------------------------------------------------------------
 } # end of function
