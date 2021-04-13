@@ -34,9 +34,13 @@ corr_mat_ <- function(data, items, corr_type, sampling_weights) {
   }
 
   corr_mat <- matrix(NA, length(items), length(items), dimnames = list(items, items))
+  diag(corr_mat) <- 1
   for (i in items) {
     for (j in items) {
-      corr_mat[i, j] <- weightedCorr_automated(x = data[, i], y = data[, j], corr_type = corr_type, sampling_weights = sampling_weights)
+      if (is.na(corr_mat[i, j]) & is.na(corr_mat[j, i])) {
+        corr_mat[i, j] <- weightedCorr_automated(x = data[[i]], y = data[[j]], corr_type = corr_type, sampling_weights = sampling_weights)
+        corr_mat[j, i] <- corr_mat[i, j]
+      }
     }
   }
 
@@ -74,7 +78,10 @@ corr_mat_type_ <- function(data, items, corr_type) {
   corr_mat_type <- matrix(NA, length(items), length(items), dimnames = list(items, items))
   for (i in items) {
     for (j in items) {
-      corr_mat_type[i, j] <- corr_type_(x = data[, i], y = data[, j], corr_type = corr_type)
+      if (is.na(corr_mat_type[i, j]) & is.na(corr_mat_type[j, i])) {
+        corr_mat_type[i, j] <- corr_type_(x = data[[i]], y = data[[j]], corr_type = corr_type)
+        corr_mat_type[j, i] <- corr_mat_type[i, j]
+      }
     }
   }
   corr_mat_type
