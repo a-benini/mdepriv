@@ -33,7 +33,8 @@ Suggests:
     testthat (>= 2.1.0),
     tibble,
     tidyverse,
-    utils
+    utils,
+    visdat
 URL: https://github.com/a-benini/mdepriv, https://a-benini.github.io/mdepriv
 BugReports: https://github.com/a-benini/mdepriv/issues
 VignetteBuilder: 

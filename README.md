@@ -42,7 +42,7 @@ way as non-normative ones (e.g., workdays lost to illness).
 #   devtools::install_github("a-benini/mdepriv")
 
 # recommended: installation at a slower pace from GitHub including vignettes:
- pkgs_4_vignettes <- c("tidyverse", "kableExtra", "knitr", "rmarkdown")
+ pkgs_4_vignettes <- c("tidyverse", "kableExtra", "knitr", "rmarkdown", "visdat")
  # packages required to build mdepriv's vignettes from GitHup repository
  new_pkgs_4_vignettes <- pkgs_4_vignettes[!pkgs_4_vignettes %in% installed.packages()]
  # among these packages the ones not yet installed

@@ -97,7 +97,7 @@ Packages used in the following:
 # devtools::install_github("a-benini/mdepriv")
 
 # recommended: installation at a slower pace from GitHub including vignettes:
-# pkgs_4_vignettes <- c("tidyverse", "kableExtra", "knitr", "rmarkdown")
+# pkgs_4_vignettes <- c("tidyverse", "kableExtra", "knitr", "rmarkdown", "visdat")
 # packages required to build mdepriv's vignettes from GitHup repository
 # new_pkgs_4_vignettes <- pkgs_4_vignettes[!pkgs_4_vignettes %in% installed.packages()]
 # among these packages the ones not yet installed
@@ -111,6 +111,9 @@ help(package = "mdepriv") # mdepriv package documentation
 
 # install.packages("tidyverse")
 library(tidyverse) # includes packages for data handling and graphics
+
+# install.packages("visdat")
+library(visdat) # package for preliminary visualisation of data
 ```
 
 ## A Minimalist Start
@@ -790,13 +793,15 @@ model_3 <- mdepriv(model_2$data, items_sel, wa = "cz", wb = "mixed",
 head(model_3$data, 3) %>% mutate_if(is.double, function(x) round(x, 3))
 ```
 
-## Two-Level Deprivation Model
+## Two-Level Deprivation Model {#two-level-model}
+
 To demonstrate a two-level deprivation model with the Betti-Verma double weighting rule operating at both levels we use the dataset `MSNA_HC`.
+
 ```{r eval=TRUE}
 help("MSNA_HC")
 ```
 
-Check the data set structure...
+Check the dataset structure...
 
 ```{r}
 str(MSNA_HC)
@@ -830,8 +835,9 @@ Check correlation type of items pairs according to the [`mixed`-rule](#mixed_rul
 ```{r}
 corr_mat(MSNA_HC, items_level_1, output = "type") # corr_type (default) = "mixed"
 
-# all correlation type are "polychoric"
+# all correlations are of type "polychoric"
 ```
+
 In this humanitarian context, there is no basis to consider one or the other water or sanitation problem more or less important on the basis of their different prevalence. Therefore, in aggregating the seven binary water and sanitation items, for the first weighting factor we set the argument `wa` = `"equal"`. However, we keep redundancy control active. That is, the second weighting factor `wb` = `"mixed"` has the effect of reducing weights on more redundant items. (Note that because [all WASH items are binary 0 or 1](#msna_hc_items_distribution), choosing [`"mixed"` results in `"polychoric"` for all item pairs](#corr_wash_items). `wb` = `"diagonal"` would be neutral to redundancy; and `wb` = `"pearson"` would underrate the strength of correlations between binary items).
 
 This model returns the deprivation scores as a column `"ls_4_WASH"` (argument `score_i_heading`) merged to the `output` element `"data"`:
@@ -893,6 +899,165 @@ model_level_2$data %>%
 ```
 
 Of particular note are the gender differences (much higher median deprivation scores for female-headed households) in Palong Khali Union and in the Teknaf Upazila headquarter Union (Paurashava).
+
+## Handling Missing Values
+
+`mdepriv()` does not allow any missing values among variables specified by the 
+arguments `items` or `sampling_weights`. In other words, `mdepriv()` does not
+automatically "unter the hood" filter out such observations from the input
+`data`.
+
+Although inconvenient, the absence of such tacit filtering is for a good reason.
+In multi-level models that use different variables as `items` at each level, there
+is the potential of sequentially decreasing numbers of complete observations.
+The user, aware of this risk, should filter out observations with missing values
+in any of the variables entered in the whole model. This step should be taken
+prior to running the model at the first level.
+
+To demonstrate the handling of missing values, we use the same specification of 
+arguments as in the [above two-level-deprivation model](#two-level-model), but a
+dataset containing missing values among items selected for the 1^st^ and 2^nd^
+level as well as among the sampling weights. 
+
+We recall the items and sampling weight specification:
+
+```{r}
+items_level_1
+
+items_level_2
+# As noted earlier, the 4th item holds the scores from the model's 1st level
+
+"sampl_weights"
+```
+
+We gather the names of the variables (arguments `items` and `sampling_weights`)
+which require complete values in order for `mdepriv()` to execute the model:
+
+```{r}
+vars_required_complete <- c(
+  items_level_1 %>% unlist() %>% unname(),
+  items_level_2[-4], # without "ls_4_WASH"
+  "sampl_weights"
+  )
+```
+
+For the purpose of demonstration some of the values of those variables are
+replaced with `NA` (= missing values):
+
+```{r}
+MSNA_HC_with_NA <- MSNA_HC
+for (i in seq_along(vars_required_complete)) {
+  MSNA_HC_with_NA[i * 10 + (-9:25), vars_required_complete[i]] <- NA
+  }
+```
+
+Now we try to run the first-level model. `mdepriv()` responds with this error message: 
+
+```{r, error = TRUE}
+model_level_1 <- mdepriv(MSNA_HC_with_NA, items_level_1, "sampl_weights",
+                         wa = "equal", wb = "mixed",
+                         score_i_heading = "ls_4_WASH", output = "all")
+```
+
+One might be tempted to filter out only those records from the input dataset
+(argument `data`) with `NA`s in the variables that the error message pointed out.
+However, that would not be enough; the error message addresses only the use of
+items in the model's 1^st^ level. The items of the 2^nd^ level and the sampling
+weights, too need to be inspected for `NA`s:
+
+<a name="vis_dat"></a>
+```{r Fig_mis_val_1, collapse = TRUE, fig.height=10/2.54, fig.width=14/2.54}
+MSNA_HC_with_NA %>%
+  # select(all_of(vars_required_complete)) %>%
+  # uncomment above line if only variables required to be complete should be visualized
+  vis_dat(sort_type = FALSE)
+```
+
+The [above graphic](#vis_dat) reveals missing values also in the 2^nd^-level
+items (`ls_1_food`, `ls_2_livelihood`, `ls_3_shelter`) as well as in the
+sampling weights. 
+
+Hint: If there are only relatively few missing values / `NA`s,  the function
+`visdat::vis_dat()` may not be the best option to visualize them. Instead you
+could try out `visdat::vis_miss()`. This function tags the percentage of missing
+values in each variable to its label and the percentages of incomplete
+observations across all selected variables to the legend. ([s. below](#vis_miss)). 
+
+If we intend to link the scores obtained with `mdepriv()` back to each
+observation within the original dataset containing `NA`s among the specified 
+`items` and/or `sampling_weights` a variable column with a unique value for each
+row as a valid identifier for each record is required. Thus we check if `id` is
+a valid identifier:
+
+```{r}
+n_distinct(MSNA_HC_with_NA$id, na.rm = TRUE) == nrow(MSNA_HC_with_NA)
+```
+
+If that is not the case, a new valid identifier column must be added to the dataset:
+
+```{r}
+# MSNA_HC_with_NA$id_new <- 1:nrow(MSNA_HC_with_NA)
+```
+
+Now we filter for records with complete values among the items and sampling weights:
+
+```{r}
+MSNA_HC_filtered <- MSNA_HC_with_NA %>% filter(complete.cases(.[vars_required_complete]))
+```
+
+After filtering, the model (here one with two levels) works as usual:
+
+```{r}
+# save lower level model
+model_level_1 <- mdepriv(MSNA_HC_filtered, items_level_1, "sampl_weights",
+                         wa = "equal", wb = "mixed",
+                         score_i_heading = "ls_4_WASH", output = "all")
+
+# save the "data" returned by the lower level model
+MSNA_HC_filtered_2 <- model_level_1$data
+
+# save higher level model
+model_level_2 <- mdepriv(MSNA_HC_filtered_2, items_level_2, method = "bv", output = "all")
+```
+
+Now we can merge back:
+
+```{r}
+data_4_join <- model_level_2$data %>%
+  select(id, setdiff(names(.), names(MSNA_HC_with_NA)))
+
+head(data_4_join, 3)
+
+MSNA_HC_with_NA <- left_join(MSNA_HC_with_NA, data_4_join, by = "id")
+```
+
+Our demonstration is done and we check the outcome with `visdat::vis_dat()`. The
+missing values in the calculated score variables `ls_4_WASH` (1^st^ level) and
+`score_i` (2^nd^ level) correspond to observations containing at least one 
+missing value among the applied `items` and `sampling_weights`:
+
+<a name="vis_miss"></a>
+```{r Fig_mis_val_2,fig.height=11.5/2.54, fig.width=15/2.54}
+vis_miss(MSNA_HC_with_NA) +
+  theme(legend.position = "right")
+```
+
+```{r, collapse = TRUE}
+nrow(MSNA_HC_with_NA) # number of observations in original dataset
+
+model_level_2$summary_scores # scores summary of higher / 2nd level
+
+# percentage of observations with valid input and calculated scores
+round(model_level_2$summary_scores$N_Obs. / nrow(MSNA_HC_with_NA) * 100, 2)
+```
+
+```{r echo = FALSE}
+per_valid <- round(model_level_2$summary_scores$N_Obs. / nrow(MSNA_HC_with_NA) * 100, 2)
+per_invalid <- 100 - per_valid
+```
+
+The `r per_valid`% are the complement to the `r per_invalid`% missing scores as
+shown in [the above plot](#vis_miss).
 
 ## Multiple Models in a data.frame
 The handling of returns of multiple `mdepriv` models, which each comes as a `list`, can become cumbersome. We make this more convenient by combining the `list`s in a `data.frame`. Every model becomes a row and the different `output` elements are gathered as columns/variables.
