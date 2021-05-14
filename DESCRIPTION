@@ -24,12 +24,14 @@ Imports:
     Weighted.Desc.Stat (>= 1.0)
 Suggests: 
     devtools,
+    dplyr,
     graphics,
     httr,
     kableExtra,
     knitr,
     readxl,
     rmarkdown,
+    stringr,
     testthat (>= 2.1.0),
     tibble,
     tidyverse,
