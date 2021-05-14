@@ -5,7 +5,8 @@ version 0.0.2
 - overall tidied up function code
 - section on handling of missing values added to vignette `mdepriv_get_started`
 - minor formal changes in vignette mdepriv_get_started
-- no change in functionality of the package mdepriv
+- internal trimming of `mdepriv()`'s output  `score_i`  to the range [0, 1] added. This was done due to rarely observed very minor overshooting of 1 by some values of `score_i` (difference < 1e-15). If in such a case the output `score_i` would have been used as one of the `items` in a higher-level model with `mdepriv()`, that run would fail because `items` are restricted to the range [0, 1].
+- besides the trimming of `mdepriv()`'s output `score_i`, no change in functionality of the package `mdepriv`
 
 version 0.0.1
 - fixed bug: tibble in addition to ordinary data.frame or matrix as argument data: enabled in functions mdepriv and corr_mat.

@@ -576,6 +576,9 @@ mdepriv <- function(data,
 
   score_i <- as.matrix(data[, items]) %*% Weight
   score_i <- as.vector(score_i)
+  # trim score_i to range [0, 1]
+  score_i[score_i < 0] <- 0
+  score_i[score_i > 1] <- 1
 
   data[, score_i_heading] <- score_i
 
