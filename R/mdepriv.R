@@ -84,7 +84,7 @@
 #'   \item \code{"sum_sampling_weights"} a numeric value equal to the sum of sampling weights.
 #'   If the argument \code{sampling_weights} is unspecified, \code{NA} is returned.
 #'   \item \code{"data"} a \code{data.frame} including the argument \code{data} as well as a merged column containing the scores
-#'   (default heading \code{"score_i"}, which can be alter by the argument \code{score_i_heading}).
+#'   (default heading \code{"score_i"}, which can be altered by the argument \code{score_i_heading}).
 #'   \item \code{"items"} a named \code{list} of one or more character vectors returning the argument items grouped as dimensions.
 #'   If no dimensions were specified a \code{list} with only one vector is returned.
 #'   The list can be re-used as a template for the argument \code{"items"} in the functions \code{mdepriv} and \code{corr_mat}
@@ -96,7 +96,7 @@
 #'   \item \code{"user_def_weights"} a named \code{list} of one or more numeric vectors returning the argument \code{user_def_weights} grouped as dimensions.
 #'   The names of the \code{list}'s elements are identical with those of the output \code{"items"}.
 #'   If the argument \code{user_def_weights} is unspecified, NA is returned.
-#'   \item \code{"score_i_heanding"} single character strings returning the specification of the argumnent \code{score_i_heanding}.
+#'   \item \code{"score_i_heading"} single character strings returning the specification of the argumnent \code{score_i_heading}.
 #' }
 #'
 #' @details
@@ -196,7 +196,7 @@
 #'
 #' @examples head(simul_data, 3) # data used for demonstration
 #'
-#' # least possible specification: data & items:
+#' # minimum possible specification: data & items:
 #' mdepriv(simul_data, c("y1", "y2", "y3", "y4", "y5", "y6", "y7"))
 #' # group items in dimensions:
 #' mdepriv(simul_data, list(c("y1", "y2", "y3", "y4"), c("y5", "y6", "y7")))
@@ -211,7 +211,7 @@
 #' data.frame(
 #'   row.names = names(two_dim),
 #'   no_or_1_dim_specified = ifelse(names(two_dim) %in% names(no_dim_specified), "X", ""),
-#'   at_least_2_dim_speicified = "X"
+#'   at_least_2_dim_specified = "X"
 #' )
 #' setdiff(names(two_dim), names(no_dim_specified))
 #' # if no dimensions are specified, "summary_by_dimension" is dropped from the two output wrappers
@@ -269,7 +269,7 @@
 #'                                     wa = "equal", wb = "pearson", rhoH = 0.3, output = "all")
 #' equal_pearson_rhoH_fixed[c("weighting_scheme", "wa", "wb", "rhoH")]
 #'
-#' # pass expertise-base weights to the items
+#' # pass expertise-based weights to the items
 #' dim <- list("Group A" = c("y1", "y2", "y3"), "Group B" = c("y4", "y5", "y6"))
 #' # 'expertise weights' structured as dimensions
 #' w_expertise <- list(c(0.5, 0.25, 0.25), c(0.4, 0.45, 0.15))

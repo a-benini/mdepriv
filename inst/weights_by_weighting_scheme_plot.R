@@ -28,7 +28,7 @@ legend("topright", c("equi-proportionate", "Desai & Shah", "Cerioli & Zani", "Be
   col = c("blue", "magenta", "chartreuse3", "orange"),
   lwd = 2
 )
-mtext("range shown  = [0.025, 1]; re-scaled such that f(0.5) = 1 for all four function.\nAll items negatively oriented, i.e. 0 = desirable state, 1 = deprived.",
+mtext("range shown  = [0.025, 1]; re-scaled such that f(0.5) = 1 for all four functions.\nAll items negatively oriented, i.e. 0 = desirable state, 1 = deprived.",
   side = 1, line = 5.5, cex = 0.8
 )
 # ---------------------------------------------------------------------------------

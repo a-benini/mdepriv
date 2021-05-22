@@ -20,7 +20,7 @@
 #'   - are significantly associated with the scores of household food consumption.
 #'   Across the sample households, the five types appeared in 23 combinations.
 #'   These were mapped to a scale, with four levels, of increasingly less favorable combinations,
-#'   reflected in a (nearly linear) decrease in the predicted food consumptionscores.
+#'   reflected in a (nearly linear) decrease in the predicted food consumption scores.
 #'   Because of that nearly linear effect, this indicator is treated as interval-level variable.}
 #'   \item{ls_3_shelter}{Probability of living in a worse shelter than others:
 #'   Four distinct values: 0.0696, 0.3204, 0.6645, 0.9137.
@@ -61,7 +61,7 @@
 #'
 #' At the second level, in the aggregation of the four continuous ls-indicators (ls_1_food, ls_2_livelihood, ls_3_shelter, ls_4_WASH),
 #' the default Betti-Verma method is used, by setting \code{method} = \code{"bv"} in the function \code{mdepriv}.
-#' This activates both mechanisms of the double-weighting scheme -rewarding more discriminating indicators with higher weights,
+#' This activates both mechanisms of the double-weighting scheme - rewarding more discriminating indicators with higher weights,
 #' and penalizing redundant ones with lower weights.
 #' @source ISCG (Inter Sector Coordination Group) / REACH / ACAPS-NPM, Cox Bazar, Bangladesh, December 2018,
 #' published with the provision: "This tool is made available to all staff and partners of the ISCG,

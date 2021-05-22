@@ -117,11 +117,11 @@ corr_mat(bv_diagonal$data, bv_diagonal$items, bv_diagonal$sampling_weights,
 }
 # would trigger an error because:
 bv_diagonal$wb
-# if corr_type left as the default or set to a valid option, then ...
+# if corr_type is left as the default or set to a valid option, then ...
 corr_mat(bv_diagonal$data, bv_diagonal$items, bv_diagonal$sampling_weights)
 # ...  it works
 # for the arguments data, items and sampling_weights the ...
-# ... corresponding medepriv outputs are always valid
+# ... corresponding mdepriv outputs are always valid
 
 # plot unique correlation values and their relation to rhoH
 items_sel <- c("y1", "y4", "y5", "y6", "y2", "y3", "y7") # a selection of items
