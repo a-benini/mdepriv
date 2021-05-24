@@ -134,7 +134,7 @@ all.equal(tidy, lazy)
 ```
 
 ## What mdepriv Can Return
-`mdepriv`'s returns can be selected by the multiple choice argument `output`. The `output` options `"view"` and `"all"` are wrappers for `output`-compilations (s. [below](#tab_output)), the former being `output`'s default setting. If `output` consists of a single element, a single object is returned as such. Multiple returns are gather in a named `list`. For more detailed information on the returns have a look at the section 'Value' on `mepriv`'s help page.
+`mdepriv`'s returns can be selected by the multiple choice argument `output`. The `output` options `"view"` and `"all"` are wrappers for `output`-compilations (s. [below](#tab_output)), the former being `output`'s default setting. If `output` consists of a single element, a single object is returned as such. Multiple returns are gathered in a named `list`. For more detailed information on the returns have a look at the section 'Value' on `mepriv`'s help page.
 
 ```{r eval=TRUE}
 help("mdepriv")
@@ -185,7 +185,7 @@ mdepriv_returns <- mdepriv(simul_data, c("y1", "y2", "y3", "y4", "y5", "y6", "y7
 # 3 ways to pick an element as such from list
 mdepriv_returns$weighting_scheme
 mdepriv_returns[["weighting_scheme"]]
-mdepriv_returns[[1]] # by index also works with unnamed lists
+mdepriv_returns[[1]] # by index; also works with unnamed lists
 ```
 
 Warning: Don't confuse a `list` of only 1 element with the very element as such:
@@ -239,7 +239,7 @@ The `output` element `items` is always returned as a `list`. This is true also w
 ```{r }
 class(c("y1", "y2", "y4")) # items in character vector
 model_1 <- mdepriv(simul_data, c("y1", "y2", "y4"), output = "all")
-model_1$items # same items are return in a list with one dimension
+model_1$items # same items are returned in a list with one dimension
 class(model_1$items)
 model_2 <- mdepriv(simul_data, model_1$items, output = "all")
 all.equal(model_1, model_2)
@@ -297,10 +297,10 @@ rbind(without_s_w, with_s_w) %>%
   ggplot(aes(x = method, y = aggregate_deprivation_level, fill = sampling_weight)) +
   geom_col(position = position_dodge()) +
   theme_bw() +
-  ggtitle("method vs. aggregate deprivation level")
+  ggtitle("aggregate deprivation level, by method")
 ```
 
-Lets investigate the differences of the `method`s not just based on the single figure `aggregate_deprivation_level`, but on a comparison of `summary_by_item`-tables.
+Lets investigate the differences of the `method`s, not only based on the single figure `aggregate_deprivation_level`, but also on a comparison of `summary_by_item`-tables.
 ```{r ,warning=FALSE, Fig2, fig.height=8, fig.width=7.25}
 items_sel <- c("y1", "y2", "y3", "y4", "y5", "y6", "y7") # a selection of items
 methods <- c("cz", "ds", "bv", "equal") # all available methods
@@ -309,7 +309,7 @@ sampling_weights <- c("sampl_weights", NA) # sampling weights specified/unspecif
 methods <- rep(methods, length(sampling_weights))
 # repeat methods as many times as there are different (non-)specifications of sampling weights
 sampling_weights <- rep(sampling_weights, each = n_distinct(methods))
-# repeat each different sampling weights (non-)specifications as many times as there are distinct methods
+# repeat each different sampling-weights (non-)specifications as many times as there are distinct methods
 
 # aggregate summary_by_item-tables and channel them to a plot
 lapply(
@@ -324,7 +324,7 @@ lapply(
     )
   ) %>%
   tibble(., # 'listed' summary_by_item-tables as variable
-    method = methods, # methods as varible
+    method = methods, # methods as variable
     sampling_weight = !is.na(sampling_weights) # TRUE if sampl. weights applied else FALSE
   ) %>%
     unnest() %>%
@@ -336,7 +336,7 @@ lapply(
       method = factor(method, c("cz", "ds", "bv", "equal"))
     ) %>%
     # change key & method to factor to get certain, non-alphabetical sequences in plot grid
-    # key (rows), method (colums)
+    # key (rows), method (columns)
     ggplot(aes(x = Item, y = value, fill = sampling_weight)) +
     geom_col(position = position_dodge()) +
     facet_grid(rows = vars(key), col = vars(method), scales = "free_y") +
@@ -346,7 +346,7 @@ lapply(
 ```
 
 <a name="method_default_settings"></a>
-Different `method`s do matter as far as their result, but this should not be confused with the default argument settings of `mdepriv`:
+Different `method`s do matter as far as their results, but this should not be confused with the default argument settings of `mdepriv`:
 
 ```{r }
 # The Cerioli & Zani (1990) weighting scheme is the default method and must not really be specified
@@ -489,7 +489,7 @@ As far as this model with simulated data is representative of the behavior of `r
 
 Setting a fixed value for `rhoH` by the user is rarely called for, except when a constant `rhoH` is required for the comparison of several [models with double-weighting](#wa_wb_comination).
 
-As a technicality, it may be noted that, if the user chooses more than one dimension, `rhoH` is common for all. If this is the case and `rhoH` is data-driven, rhoH might not equal the correlation coefficient between any of the items pairs within the dimensions. Instead the correlation coefficient at the upper bound of the greatest gap may be between two items that belong to different dimensions. This definition is necessary in order to avoid the breakdown of the Betti-Verma formula in models in which some dimension(s) has/have only one element. The technicality is of no practical consequence for the user.
+As a technicality, it may be noted that, if the user chooses more than one dimension, `rhoH` is common for all. If this is the case and `rhoH` is data-driven, `rhoH` might not equal the correlation coefficient between any of the items pairs within the dimensions. Instead the correlation coefficient at the upper bound of the greatest gap may be between two items that belong to different dimensions. This definition is necessary in order to avoid the breakdown of the Betti-Verma formula in models in which some dimension(s) has/have only one element. The technicality is of no practical consequence for the user.
 
 ## Flexible Double Weighting Schemes beyond Betti-Verma
 
@@ -613,21 +613,21 @@ summary_by_item <- lapply(
 )
 
 # channel figures to a plot
-tibble(wa, wb, summary_by_item) %>% # gather (variated) arguments & output in a tibble (i.e. data.frame)
+tibble(wa, wb, summary_by_item) %>% # gather varied arguments & outputs in a tibble (i.e. data.frame)
   unnest() %>%
   filter(Item != "Total") %>% # filter out rows with the totals inherited from the summary_by_item-tables
   ggplot(aes(x = Item, y = Weight, fill = Item)) +
   geom_col(position = position_dodge()) +
   facet_wrap(vars(wa, wb), ncol = 2) +
   theme_bw() +
-  ggtitle("Item Weight from User Defined Double Weighting Schemes")
+  ggtitle("Item Weights from User Defined Double Weighting Schemes")
 ```
 
 The largest differences in weights are between the `"bv"`-`"diagonal"` model vs. the three others, for all of which `wb` as set to `"mixed"`. In the former, the correlations among items have no effect on the weights because of `wb` = `"diagonal"`. In the latter, they take full effect, due to `wb` =  "`mixed"`. Note that for each of the seven items, the Desai-Shaw weight is in the interval defined by the respective Cerioli-Zani and equi-proportionate weights. This is so because Desai-Shaw's sensitivity to the means of items is less than that of Cerioli-Zani; it is higher than in the equi-proportionate method, which is indifferent to the item means. [The remarks and table above](#reason_wa_wb) give reasons for selecting particular wa-wb-combinations in reference to analytic objectives.
 
 ## Expertise-Based Weights for Items
 
-Instead of a data-driven weighting scheme users can pass expertise-based weights to items. This is done by structuring the argument `user_def_weights` analogously to the `items`' argument. For each of the [dimensions](#grouping-items-as-dimensions) (= group of items) the user-defined weights must sum up to 1. When returned as an output user_def_weights inherits the dimensions' labelling specified by the `items`' argument.
+Instead of a data-driven weighting scheme users can pass expertise-based weights to items. This is done by structuring the argument `user_def_weights` analogously to the `items`' argument. For each of the [dimensions](#grouping-items-as-dimensions) (= group of items) the user-defined weights must sum up to 1. When returned as an output `user_def_weights` inherits the dimensions' labelling specified by the `items`' argument.
 
 ```{r }
 mdepriv(simul_data,
@@ -764,7 +764,7 @@ mdepriv(simul_data, items_sel, score_i_heading = "score_i_user_name", output = "
 ```
 
 <a name="reuse_data"></a>
-Thus the scores are twofold accessible:
+Thus the scores are accessible in two ways:
 
 ```{r}
 items_sel <- c("y1", "y2", "y3", "y4", "y5", "y6", "y7") # a selection of items
@@ -772,7 +772,7 @@ model <- mdepriv(simul_data, items_sel, output = "all") # method (default) = "cz
 all.equal(model$score_i, model$data$score_i)
 ```
 
-The score column heading effects the ability of the `output` element `"data"` being used as input `data` in another model:
+The score column heading impacts the ability of the `output` element `"data"` being used as input `data` in another model:
 
 ```{r error=TRUE, purl = FALSE}
 new_model <- mdepriv(model$data, items_sel, method = "ds", output = "all")
@@ -808,7 +808,7 @@ str(MSNA_HC)
 ```
 
 <a name="msna_hc_items_distribution"></a>
-... and the items distrubutions.
+... and the distribution of every item:
 
 ```{r Fig8, fig.height=15/2.54, fig.width=18/2.54}
 items <- MSNA_HC %>% select(ls_1_food:sanit_4) %>% names() # all items
@@ -819,7 +819,7 @@ MSNA_HC %>%
   geom_histogram(breaks = seq(0, 1, 0.05)) +
   facet_wrap(~item, ncol = 3) +
   theme_bw() +
-  ggtitle("Items Distributions")
+  ggtitle("Item Distributions")
 ```
 
 At the lower level (`level_1`), the seven binary WASH (Water, Sanitation and Hygiene) items will be aggregated to a continuous WASH deprivation indicator, `ls_4_WASH`. To equalize subsector contributions, water (prefix `water_`) and sanitation (prefix `sanit_`) items are grouped in different dimensions.
@@ -853,7 +853,7 @@ model_level_1$data %>% str()
 At the second level (`level_2`), in the aggregation of the four continuous living-standards-indicators (`ls_1_food`, `ls_2_livelihood`, `ls_3_shelter`, `ls_4_WASH`), the default Betti-Verma method is used, by setting `method` = `"bv"`. This activates both mechanisms of the double-weighting scheme - rewarding more discriminating indicators with higher weights, and penalizing redundant ones with lower weights.
 
 ```{r}
-# save the "data" return by the lower level model
+# save the "data" returned by the lower level model
 MSNA_HC_2 <- model_level_1$data
 # save all column headings with prefix ls_ (living standards) as items of the higher level
 (items_level_2 <- names(MSNA_HC_2) %>% str_subset("^ls_"))
@@ -904,7 +904,7 @@ Of particular note are the gender differences (much higher median deprivation sc
 
 `mdepriv()` does not allow any missing values among variables specified by the 
 arguments `items` or `sampling_weights`. In other words, `mdepriv()` does not
-automatically "unter the hood" filter out such observations from the input
+automatically under the hood filter out such observations from the input
 `data`.
 
 Although inconvenient, the absence of such tacit filtering is for a good reason.
@@ -1144,7 +1144,7 @@ df %>%
   geom_histogram(breaks = seq(0, 1, 0.05)) +
   facet_wrap(~model, ncol = 3) +
   theme_bw() +
-  ggtitle("Scores' Distribution")
+  ggtitle("Distributions of deprivation scores, by model")
 ```
 
 ## Acknowledgement
