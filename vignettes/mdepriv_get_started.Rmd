@@ -83,7 +83,7 @@ As a final introductory remark, it should be said that the Betti-Verma method is
 
 The following focuses on the technical handling of the `mdepriv` package. Context and rationale are not discussed here. The purpose is to walk the user through the manifold arguments and outputs of the core function `mdepriv`. Familiarity with the basics of R is presumed. Still, things are kept at a pretty low skill level so that users with little R experience can follow. The code provided is intended as copy-and-paste material, which users can modify for practice or for real-world data analysis.
 
-Chiefly we will use the simulated dataset `simul_data` with 100 observations, which are enough to demonstrate functionality. To showcase a [two-level deprivation model](#two-level-deprivation-model) we put the dataset `MSNA_HC` to use. Both datasets are part of the `mdepriv`-package; thus they do not require further sourcing.
+Chiefly we will use the simulated dataset `simul_data` with 100 observations, which are enough to demonstrate functionality. To showcase a [two-level deprivation model](#two-level-model) we put the dataset `MSNA_HC` to use. Both datasets are part of the `mdepriv`-package; thus they do not require further sourcing.
 
 ## Requirements
 
