@@ -292,8 +292,8 @@ items_sel <- c("y1", "y2", "y3", "y4", "y5", "y6", "y7") # a selection of items
 rbind(without_s_w, with_s_w) %>%
   data.frame(sampling_weight = c(FALSE, TRUE)) %>%
   pivot_longer(-sampling_weight, names_to = "method", values_to = "aggregate_deprivation_level") %>%
-  mutate(method = factor(method, c("cz", "ds", "bv", "equal"))) %>%
-  # methods as factor: to get them in a certain, non-alphabetical sequence in the plot
+  mutate(method = fct_inorder(method)) %>%
+  # methods as factor ordered by first appearance (-> sequence in plot)
   ggplot(aes(x = method, y = aggregate_deprivation_level, fill = sampling_weight)) +
   geom_col(position = position_dodge()) +
   theme_bw() +
@@ -331,12 +331,9 @@ lapply(
     filter(Item != "Total") %>%
     # filter out rows with the totals inherited from the summary_by_item-tables
     pivot_longer(-c(sampling_weight, method, Item), "key", "value") %>%
-    mutate(
-      key = factor(key, c("Index", "Weight", "Contri", "Share")),
-      method = factor(method, c("cz", "ds", "bv", "equal"))
-    ) %>%
-    # change key & method to factor to get certain, non-alphabetical sequences in plot grid
-    # key (rows), method (columns)
+    mutate(key = fct_inorder(key), method = fct_inorder(method)) %>%
+    # key & method as factors ordered by first appearance 
+    # -> non-alphabetical sequences in plot grid (key as rows, method as columns)
     ggplot(aes(x = Item, y = value, fill = sampling_weight)) +
     geom_col(position = position_dodge()) +
     facet_grid(rows = vars(key), col = vars(method), scales = "free_y") +
@@ -613,7 +610,11 @@ summary_by_item <- lapply(
 )
 
 # channel figures to a plot
-tibble(wa, wb, summary_by_item) %>% # gather varied arguments & outputs in a tibble (i.e. data.frame)
+tibble( # gather varied arguments & outputs in a tibble / data.frame
+  wa = fct_inorder(wa), # order arguments ...
+  wb = fct_inorder(wb), # ... by first appearance
+  summary_by_item
+  ) %>%
   unnest() %>%
   filter(Item != "Total") %>% # filter out rows with the totals inherited from the summary_by_item-tables
   ggplot(aes(x = Item, y = Weight, fill = Item)) +
@@ -1096,8 +1097,8 @@ mat <- do.call(rbind, l)
 is(mat)
 
 df <- as_tibble(mat) # turn the matrix into a data.frame/tibble
-df$model <- factor(names(l), level = names(l))
-# add a column for model identification as factor with non-alphabetical order
+df$model <- fct_inorder(names(l))
+# add a column for model names as factor ordered by first appearance
 is(df)
 ```
 
