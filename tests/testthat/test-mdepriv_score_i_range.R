@@ -75,16 +75,12 @@ test_that("mdepriv: score_i range", {
   score_i_greater_1 <- score_i[score_i > 1]
   expect_true(all((score_i_greater_1 - 1) < 1e-15))
 
-  # pointless testing after adding internal trimming of score_i within mdepriv() to range [0, 1]:
-  # check reconstructed score_i vs. corresponding mdepriv() output:
-  # expect_equal(score_i, MSNA_HC_filtered_2$ls_4_WASH)
+  # compare untrimmed score_i  and trimmed score_i (ls_4_WASH)
+  expect_true(any(score_i - MSNA_HC_filtered_2$ls_4_WASH > 0))
+  score_i_greater_1_II <- score_i[score_i - MSNA_HC_filtered_2$ls_4_WASH > 0]
+  expect_equal(sum(score_i_greater_1 - score_i_greater_1_II == 0), 9)
 
-  # pointless testing after adding internal trimming of score_i within mdepriv() to range [0, 1]:
-  # trim score_i in mdepriv() output
-  # MSNA_HC_filtered_2$ls_4_WASH[MSNA_HC_filtered_2$ls_4_WASH > 1] <- 1
-  # expect_false(any(MSNA_HC_filtered_2$ls_4_WASH > 1))
-
-  # with the (internally) trimmed item ls_4_WASH as input the 2nd-level mdepriv() run works:
+  # with the (internally) trimmed item ls_4_WASH as input, the 2nd-level mdepriv() run works:
   # model_level_2 <- mdepriv(MSNA_HC_filtered_2, items_level_2, method = "bv", output = "all")
   # but not if ls_4_WASH is replaced by its untrimmed precursor
   MSNA_HC_filtered_2$ls_4_WASH <- score_i
