@@ -139,7 +139,7 @@ title("mdepriv in Stata: possible weighthing schemes", line = -2, adj = 0)
 help("mdepriv")
 ```
 
-* Differently from **_Stata_**, in **_R_** observations with missing item values have to be removed in preparation.
+* Differently from **_Stata_**, in **_R_** observations with missing item values have to be removed in preparation. Rationale and code can be found under section [**_Handling Missing Values_**](./mdepriv_get_started.html#handling-missing-values) in the vignette **_Get Started with `mdepriv`_**.
 
 * Models with double-weighting work with an internal parameter known as **_rhoH_**. **_rhoH_** is determined by the central point in the largest gap in the ordered sequence of distinct correlation coefficients between all item / indicator pairs. As such, by default, **_rhoH_** is a data-driven quantity. The user has the option to set a value for **_rhoH_**; this is rarely called for, except when a constant **_rhoH_** is desired for the comparison of several such models. The implementation between **_Stata_** and **_R_** differs:
   + By default, **_Stata_** uses -2 as starting value for the computation of **_rhoH_**. In **_R_**, the default value is NA, causing `mdepriv` to calculate the data-driven value in models with double-weighting, or else leave it as NA.
