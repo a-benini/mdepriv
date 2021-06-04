@@ -105,8 +105,8 @@ Multidimensional poverty measurement and analysis, Oxford University
 Press, USA.
 
 Pessoa, Djalma, et.al., convey - Income Concentration Analysis with
-Complex Survey Samples, version 0.2.1.,
-<https://CRAN.R-project.org/package=convey> (2020-01-02).
+Complex Survey Samples, version 0.2.3.,
+<https://CRAN.R-project.org/package=convey> (2021-03-18).
 
 Pi Alperin, M. N. and Van Kerm, P. (2009), ‘mdepriv - Synthetic
 indicators of multiple deprivation’, v2.0 (revised March 2014),
