@@ -19,6 +19,15 @@ test_that("mdepriv: score_i range", {
     MSNA_HC_with_NA[i * 10 + (-9:20), vars_required_complete[i]] <- NA
   }
 
+  # The below explored range issue of score_i seems to be macOS-specific.
+  # The below tests passed when checked with
+  # - macOS 10.15.7 / R version 4.0.5 (2021-03-31) / RStudio Version 1.4.1106
+  # - rhub::check(platform = "macos-highsierra-release") / macOS 10.13.6 High Sierra, R-release, brew
+  # - rhub::check(platform = "macos-highsierra-release-cran") / macOS 10.13.6 High Sierra, R-release, CRAN's setup
+  skip_on_os("windows")
+  skip_on_os("linux")
+  skip_on_os("solaris")
+
   # NA not allowed among items and sampling_weights:
   expect_error(
     mdepriv(MSNA_HC_with_NA, items_level_1, "sampl_weights",
