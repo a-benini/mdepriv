@@ -17,6 +17,7 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 options(rmarkdown.html_vignette.check_title = FALSE)
+Sys.setenv(LANG = "en_US.UTF-8") 
 ```
 
 ## Introduction
