@@ -275,72 +275,83 @@ Four different standard `method`s for calculating synthetic scores of multiple d
 
 We compare aggregated deprivation levels by `method` and by the use of the sampling weights or not.
 
+<a name="arg_comb"></a>
 ```{r Fig1, fig.height=4, fig.width=5.5}
-methods <- c("cz", "ds", "bv", "equal") # all available methods
 items_sel <- c("y1", "y2", "y3", "y4", "y5", "y6", "y7") # a selection of items
 
-# aggregate deprivation levels when no sampling weights are applied
-(without_s_w <- sapply(methods, function(x) {
-  mdepriv(simul_data, items_sel, method = x, output = "aggregate_deprivation_level")
-}))
+# combinations of argument values for mdepriv()
+arg_comb <- expand.grid(
+  method           = c("cz", "ds", "bv", "equal"), # all available methods
+  sampling_weights = c("sampl_weights", NA), # sampling weights specified/unspecified
+  stringsAsFactors = FALSE
+  )
 
-# aggregate deprivation levels when sampling weights are applied
-(with_s_w <- sapply(methods, function(x) {
-  mdepriv(simul_data, items_sel, "sampl_weights", method = x, output = "aggregate_deprivation_level")
-}))
-
-# channel the figures to a plot
-rbind(without_s_w, with_s_w) %>%
-  data.frame(sampling_weight = c(FALSE, TRUE)) %>%
-  pivot_longer(-sampling_weight, names_to = "method", values_to = "aggregate_deprivation_level") %>%
-  mutate(method = fct_inorder(method)) %>%
-  # methods as factor ordered by first appearance (-> sequence in plot)
-  ggplot(aes(x = method, y = aggregate_deprivation_level, fill = sampling_weight)) +
-  geom_col(position = position_dodge()) +
-  theme_bw() +
-  ggtitle("aggregate deprivation level, by method")
-```
-
-Lets investigate the differences of the `method`s, not only based on the single figure `aggregate_deprivation_level`, but also on a comparison of `summary_by_item`-tables.
-```{r ,warning=FALSE, Fig2, fig.height=8, fig.width=7.25}
-items_sel <- c("y1", "y2", "y3", "y4", "y5", "y6", "y7") # a selection of items
-methods <- c("cz", "ds", "bv", "equal") # all available methods
-sampling_weights <- c("sampl_weights", NA) # sampling weights specified/unspecified
-
-methods <- rep(methods, length(sampling_weights))
-# repeat methods as many times as there are different (non-)specifications of sampling weights
-sampling_weights <- rep(sampling_weights, each = n_distinct(methods))
-# repeat each different sampling-weights (non-)specifications as many times as there are distinct methods
-
-# aggregate summary_by_item-tables and channel them to a plot
-lapply(
-  seq_along(methods),
-  function(x)
+# aggregate deprivation levels by combination of methods and (un)specified sampling weights
+aggregate_deprivation_level <- sapply(
+  1:nrow(arg_comb),
+  function(x) {
     mdepriv(
       simul_data,
       items_sel,
-      sampling_weights = sampling_weights[x],
-      method = methods[x],
+      method = arg_comb$method[x],
+      sampling_weights = arg_comb$sampling_weights[x],
+      output = "aggregate_deprivation_level"
+      )
+    }
+  )
+
+# plot aggregate deprivation levels by argument combination
+data.frame(arg_comb, aggregate_deprivation_level) %>%
+  mutate(
+    method = fct_inorder(method),
+    # methods as factor ordered by first appearance (-> sequence in plot)
+    sampling_weights = paste(sampling_weights)
+    # NA as string (-> avoid gray, the default color for NA)
+    ) %>%
+  ggplot(aes(x = method, y = aggregate_deprivation_level, fill = sampling_weights)) +
+  geom_col(position = position_dodge()) +
+  theme_bw() +
+  labs(fill = "specification of\nargument\nsampling_weights") +
+  ggtitle("aggregate deprivation level, by method")
+```
+
+Lets investigate the differences of the `method`s, not only based on the single figure `aggregate_deprivation_level`, but also on a comparison of `summary_by_item`-tables (Note that the [above](#arg_comb) combination of `method` and `sampling_weights` as well as the above selection of items `items_sel` are being reused below.).
+```{r ,warning=FALSE, Fig2, fig.height=8, fig.width=7.25}
+# list summary_by_item-tables by combination of methods and (un)specified sampling weights
+summary_by_item <- lapply(
+  1:nrow(arg_comb),
+  function(x) {
+    mdepriv(
+      simul_data,
+      items_sel,
+      method = arg_comb$method[x],
+      sampling_weights = arg_comb$sampling_weights[x],
       output = "summary_by_item"
-    )
-  ) %>%
-  tibble(., # 'listed' summary_by_item-tables as variable
-    method = methods, # methods as variable
-    sampling_weight = !is.na(sampling_weights) # TRUE if sampl. weights applied else FALSE
-  ) %>%
-    unnest() %>%
-    filter(Item != "Total") %>%
-    # filter out rows with the totals inherited from the summary_by_item-tables
-    pivot_longer(-c(sampling_weight, method, Item), "key", "value") %>%
-    mutate(key = fct_inorder(key), method = fct_inorder(method)) %>%
+      )
+    }
+  )
+
+# aggregate and plot listed summary_by_item-tables
+tibble(arg_comb, summary_by_item) %>%
+  unnest() %>%
+  filter(Item != "Total") %>%
+  # filter out rows with the totals inherited from the summary_by_item-tables
+  pivot_longer(-c(sampling_weights, method, Item), "key", "value") %>%
+  mutate(
+    key = fct_inorder(key),
+    method = fct_inorder(method),
     # key & method as factors ordered by first appearance 
     # -> non-alphabetical sequences in plot grid (key as rows, method as columns)
-    ggplot(aes(x = Item, y = value, fill = sampling_weight)) +
-    geom_col(position = position_dodge()) +
-    facet_grid(rows = vars(key), col = vars(method), scales = "free_y") +
-    theme_bw() +
-    ggtitle("method vs. key figures from the summary by item") +
-    theme(legend.position = "top")
+    sampling_weights = paste(sampling_weights)
+    # NA as string (-> avoid gray, the default color for NA)
+    ) %>%
+  ggplot(aes(x = Item, y = value, fill = sampling_weights)) +
+  geom_col(position = position_dodge()) +
+  facet_grid(rows = vars(key), col = vars(method), scales = "free_y") +
+  theme_bw() +
+  labs(fill = "specification of argument\nsampling_weights") +
+  ggtitle("method vs. key figures from the summary by item") +
+  theme(legend.position = "top")
 ```
 
 <a name="method_default_settings"></a>
@@ -440,47 +451,47 @@ Alternatively, the user can set a fixed value for `rhoH` in the interval [-1, +1
 
 ```{r Fig4, fig.height=10/2.54, fig.width=18/2.54}
 items_sel <- c("y1", "y2", "y3", "y4", "y5", "y6", "y7") # a selection of items
-rhoHs <- c(-0.2, 0, 0.2, 0.4, 0.6, 0.8, 1, NA)
-# fixed rhoHs & NA (= default specification for data driven rhoH)
-bv_corr_types <- c("mixed", "pearson") # correlation types
 
-rhoHs <- rep(rhoHs, length(bv_corr_types))
-# repeat rhoHs as many times as there are different correlation types
-bv_corr_types <- rep(bv_corr_types, each = n_distinct(rhoHs))
-# repeat each different correlation type as many times as there are distinct values of rhoH
+# combinations of argument values for mdepriv()
+arg_comb <- expand.grid(
+  bv_corr_type     = c("mixed", "pearson"), # correlation types
+  rhoH             = c(-0.2, 0, 0.2, 0.4, 0.6, 0.8, 1, NA),
+  # fixed rhoHs & NA (= default specification for data driven rhoH)
+  stringsAsFactors = FALSE
+  )
 
-rhoH_type <- ifelse(is.na(rhoHs), "data driven", "fixed") # rhoH type / classification
+rhoH_type <- ifelse(is.na(arg_comb$rhoH), "data driven", "fixed") # rhoH type / classification
 rhoH_type <- factor(rhoH_type, c("fixed", "data driven"))
 # factorize for non-alphabetical sequence in plot
 
 # get and plot the (under the hood) applied rhoHs and aggregate_deprivation_level
 lapply(
-  seq_along(rhoHs),
+  1:nrow(arg_comb),
   function(x)
     mdepriv(
       simul_data,
       items_sel,
       method = "bv",
-      bv_corr_type = bv_corr_types[x],
-      rhoH = rhoHs[x],
+      bv_corr_type = arg_comb$bv_corr_type[x],
+      rhoH = arg_comb$rhoH[x],
       output = c("aggregate_deprivation_level", "rhoH")
     )
-  ) %>%
+  ) %>% 
   bind_rows() %>%
-    mutate(
-      bv_corr_type = bv_corr_types,
-      rhoH_type = rhoH_type
-    ) %>%
-    ggplot(aes(
-      x = rhoH,
-      y = aggregate_deprivation_level,
-      col = bv_corr_type,
-      shape = rhoH_type
-    )) +
-    geom_point(size = 3) +
-    theme_bw() +
-    scale_x_continuous(breaks = seq(-0.2, 1, 0.2), limits = c(-0.25, 1.05)) +
-    ggtitle("aggregate deprivation level vs. fixed and data driven rhoH")
+  tibble(
+    bv_corr_type = arg_comb$bv_corr_type,
+    rhoH_type
+    ) %>% 
+  ggplot(aes(
+    x = rhoH,
+    y = aggregate_deprivation_level,
+    col = bv_corr_type,
+    shape = rhoH_type
+  )) +
+  geom_point(size = 3) +
+  theme_bw() +
+  scale_x_continuous(breaks = seq(-0.2, 1, 0.2), limits = c(-0.25, 1.05)) +
+  ggtitle("aggregate deprivation level vs. fixed and data driven rhoH")
 ```
 
 As far as this model with simulated data is representative of the behavior of `rhoH`, it would appear that the maximum aggregate deprivation level is at or near the one obtained when `rhoH` is entirely data-driven.
@@ -600,21 +611,22 @@ So lets have a look at the items weights of some non-standard `wa`-`wb`-weightin
 items_sel <- c("y1", "y2", "y3", "y4", "y5", "y6", "y7") # a selection of items
 
 # wa-wb-combinations
-wa <- c("cz", "ds", "equal", "bv")
-wb <- c(rep("mixed", 3), "diagonal")
-data.frame(wa, wb)
+(wa_wb <- data.frame(
+  wa = c("cz", "ds", "equal", "bv"),
+  wb = c(rep("mixed", 3), "diagonal")
+  ))
 
 # list with summaries by items for each wa-wb-combination
 summary_by_item <- lapply(
-  seq_along(wa),
-  function(x) mdepriv(simul_data, items_sel, wa = wa[x], wb = wb[x], output = "summary_by_item")
-)
+  1:nrow(wa_wb),
+  function(x) mdepriv(simul_data, items_sel, wa = wa_wb$wa[x], wb = wa_wb$wb[x], output = "summary_by_item")
+  )
 
 # channel figures to a plot
-tibble( # gather varied arguments & outputs in a tibble / data.frame
+tibble(wa_wb, summary_by_item) %>%  # gather varied arguments & outputs in a tibble / data.frame
+  mutate(
   wa = fct_inorder(wa), # order arguments ...
-  wb = fct_inorder(wb), # ... by first appearance
-  summary_by_item
+  wb = fct_inorder(wb)  # ... by first appearance
   ) %>%
   unnest() %>%
   filter(Item != "Total") %>% # filter out rows with the totals inherited from the summary_by_item-tables
