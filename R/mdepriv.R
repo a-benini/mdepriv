@@ -385,11 +385,10 @@ mdepriv <- function(data,
 
   check_items_range_(items, data)
   # ------------------------------------------------------------------------
-  if (!is.null(user_def_weights)) {
-    if (all(is.na(user_def_weights) & length(user_def_weights) == 1 & class(user_def_weights) == "logical")) {
-      user_def_weights <- NULL
-    }
+  if (all(is.na(user_def_weights) & length(user_def_weights) == 1 & class(user_def_weights) == "logical")) {
+    user_def_weights <- NULL
   }
+
   if (!is.null(user_def_weights)) {
     check_user_def_weights_numeric_(user_def_weights)
 

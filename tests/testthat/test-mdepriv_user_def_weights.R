@@ -6,6 +6,11 @@ test_that("mdepriv: argument user_def_weights", {
   test_na <- mdepriv(simul_data, c("y1", "y2"), output = "user_def_weights")
   expect_equal(is.na(test_na), TRUE)
 
+  expect_equal(
+    mdepriv(simul_data, list(c("y1", "y2"), c("y3", "y4")), output = "all"),
+    mdepriv(simul_data, list(c("y1", "y2"), c("y3", "y4")), user_def_weights = NULL, output = "all")
+  )
+
   expect_error(
     mdepriv(simul_data, c("y1", "y2"), user_def_weights = 1),
     "The number of elements per dimension in the argument 'user_def_weights' does not match the number of elements per dimension in the argument 'items'."
