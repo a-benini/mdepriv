@@ -431,16 +431,13 @@ mdepriv <- function(data,
   method       <- match.arg(method)
   bv_corr_type <- match.arg(bv_corr_type)
 
-  if (!is.null(wa)) {
-    if (all(is.na(wa) & length(wa) == 1 & class(wa) %in% c("logical", "character"))) {
-      wa <- NULL
-    }
+  if (all(is.na(wa) & length(wa) == 1 & class(wa) %in% c("logical", "character"))) {
+    wa <- NULL
   }
   if (!is.null(wa)) {wa <- match.arg(wa, c("cz", "ds", "bv", "equal"))}
-  if (!is.null(wb)) {
-    if (all(is.na(wb) & length(wb) == 1 & class(wb) %in% c("logical", "character"))) {
-      wb <- NULL
-    }
+
+  if (all(is.na(wb) & length(wb) == 1 & class(wb) %in% c("logical", "character"))) {
+    wb <- NULL
   }
   if (!is.null(wb)) {wb <- match.arg(wb, c("mixed", "pearson", "diagonal"))}
 

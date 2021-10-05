@@ -1,5 +1,10 @@
 test_that("mdepriv: arguments wa & wb", {
   expect_equal(
+    mdepriv(simul_data, c("y1", "y2"), output = "all"),
+    mdepriv(simul_data, c("y1", "y2"), wa = NULL, wb = NULL, output = "all")
+  )
+
+  expect_equal(
     mdepriv(simul_data, c("y1", "y2"), output = "all")[-1],
     mdepriv(simul_data, c("y1", "y2"), wa = "cz", wb = "diagonal", output = "all")[-1]
   )
