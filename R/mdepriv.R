@@ -422,10 +422,8 @@ mdepriv <- function(data,
   check_sampling_weights_NA_(sampling_weights, sampling_weights_arg)
   check_sampling_weights_values_(sampling_weights, sampling_weights_arg)
   # ------------------------------------------------------------------------
-  if (!is.null(rhoH)) {
-    if (all(is.na(rhoH) & length(rhoH) == 1 & class(rhoH) %in% c("logical", "numeric"))) {
-      rhoH <- NULL
-    }
+  if (all(is.na(rhoH) & length(rhoH) == 1 & class(rhoH) %in% c("logical", "numeric"))) {
+    rhoH <- NULL
   }
   if (!is.null(rhoH)) {
     check_rhoH_(rhoH)
