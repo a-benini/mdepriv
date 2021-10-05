@@ -1,6 +1,10 @@
 test_that("mdepriv: argument sampling_weights", {
   expect_equal(mdepriv(simul_data, c("y1", "y2"), "sampl_weights", output = "sampling_weights"), "sampl_weights")
   expect_equal(mdepriv(simul_data, c("y1", "y2"), output = "sampling_weights"), NA_character_)
+  expect_equal(
+    mdepriv(simul_data, c("y1", "y2"), output = "all"),
+    mdepriv(simul_data, c("y1", "y2"), sampling_weights = NULL, output = "all")
+    )
   expect_equal(mdepriv(simul_data, c("y1", "y2"), "sampl_weights", output = "sum_sampling_weights"), 100.237)
   expect_equal(mdepriv(simul_data, c("y1", "y2"), output = "sum_sampling_weights"), NA_real_)
 

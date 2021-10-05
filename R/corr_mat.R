@@ -169,10 +169,7 @@ corr_mat <- function(data,
 
   check_items_range_(items, data)
   # ------------------------------------------------------------------------
-  if (is.null(sampling_weights)) {
-    sampling_weights_arg <- NA_character_
-    sampling_weights     <- rep(1, nrow(data))
-  } else if (all(is.na(sampling_weights) & length(sampling_weights) == 1 & class(sampling_weights) %in% c("logical", "character"))) {
+  if (all(is.na(sampling_weights) & length(sampling_weights) == 1 & class(sampling_weights) %in% c("logical", "character"))) {
     sampling_weights_arg <- NA_character_
     sampling_weights     <- rep(1, nrow(data))
   } else {
