@@ -1,3 +1,7 @@
+# mdepriv 0.0.3
+* some minor adjustments of code in vignette `mdepriv_get_started`
+* few code-simplifications of functions `mdepriv` and `corr_mat` with no effect on their functionality
+
 # mdepriv 0.0.2
 * more efficient code for matrix filling within functions `mdepriv` and `corr_mat`
 * code related to filling and to processing of matrices implemented as helper functions in a separate R file (`utils.R`)
