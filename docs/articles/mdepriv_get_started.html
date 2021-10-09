@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mdepriv</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.3</span>
       </span>
     </div>
 
@@ -39,7 +39,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa-home"></span>
+    <span class="fa fa-home"></span>
      
   </a>
 </li>
@@ -93,7 +93,7 @@
 
       
 
-      </header><script src="mdepriv_get_started_files/header-attrs-2.8/header-attrs.js"></script><script src="mdepriv_get_started_files/kePrint-0.0.1/kePrint.js"></script><link href="mdepriv_get_started_files/lightable-0.0.1/lightable.css" rel="stylesheet">
+      </header><script src="mdepriv_get_started_files/header-attrs-2.11/header-attrs.js"></script><script src="mdepriv_get_started_files/kePrint-0.0.1/kePrint.js"></script><link href="mdepriv_get_started_files/lightable-0.0.1/lightable.css" rel="stylesheet">
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
@@ -257,10 +257,10 @@ on
 <span class="co"># install.packages("tidyverse")</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span> <span class="co"># includes packages for data handling and graphics</span>
 <span class="co">#&gt; ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──</span>
-<span class="co">#&gt; ✓ ggplot2 3.3.3     ✓ purrr   0.3.4</span>
-<span class="co">#&gt; ✓ tibble  3.1.2     ✓ dplyr   1.0.6</span>
-<span class="co">#&gt; ✓ tidyr   1.1.3     ✓ stringr 1.4.0</span>
-<span class="co">#&gt; ✓ readr   1.4.0     ✓ forcats 0.5.1</span>
+<span class="co">#&gt; ✓ ggplot2 3.3.5     ✓ purrr   0.3.4</span>
+<span class="co">#&gt; ✓ tibble  3.1.5     ✓ dplyr   1.0.7</span>
+<span class="co">#&gt; ✓ tidyr   1.1.4     ✓ stringr 1.4.0</span>
+<span class="co">#&gt; ✓ readr   2.0.2     ✓ forcats 0.5.1</span>
 <span class="co">#&gt; ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──</span>
 <span class="co">#&gt; x dplyr::filter()     masks stats::filter()</span>
 <span class="co">#&gt; x dplyr::group_rows() masks kableExtra::group_rows()</span>
@@ -746,75 +746,82 @@ X
 <code>"equal"</code>:   Equi-proportionate weighting</li>
 </ul>
 <p>We compare aggregated deprivation levels by <code>method</code> and by the use of the sampling weights or not.</p>
+<p><a name="arg_comb"></a></p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">methods</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"cz"</span>, <span class="st">"ds"</span>, <span class="st">"bv"</span>, <span class="st">"equal"</span><span class="op">)</span> <span class="co"># all available methods</span>
-<span class="va">items_sel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"y1"</span>, <span class="st">"y2"</span>, <span class="st">"y3"</span>, <span class="st">"y4"</span>, <span class="st">"y5"</span>, <span class="st">"y6"</span>, <span class="st">"y7"</span><span class="op">)</span> <span class="co"># a selection of items</span>
-
-<span class="co"># aggregate deprivation levels when no sampling weights are applied</span>
-<span class="op">(</span><span class="va">without_s_w</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">methods</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
-  <span class="fu"><a href="../reference/mdepriv.html">mdepriv</a></span><span class="op">(</span><span class="va">simul_data</span>, <span class="va">items_sel</span>, method <span class="op">=</span> <span class="va">x</span>, output <span class="op">=</span> <span class="st">"aggregate_deprivation_level"</span><span class="op">)</span>
-<span class="op">}</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt;        cz        ds        bv     equal </span>
-<span class="co">#&gt; 0.3719576 0.4135734 0.4321696 0.4801443</span>
-
-<span class="co"># aggregate deprivation levels when sampling weights are applied</span>
-<span class="op">(</span><span class="va">with_s_w</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">methods</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
-  <span class="fu"><a href="../reference/mdepriv.html">mdepriv</a></span><span class="op">(</span><span class="va">simul_data</span>, <span class="va">items_sel</span>, <span class="st">"sampl_weights"</span>, method <span class="op">=</span> <span class="va">x</span>, output <span class="op">=</span> <span class="st">"aggregate_deprivation_level"</span><span class="op">)</span>
-<span class="op">}</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt;        cz        ds        bv     equal </span>
-<span class="co">#&gt; 0.3658611 0.4111543 0.4271009 0.4807106</span>
-
-<span class="co"># channel the figures to a plot</span>
-<span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">without_s_w</span>, <span class="va">with_s_w</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>sampling_weight <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">pivot_longer</span><span class="op">(</span><span class="op">-</span><span class="va">sampling_weight</span>, names_to <span class="op">=</span> <span class="st">"method"</span>, values_to <span class="op">=</span> <span class="st">"aggregate_deprivation_level"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">mutate</span><span class="op">(</span>method <span class="op">=</span> <span class="fu">fct_inorder</span><span class="op">(</span><span class="va">method</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="co"># methods as factor ordered by first appearance (-&gt; sequence in plot)</span>
-  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">method</span>, y <span class="op">=</span> <span class="va">aggregate_deprivation_level</span>, fill <span class="op">=</span> <span class="va">sampling_weight</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_col</span><span class="op">(</span>position <span class="op">=</span> <span class="fu">position_dodge</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">ggtitle</span><span class="op">(</span><span class="st">"aggregate deprivation level, by method"</span><span class="op">)</span></code></pre></div>
-<p><img src="mdepriv_get_started_files/figure-html/Fig1-1.png" width="528"></p>
-<p>Lets investigate the differences of the <code>method</code>s, not only based on the single figure <code>aggregate_deprivation_level</code>, but also on a comparison of <code>summary_by_item</code>-tables.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">items_sel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"y1"</span>, <span class="st">"y2"</span>, <span class="st">"y3"</span>, <span class="st">"y4"</span>, <span class="st">"y5"</span>, <span class="st">"y6"</span>, <span class="st">"y7"</span><span class="op">)</span> <span class="co"># a selection of items</span>
-<span class="va">methods</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"cz"</span>, <span class="st">"ds"</span>, <span class="st">"bv"</span>, <span class="st">"equal"</span><span class="op">)</span> <span class="co"># all available methods</span>
-<span class="va">sampling_weights</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"sampl_weights"</span>, <span class="cn">NA</span><span class="op">)</span> <span class="co"># sampling weights specified/unspecified</span>
 
-<span class="va">methods</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="va">methods</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">sampling_weights</span><span class="op">)</span><span class="op">)</span>
-<span class="co"># repeat methods as many times as there are different (non-)specifications of sampling weights</span>
-<span class="va">sampling_weights</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="va">sampling_weights</span>, each <span class="op">=</span> <span class="fu">n_distinct</span><span class="op">(</span><span class="va">methods</span><span class="op">)</span><span class="op">)</span>
-<span class="co"># repeat each different sampling-weights (non-)specifications as many times as there are distinct methods</span>
+<span class="co"># combinations of argument values for mdepriv()</span>
+<span class="va">arg_comb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html">expand.grid</a></span><span class="op">(</span>
+  method           <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"cz"</span>, <span class="st">"ds"</span>, <span class="st">"bv"</span>, <span class="st">"equal"</span><span class="op">)</span>, <span class="co"># all available methods</span>
+  sampling_weights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"sampl_weights"</span>, <span class="cn">NA</span><span class="op">)</span>, <span class="co"># sampling weights specified/unspecified</span>
+  stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span>
+  <span class="op">)</span>
 
-<span class="co"># aggregate summary_by_item-tables and channel them to a plot</span>
-<span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">methods</span><span class="op">)</span>,
-  <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
+<span class="co"># aggregate deprivation levels by combination of methods and (un)specified sampling weights</span>
+<span class="va">aggregate_deprivation_level</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span>
+  <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">arg_comb</span><span class="op">)</span>,
+  <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
     <span class="fu"><a href="../reference/mdepriv.html">mdepriv</a></span><span class="op">(</span>
       <span class="va">simul_data</span>,
       <span class="va">items_sel</span>,
-      sampling_weights <span class="op">=</span> <span class="va">sampling_weights</span><span class="op">[</span><span class="va">x</span><span class="op">]</span>,
-      method <span class="op">=</span> <span class="va">methods</span><span class="op">[</span><span class="va">x</span><span class="op">]</span>,
+      method <span class="op">=</span> <span class="va">arg_comb</span><span class="op">$</span><span class="va">method</span><span class="op">[</span><span class="va">x</span><span class="op">]</span>,
+      sampling_weights <span class="op">=</span> <span class="va">arg_comb</span><span class="op">$</span><span class="va">sampling_weights</span><span class="op">[</span><span class="va">x</span><span class="op">]</span>,
+      output <span class="op">=</span> <span class="st">"aggregate_deprivation_level"</span>
+      <span class="op">)</span>
+    <span class="op">}</span>
+  <span class="op">)</span>
+
+<span class="co"># plot aggregate deprivation levels by argument combination</span>
+<span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="va">arg_comb</span>, <span class="va">aggregate_deprivation_level</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">mutate</span><span class="op">(</span>
+    method <span class="op">=</span> <span class="fu">fct_inorder</span><span class="op">(</span><span class="va">method</span><span class="op">)</span>,
+    <span class="co"># methods as factor ordered by first appearance (-&gt; sequence in plot)</span>
+    sampling_weights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">sampling_weights</span><span class="op">)</span>
+    <span class="co"># NA as string (-&gt; avoid gray, the default color for NA)</span>
+    <span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">method</span>, y <span class="op">=</span> <span class="va">aggregate_deprivation_level</span>, fill <span class="op">=</span> <span class="va">sampling_weights</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_col</span><span class="op">(</span>position <span class="op">=</span> <span class="fu">position_dodge</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">labs</span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"specification of\nargument\nsampling_weights"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">ggtitle</span><span class="op">(</span><span class="st">"aggregate deprivation level, by method"</span><span class="op">)</span></code></pre></div>
+<p><img src="mdepriv_get_started_files/figure-html/Fig1-1.png" width="528"></p>
+<p>Lets investigate the differences of the <code>method</code>s, not only based on the single figure <code>aggregate_deprivation_level</code>, but also on a comparison of <code>summary_by_item</code>-tables (Note that the <a href="#arg_comb">above</a> combination of <code>method</code> and <code>sampling_weights</code> as well as the above selection of items <code>items_sel</code> are being reused below.).</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># list summary_by_item-tables by combination of methods and (un)specified sampling weights</span>
+<span class="va">summary_by_item</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span>
+  <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">arg_comb</span><span class="op">)</span>,
+  <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
+    <span class="fu"><a href="../reference/mdepriv.html">mdepriv</a></span><span class="op">(</span>
+      <span class="va">simul_data</span>,
+      <span class="va">items_sel</span>,
+      method <span class="op">=</span> <span class="va">arg_comb</span><span class="op">$</span><span class="va">method</span><span class="op">[</span><span class="va">x</span><span class="op">]</span>,
+      sampling_weights <span class="op">=</span> <span class="va">arg_comb</span><span class="op">$</span><span class="va">sampling_weights</span><span class="op">[</span><span class="va">x</span><span class="op">]</span>,
       output <span class="op">=</span> <span class="st">"summary_by_item"</span>
-    <span class="op">)</span>
-  <span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">tibble</span><span class="op">(</span><span class="va">.</span>, <span class="co"># 'listed' summary_by_item-tables as variable</span>
-    method <span class="op">=</span> <span class="va">methods</span>, <span class="co"># methods as variable</span>
-    sampling_weight <span class="op">=</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">sampling_weights</span><span class="op">)</span> <span class="co"># TRUE if sampl. weights applied else FALSE</span>
-  <span class="op">)</span> <span class="op">%&gt;%</span>
-    <span class="fu">unnest</span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
-    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">Item</span> <span class="op">!=</span> <span class="st">"Total"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-    <span class="co"># filter out rows with the totals inherited from the summary_by_item-tables</span>
-    <span class="fu">pivot_longer</span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">sampling_weight</span>, <span class="va">method</span>, <span class="va">Item</span><span class="op">)</span>, <span class="st">"key"</span>, <span class="st">"value"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-    <span class="fu">mutate</span><span class="op">(</span>key <span class="op">=</span> <span class="fu">fct_inorder</span><span class="op">(</span><span class="va">key</span><span class="op">)</span>, method <span class="op">=</span> <span class="fu">fct_inorder</span><span class="op">(</span><span class="va">method</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+      <span class="op">)</span>
+    <span class="op">}</span>
+  <span class="op">)</span>
+
+<span class="co"># aggregate and plot listed summary_by_item-tables</span>
+<span class="fu">tibble</span><span class="op">(</span><span class="va">arg_comb</span>, <span class="va">summary_by_item</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">unnest</span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">Item</span> <span class="op">!=</span> <span class="st">"Total"</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="co"># filter out rows with the totals inherited from the summary_by_item-tables</span>
+  <span class="fu">pivot_longer</span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">sampling_weights</span>, <span class="va">method</span>, <span class="va">Item</span><span class="op">)</span>, <span class="st">"key"</span>, <span class="st">"value"</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">mutate</span><span class="op">(</span>
+    key <span class="op">=</span> <span class="fu">fct_inorder</span><span class="op">(</span><span class="va">key</span><span class="op">)</span>,
+    method <span class="op">=</span> <span class="fu">fct_inorder</span><span class="op">(</span><span class="va">method</span><span class="op">)</span>,
     <span class="co"># key &amp; method as factors ordered by first appearance </span>
     <span class="co"># -&gt; non-alphabetical sequences in plot grid (key as rows, method as columns)</span>
-    <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Item</span>, y <span class="op">=</span> <span class="va">value</span>, fill <span class="op">=</span> <span class="va">sampling_weight</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">geom_col</span><span class="op">(</span>position <span class="op">=</span> <span class="fu">position_dodge</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">facet_grid</span><span class="op">(</span>rows <span class="op">=</span> <span class="fu">vars</span><span class="op">(</span><span class="va">key</span><span class="op">)</span>, col <span class="op">=</span> <span class="fu">vars</span><span class="op">(</span><span class="va">method</span><span class="op">)</span>, scales <span class="op">=</span> <span class="st">"free_y"</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">ggtitle</span><span class="op">(</span><span class="st">"method vs. key figures from the summary by item"</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"top"</span><span class="op">)</span></code></pre></div>
+    sampling_weights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">sampling_weights</span><span class="op">)</span>
+    <span class="co"># NA as string (-&gt; avoid gray, the default color for NA)</span>
+    <span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Item</span>, y <span class="op">=</span> <span class="va">value</span>, fill <span class="op">=</span> <span class="va">sampling_weights</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_col</span><span class="op">(</span>position <span class="op">=</span> <span class="fu">position_dodge</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">facet_grid</span><span class="op">(</span>rows <span class="op">=</span> <span class="fu">vars</span><span class="op">(</span><span class="va">key</span><span class="op">)</span>, col <span class="op">=</span> <span class="fu">vars</span><span class="op">(</span><span class="va">method</span><span class="op">)</span>, scales <span class="op">=</span> <span class="st">"free_y"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">labs</span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"specification of argument\nsampling_weights"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">ggtitle</span><span class="op">(</span><span class="st">"method vs. key figures from the summary by item"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"top"</span><span class="op">)</span></code></pre></div>
 <p><img src="mdepriv_get_started_files/figure-html/Fig2-1.png" width="696"></p>
 <p><a name="method_default_settings"></a> Different <code>method</code>s do matter as far as their results, but this should not be confused with the default argument settings of <code>mdepriv</code>:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
@@ -873,47 +880,47 @@ X
 <p>Alternatively, the user can set a fixed value for <code>rhoH</code> in the interval [-1, +1]. When <code>rhoH</code> is automatically calculated, the weights of items that overall are more weakly correlated with the other items turn out higher, compared to their weights when the user chooses a <code>rhoH</code> value far from the automatic version. Setting <code>rhoH</code> to -1 or +1 (the bounds of its range) causes all correlation coefficients to be assigned to one set only. However, in our experiments the item weight differences between models with automatically calculated vs. user-defined <code>rhoH</code> have been modest, rarely more than 10 percent up or down. Both variants - data-driven or user-defined - of <code>rhoH</code>, in combination with the chosen <code>bv_coor_type</code>, affect the outcome of the Betty-Verma double weighting model.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">items_sel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"y1"</span>, <span class="st">"y2"</span>, <span class="st">"y3"</span>, <span class="st">"y4"</span>, <span class="st">"y5"</span>, <span class="st">"y6"</span>, <span class="st">"y7"</span><span class="op">)</span> <span class="co"># a selection of items</span>
-<span class="va">rhoHs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.2</span>, <span class="fl">0</span>, <span class="fl">0.2</span>, <span class="fl">0.4</span>, <span class="fl">0.6</span>, <span class="fl">0.8</span>, <span class="fl">1</span>, <span class="cn">NA</span><span class="op">)</span>
-<span class="co"># fixed rhoHs &amp; NA (= default specification for data driven rhoH)</span>
-<span class="va">bv_corr_types</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"mixed"</span>, <span class="st">"pearson"</span><span class="op">)</span> <span class="co"># correlation types</span>
 
-<span class="va">rhoHs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="va">rhoHs</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">bv_corr_types</span><span class="op">)</span><span class="op">)</span>
-<span class="co"># repeat rhoHs as many times as there are different correlation types</span>
-<span class="va">bv_corr_types</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="va">bv_corr_types</span>, each <span class="op">=</span> <span class="fu">n_distinct</span><span class="op">(</span><span class="va">rhoHs</span><span class="op">)</span><span class="op">)</span>
-<span class="co"># repeat each different correlation type as many times as there are distinct values of rhoH</span>
+<span class="co"># combinations of argument values for mdepriv()</span>
+<span class="va">arg_comb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html">expand.grid</a></span><span class="op">(</span>
+  bv_corr_type     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"mixed"</span>, <span class="st">"pearson"</span><span class="op">)</span>, <span class="co"># correlation types</span>
+  rhoH             <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.2</span>, <span class="fl">0</span>, <span class="fl">0.2</span>, <span class="fl">0.4</span>, <span class="fl">0.6</span>, <span class="fl">0.8</span>, <span class="fl">1</span>, <span class="cn">NA</span><span class="op">)</span>,
+  <span class="co"># fixed rhoHs &amp; NA (= default specification for data driven rhoH)</span>
+  stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span>
+  <span class="op">)</span>
 
-<span class="va">rhoH_type</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">rhoHs</span><span class="op">)</span>, <span class="st">"data driven"</span>, <span class="st">"fixed"</span><span class="op">)</span> <span class="co"># rhoH type / classification</span>
+<span class="va">rhoH_type</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">arg_comb</span><span class="op">$</span><span class="va">rhoH</span><span class="op">)</span>, <span class="st">"data driven"</span>, <span class="st">"fixed"</span><span class="op">)</span> <span class="co"># rhoH type / classification</span>
 <span class="va">rhoH_type</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">rhoH_type</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"fixed"</span>, <span class="st">"data driven"</span><span class="op">)</span><span class="op">)</span>
 <span class="co"># factorize for non-alphabetical sequence in plot</span>
 
 <span class="co"># get and plot the (under the hood) applied rhoHs and aggregate_deprivation_level</span>
 <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">rhoHs</span><span class="op">)</span>,
+  <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">arg_comb</span><span class="op">)</span>,
   <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
     <span class="fu"><a href="../reference/mdepriv.html">mdepriv</a></span><span class="op">(</span>
       <span class="va">simul_data</span>,
       <span class="va">items_sel</span>,
       method <span class="op">=</span> <span class="st">"bv"</span>,
-      bv_corr_type <span class="op">=</span> <span class="va">bv_corr_types</span><span class="op">[</span><span class="va">x</span><span class="op">]</span>,
-      rhoH <span class="op">=</span> <span class="va">rhoHs</span><span class="op">[</span><span class="va">x</span><span class="op">]</span>,
+      bv_corr_type <span class="op">=</span> <span class="va">arg_comb</span><span class="op">$</span><span class="va">bv_corr_type</span><span class="op">[</span><span class="va">x</span><span class="op">]</span>,
+      rhoH <span class="op">=</span> <span class="va">arg_comb</span><span class="op">$</span><span class="va">rhoH</span><span class="op">[</span><span class="va">x</span><span class="op">]</span>,
       output <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"aggregate_deprivation_level"</span>, <span class="st">"rhoH"</span><span class="op">)</span>
     <span class="op">)</span>
-  <span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu">bind_rows</span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
-    <span class="fu">mutate</span><span class="op">(</span>
-      bv_corr_type <span class="op">=</span> <span class="va">bv_corr_types</span>,
-      rhoH_type <span class="op">=</span> <span class="va">rhoH_type</span>
-    <span class="op">)</span> <span class="op">%&gt;%</span>
-    <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>
-      x <span class="op">=</span> <span class="va">rhoH</span>,
-      y <span class="op">=</span> <span class="va">aggregate_deprivation_level</span>,
-      col <span class="op">=</span> <span class="va">bv_corr_type</span>,
-      shape <span class="op">=</span> <span class="va">rhoH_type</span>
-    <span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">geom_point</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">scale_x_continuous</span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.2</span>, <span class="fl">1</span>, <span class="fl">0.2</span><span class="op">)</span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.25</span>, <span class="fl">1.05</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">ggtitle</span><span class="op">(</span><span class="st">"aggregate deprivation level vs. fixed and data driven rhoH"</span><span class="op">)</span></code></pre></div>
+  <span class="fu">tibble</span><span class="op">(</span>
+    bv_corr_type <span class="op">=</span> <span class="va">arg_comb</span><span class="op">$</span><span class="va">bv_corr_type</span>,
+    <span class="va">rhoH_type</span>
+    <span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>
+    x <span class="op">=</span> <span class="va">rhoH</span>,
+    y <span class="op">=</span> <span class="va">aggregate_deprivation_level</span>,
+    col <span class="op">=</span> <span class="va">bv_corr_type</span>,
+    shape <span class="op">=</span> <span class="va">rhoH_type</span>
+  <span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_point</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_x_continuous</span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.2</span>, <span class="fl">1</span>, <span class="fl">0.2</span><span class="op">)</span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.25</span>, <span class="fl">1.05</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">ggtitle</span><span class="op">(</span><span class="st">"aggregate deprivation level vs. fixed and data driven rhoH"</span><span class="op">)</span></code></pre></div>
 <p><img src="mdepriv_get_started_files/figure-html/Fig4-1.png" width="680.314960629921"></p>
 <p>As far as this model with simulated data is representative of the behavior of <code>rhoH</code>, it would appear that the maximum aggregate deprivation level is at or near the one obtained when <code>rhoH</code> is entirely data-driven.</p>
 <p>Setting a fixed value for <code>rhoH</code> by the user is rarely called for, except when a constant <code>rhoH</code> is required for the comparison of several <a href="#wa_wb_comination">models with double-weighting</a>.</p>
@@ -953,9 +960,10 @@ X
 <code class="sourceCode R"><span class="va">items_sel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"y1"</span>, <span class="st">"y2"</span>, <span class="st">"y3"</span>, <span class="st">"y4"</span>, <span class="st">"y5"</span>, <span class="st">"y6"</span>, <span class="st">"y7"</span><span class="op">)</span> <span class="co"># a selection of items</span>
 
 <span class="co"># wa-wb-combinations</span>
-<span class="va">wa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"cz"</span>, <span class="st">"ds"</span>, <span class="st">"equal"</span>, <span class="st">"bv"</span><span class="op">)</span>
-<span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="st">"mixed"</span>, <span class="fl">3</span><span class="op">)</span>, <span class="st">"diagonal"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="va">wa</span>, <span class="va">wb</span><span class="op">)</span>
+<span class="op">(</span><span class="va">wa_wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>
+  wa <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"cz"</span>, <span class="st">"ds"</span>, <span class="st">"equal"</span>, <span class="st">"bv"</span><span class="op">)</span>,
+  wb <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="st">"mixed"</span>, <span class="fl">3</span><span class="op">)</span>, <span class="st">"diagonal"</span><span class="op">)</span>
+  <span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;      wa       wb</span>
 <span class="co">#&gt; 1    cz    mixed</span>
 <span class="co">#&gt; 2    ds    mixed</span>
@@ -964,15 +972,15 @@ X
 
 <span class="co"># list with summaries by items for each wa-wb-combination</span>
 <span class="va">summary_by_item</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">wa</span><span class="op">)</span>,
-  <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/mdepriv.html">mdepriv</a></span><span class="op">(</span><span class="va">simul_data</span>, <span class="va">items_sel</span>, wa <span class="op">=</span> <span class="va">wa</span><span class="op">[</span><span class="va">x</span><span class="op">]</span>, wb <span class="op">=</span> <span class="va">wb</span><span class="op">[</span><span class="va">x</span><span class="op">]</span>, output <span class="op">=</span> <span class="st">"summary_by_item"</span><span class="op">)</span>
-<span class="op">)</span>
+  <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">wa_wb</span><span class="op">)</span>,
+  <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/mdepriv.html">mdepriv</a></span><span class="op">(</span><span class="va">simul_data</span>, <span class="va">items_sel</span>, wa <span class="op">=</span> <span class="va">wa_wb</span><span class="op">$</span><span class="va">wa</span><span class="op">[</span><span class="va">x</span><span class="op">]</span>, wb <span class="op">=</span> <span class="va">wa_wb</span><span class="op">$</span><span class="va">wb</span><span class="op">[</span><span class="va">x</span><span class="op">]</span>, output <span class="op">=</span> <span class="st">"summary_by_item"</span><span class="op">)</span>
+  <span class="op">)</span>
 
 <span class="co"># channel figures to a plot</span>
-<span class="fu">tibble</span><span class="op">(</span> <span class="co"># gather varied arguments &amp; outputs in a tibble / data.frame</span>
+<span class="fu">tibble</span><span class="op">(</span><span class="va">wa_wb</span>, <span class="va">summary_by_item</span><span class="op">)</span> <span class="op">%&gt;%</span>  <span class="co"># gather varied arguments &amp; outputs in a tibble / data.frame</span>
+  <span class="fu">mutate</span><span class="op">(</span>
   wa <span class="op">=</span> <span class="fu">fct_inorder</span><span class="op">(</span><span class="va">wa</span><span class="op">)</span>, <span class="co"># order arguments ...</span>
-  wb <span class="op">=</span> <span class="fu">fct_inorder</span><span class="op">(</span><span class="va">wb</span><span class="op">)</span>, <span class="co"># ... by first appearance</span>
-  <span class="va">summary_by_item</span>
+  wb <span class="op">=</span> <span class="fu">fct_inorder</span><span class="op">(</span><span class="va">wb</span><span class="op">)</span>  <span class="co"># ... by first appearance</span>
   <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">unnest</span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">Item</span> <span class="op">!=</span> <span class="st">"Total"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="co"># filter out rows with the totals inherited from the summary_by_item-tables</span>
@@ -982,7 +990,7 @@ X
   <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">ggtitle</span><span class="op">(</span><span class="st">"Item Weights from User Defined Double Weighting Schemes"</span><span class="op">)</span></code></pre></div>
 <p><img src="mdepriv_get_started_files/figure-html/Fig6-1.png" width="680.314960629921"></p>
-<p>The largest differences in weights are between the <code>"bv"</code>-<code>"diagonal"</code> model vs. the three others, for all of which <code>wb</code> as set to <code>"mixed"</code>. In the former, the correlations among items have no effect on the weights because of <code>wb</code> = <code>"diagonal"</code>. In the latter, they take full effect, due to <code>wb</code> = "<code>mixed"</code>. Note that for each of the seven items, the Desai-Shaw weight is in the interval defined by the respective Cerioli-Zani and equi-proportionate weights. This is so because Desai-Shaw’s sensitivity to the means of items is less than that of Cerioli-Zani; it is higher than in the equi-proportionate method, which is indifferent to the item means. <a href="#reason_wa_wb">The remarks and table above</a> give reasons for selecting particular wa-wb-combinations in reference to analytic objectives.</p>
+<p>The largest differences in weights are between the <code>"bv"</code>-<code>"diagonal"</code> model vs. the three others, for all of which <code>wb</code> as set to <code>"mixed"</code>. In the former, the correlations among items have no effect on the weights because of <code>wb</code> = <code>"diagonal"</code>. In the latter, they take full effect, due to <code>wb</code> = “<code>mixed"</code>. Note that for each of the seven items, the Desai-Shaw weight is in the interval defined by the respective Cerioli-Zani and equi-proportionate weights. This is so because Desai-Shaw’s sensitivity to the means of items is less than that of Cerioli-Zani; it is higher than in the equi-proportionate method, which is indifferent to the item means. <a href="#reason_wa_wb">The remarks and table above</a> give reasons for selecting particular wa-wb-combinations in reference to analytic objectives.</p>
 </div>
 <div id="expertise-based-weights-for-items" class="section level2">
 <h2 class="hasAnchor">
@@ -1453,10 +1461,10 @@ X
 <code class="sourceCode R"><span class="va">MSNA_HC_with_NA</span> <span class="op">%&gt;%</span>
   <span class="co"># select(all_of(vars_required_complete)) %&gt;%</span>
   <span class="co"># uncomment above line if only variables required to be complete should be visualized</span>
-  <span class="fu"><a href="http://visdat.njtierney.com//reference/vis_dat.html">vis_dat</a></span><span class="op">(</span>sort_type <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+  <span class="fu"><a href="https://docs.ropensci.org/visdat/reference/vis_dat.html">vis_dat</a></span><span class="op">(</span>sort_type <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 <p><img src="mdepriv_get_started_files/figure-html/Fig_mis_val_1-1.png" width="529.133858267717"></p>
 <p>The <a href="#vis_dat">above graphic</a> reveals missing values also in the 2<sup>nd</sup>-level items (<code>ls_1_food</code>, <code>ls_2_livelihood</code>, <code>ls_3_shelter</code>) as well as in the sampling weights.</p>
-<p>Hint: If there are only relatively few missing values / <code>NA</code>s, the function <code><a href="http://visdat.njtierney.com//reference/vis_dat.html">visdat::vis_dat()</a></code> may not be the best option to visualize them. Instead you could try out <code><a href="http://visdat.njtierney.com//reference/vis_miss.html">visdat::vis_miss()</a></code>. This function tags the percentage of missing values in each variable to its label and the percentages of incomplete observations across all selected variables to the legend. (<a href="#vis_miss">s. below</a>).</p>
+<p>Hint: If there are only relatively few missing values / <code>NA</code>s, the function <code><a href="https://docs.ropensci.org/visdat/reference/vis_dat.html">visdat::vis_dat()</a></code> may not be the best option to visualize them. Instead you could try out <code><a href="https://docs.ropensci.org/visdat/reference/vis_miss.html">visdat::vis_miss()</a></code>. This function tags the percentage of missing values in each variable to its label and the percentages of incomplete observations across all selected variables to the legend. (<a href="#vis_miss">s. below</a>).</p>
 <p>If we intend to link the scores obtained with <code><a href="../reference/mdepriv.html">mdepriv()</a></code> back to each observation within the original dataset containing <code>NA</code>s among the specified <code>items</code> and/or <code>sampling_weights</code> a variable column with a unique value for each row as a valid identifier for each record is required. Thus we check if <code>id</code> is a valid identifier:</p>
 <div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">n_distinct</span><span class="op">(</span><span class="va">MSNA_HC_with_NA</span><span class="op">$</span><span class="va">id</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">MSNA_HC_with_NA</span><span class="op">)</span>
@@ -1491,10 +1499,10 @@ X
 <span class="co">#&gt; 3 138 0.2221500 0.3557398</span>
 
 <span class="va">MSNA_HC_with_NA</span> <span class="op">&lt;-</span> <span class="fu">left_join</span><span class="op">(</span><span class="va">MSNA_HC_with_NA</span>, <span class="va">data_4_join</span>, by <span class="op">=</span> <span class="st">"id"</span><span class="op">)</span></code></pre></div>
-<p>Our demonstration is done and we check the outcome with <code><a href="http://visdat.njtierney.com//reference/vis_dat.html">visdat::vis_dat()</a></code>. The missing values in the calculated score variables <code>ls_4_WASH</code> (1<sup>st</sup> level) and <code>score_i</code> (2<sup>nd</sup> level) correspond to observations containing at least one missing value among the applied <code>items</code> and <code>sampling_weights</code>:</p>
+<p>Our demonstration is done and we check the outcome with <code><a href="https://docs.ropensci.org/visdat/reference/vis_dat.html">visdat::vis_dat()</a></code>. The missing values in the calculated score variables <code>ls_4_WASH</code> (1<sup>st</sup> level) and <code>score_i</code> (2<sup>nd</sup> level) correspond to observations containing at least one missing value among the applied <code>items</code> and <code>sampling_weights</code>:</p>
 <p><a name="vis_miss"></a></p>
 <div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="http://visdat.njtierney.com//reference/vis_miss.html">vis_miss</a></span><span class="op">(</span><span class="va">MSNA_HC_with_NA</span><span class="op">)</span> <span class="op">+</span>
+<code class="sourceCode R"><span class="fu"><a href="https://docs.ropensci.org/visdat/reference/vis_miss.html">vis_miss</a></span><span class="op">(</span><span class="va">MSNA_HC_with_NA</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span></code></pre></div>
 <p><img src="mdepriv_get_started_files/figure-html/Fig_mis_val_2-1.png" width="566.929133858268"></p>
 <div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
@@ -1594,7 +1602,7 @@ X
 
 <span class="co"># compile several variables to a data.frame ...</span>
 <span class="va">df</span> <span class="op">%&gt;%</span> <span class="fu">select</span><span class="op">(</span><span class="st">"model"</span>, <span class="st">"wa"</span>, <span class="st">"wb"</span>, <span class="st">"rhoH"</span>, <span class="st">"summary_scores"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">unnest</span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 6 x 9</span>
+<span class="co">#&gt; # A tibble: 6 × 9</span>
 <span class="co">#&gt;   model         wa    wb         rhoH N_Obs.  Mean Std._Dev.    Min   Max</span>
 <span class="co">#&gt;   &lt;fct&gt;         &lt;chr&gt; &lt;chr&gt;     &lt;dbl&gt;  &lt;int&gt; &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 bv            bv    mixed     0.656    100 0.432     0.201 0.0491 0.960</span>

@@ -1,10 +1,10 @@
-pandoc: 2.11.4
+pandoc: 2.14.0.3
 pkgdown: 1.6.1
 pkgdown_sha: ~
 articles:
   mdepriv_get_started: mdepriv_get_started.html
   what_is_different_from_stata: what_is_different_from_stata.html
-last_built: 2021-06-28T13:16Z
+last_built: 2021-10-09T10:43Z
 urls:
   reference: https://a-benini.github.io/mdepriv/reference
   article: https://a-benini.github.io/mdepriv/articles
