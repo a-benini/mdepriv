@@ -333,10 +333,10 @@ summary_by_item <- lapply(
 
 # aggregate and plot listed summary_by_item-tables
 tibble(arg_comb, summary_by_item) %>%
-  unnest() %>%
+  unnest(summary_by_item) %>%
   filter(Item != "Total") %>%
   # filter out rows with the totals inherited from the summary_by_item-tables
-  pivot_longer(-c(sampling_weights, method, Item), "key", "value") %>%
+  pivot_longer(-c(sampling_weights, method, Item), names_to = "key", values_to = "value") %>%
   mutate(
     key = fct_inorder(key),
     method = fct_inorder(method),
