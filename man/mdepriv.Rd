@@ -335,12 +335,12 @@ plot(model_1$score_i, model_2$score_i,
 abline(0, 1, col = "red", lty = 2, lwd = 2)
 
 # accumulating scores from different models in the output data
-\dontrun{
 # this code will throw an error message with a hint on how to handle the re-use ...
 # ... of 'data' output as agrument. so run it and read!
+try(
 model_3 <- mdepriv(model_1$data, items = model_1$items,
                    wa = "cz", wb = "mixed", output = "all")
-}
+)
 model_3 <- mdepriv(model_1$data, items = model_1$items,
                    wa = "cz", wb = "mixed", output = "all",
                    score_i_heading = "score_i_model_3")

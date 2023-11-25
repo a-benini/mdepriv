@@ -94,11 +94,11 @@
 #' bv_diagonal <- mdepriv(simul_data, dim, "sampl_weights",
 #'                        wa = "bv", wb = "diagonal", output = "all")
 #' # use model output as arguments
-#' \dontrun{
+#' try(
 #' corr_mat(bv_diagonal$data, bv_diagonal$items, bv_diagonal$sampling_weights,
 #'          corr_type = bv_diagonal$wb, output = "both")
-#' }
-#' # would trigger an error because:
+#' )
+#' # triggers an error because:
 #' bv_diagonal$wb
 #' # if corr_type is left as the default or set to a valid option, then ...
 #' corr_mat(bv_diagonal$data, bv_diagonal$items, bv_diagonal$sampling_weights)
