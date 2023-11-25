@@ -283,7 +283,7 @@ check_user_def_weights_names_ <- function(user_def_weights, dim) {
 }
 # ------------------------------------------------------------------------
 check_sampling_weights_class_ <- function(sampling_weights) {
-  if (class(sampling_weights) != "character") {
+  if (!inherits(sampling_weights, "character")) {
     stop(
       paste0(
         "The argument ",
@@ -452,7 +452,7 @@ check_wa_wb_ <- function(wa, wb) {
 }
 # ------------------------------------------------------------------------
 check_score_i_heading_class_ <- function(score_i_heading) {
-  if (class(score_i_heading) != "character") {
+  if (!inherits(score_i_heading, "character")) {
     stop(
       paste0(
         "The argument ",
@@ -503,7 +503,7 @@ check_score_i_heading_in_data_ <- function(score_i_heading, data) {
 }
 # ------------------------------------------------------------------------
 check_output_class_ <- function(output, output_op) {
-  if (class(output) != "character") {
+  if (!inherits(output, "character")) {
     stop(
       paste0(
         "The argument ",
