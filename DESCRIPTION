@@ -1,6 +1,6 @@
 Package: mdepriv
 Title: Synthetic Indicators of Multiple Deprivation
-Version: 0.0.4.9000
+Version: 0.0.4
 Authors@R: 
     c(person(given = "Attilio",
              family = "Benini",
