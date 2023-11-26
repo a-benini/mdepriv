@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mdepriv</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.4</span>
       </span>
     </div>
 
@@ -46,7 +48,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     <span class="fas fa-book"></span>
      
     Vignettes
@@ -77,7 +79,7 @@
   </a>
 </li>
 <li>
-  <a href="https://github.com/a-benini/mdepriv/">
+  <a href="https://github.com/a-benini/mdepriv/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
     github
@@ -93,65 +95,144 @@
 
       
 
-      </header><script src="what_is_different_from_stata_files/header-attrs-2.11/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>What is different from Stata’s mdepriv?</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/a-benini/mdepriv/blob/master/vignettes/what_is_different_from_stata.Rmd"><code>vignettes/what_is_different_from_stata.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/a-benini/mdepriv/blob/HEAD/vignettes/what_is_different_from_stata.Rmd" class="external-link"><code>vignettes/what_is_different_from_stata.Rmd</code></a></small>
       <div class="hidden name"><code>what_is_different_from_stata.Rmd</code></div>
 
     </div>
 
     
     
-<p>The <code>mdepriv</code> function is an adaptation in <strong><em>R</em></strong> of a homonymous user-written <strong><em>Stata</em></strong> command <a href="http://medim.ceps.lu/stata/mdepriv_v3.pdf">(Pi Alperin &amp; Van Kerm, 2009)</a> for computing basic synthetic scores of multiple deprivation from unidimensional indicators and/or basic items of deprivation. To facilitate orientation and usage of <code>mdepriv</code>, this <strong><em>R</em></strong> implementation follows the <strong><em>Stata</em></strong> features as closely as possible. There are only a small number of differences:</p>
+<p>The <code>mdepriv</code> function is an adaptation in
+<strong><em>R</em></strong> of a homonymous user-written
+<strong><em>Stata</em></strong> command <a href="http://medim.ceps.lu/stata/mdepriv_v3.pdf" class="external-link">(Pi Alperin &amp; Van
+Kerm, 2009)</a> for computing basic synthetic scores of multiple
+deprivation from unidimensional indicators and/or basic items of
+deprivation. To facilitate orientation and usage of
+<code>mdepriv</code>, this <strong><em>R</em></strong> implementation
+follows the <strong><em>Stata</em></strong> features as closely as
+possible. There are only a small number of differences:</p>
 <ul>
-<li>The options for the second factor of the double weighting schemes differ formally, but with virtually no practical consequences:
+<li>The options for the second factor of the double weighting schemes
+differ formally, but with virtually no practical consequences:
 <ul>
-<li>In <strong><em>R</em></strong> as in <strong><em>Stata</em></strong>, if the second weighting factor is set to <strong><em>mixed</em></strong>, the correlation type for each pair of items is automatically determined by the following rules:
+<li>In <strong><em>R</em></strong> as in
+<strong><em>Stata</em></strong>, if the second weighting factor is set
+to <strong><em>mixed</em></strong>, the correlation type for each pair
+of items is automatically determined by the following rules:
 <ul>
 <li>
-<strong><em>pearson</em></strong>: both items have &gt; 10 distinct values.</li>
+<strong><em>pearson</em></strong>: both items have &gt; 10 distinct
+values.</li>
 <li>
-<strong><em>polyserial</em></strong>: one item has <span class="math inline">\(\le\)</span> 10, the other &gt; 10 distinct values.</li>
+<strong><em>polyserial</em></strong>: one item has <span class="math inline">\(\le\)</span> 10, the other &gt; 10 distinct
+values.</li>
 <li>
 <strong><em>polychoric</em></strong>: both items have <span class="math inline">\(\le\)</span> 10 distinct values.</li>
 </ul>
 </li>
-<li>In <strong><em>R</em></strong> <strong><em>tetrachoric</em></strong>, the appropriate correlation type for pairs of binary items, is not available as the second weighting factor. This is so because the <strong><em>R</em></strong> function <a href="https://CRAN.R-project.org/package=wCorr"><code>weightedCorr</code></a>, on which the calculation of the second factor relies, treats <strong><em>tetrachoric</em></strong> correlations as <strong><em>polychoric</em></strong>. The different handling of <strong><em>tetrachoric</em></strong> correlations in <strong><em>R</em></strong> and <strong><em>Stata</em></strong> causes minuscule differences in the weights in models that include more than one binary item.</li>
-<li>In <strong><em>Stata</em></strong>, if <strong><em>polychoric</em></strong> is forced on (partly) continuous pairs of items, it switches under the hood to <strong><em>mixed</em></strong>. Thus <strong><em>polychoric</em></strong> in <strong><em>Stata</em></strong> is pointless as an enforecable option. <code>mdepriv</code> in <strong><em>R</em></strong> does not reproduce this spurious option.</li>
+<li>In <strong><em>R</em></strong>
+<strong><em>tetrachoric</em></strong>, the appropriate correlation type
+for pairs of binary items, is not available as the second weighting
+factor. This is so because the <strong><em>R</em></strong> function <a href="https://CRAN.R-project.org/package=wCorr" class="external-link"><code>weightedCorr</code></a>,
+on which the calculation of the second factor relies, treats
+<strong><em>tetrachoric</em></strong> correlations as
+<strong><em>polychoric</em></strong>. The different handling of
+<strong><em>tetrachoric</em></strong> correlations in
+<strong><em>R</em></strong> and <strong><em>Stata</em></strong> causes
+minuscule differences in the weights in models that include more than
+one binary item.</li>
+<li>In <strong><em>Stata</em></strong>, if
+<strong><em>polychoric</em></strong> is forced on (partly) continuous
+pairs of items, it switches under the hood to
+<strong><em>mixed</em></strong>. Thus
+<strong><em>polychoric</em></strong> in <strong><em>Stata</em></strong>
+is pointless as an enforecable option. <code>mdepriv</code> in
+<strong><em>R</em></strong> does not reproduce this spurious
+option.</li>
 <li>
-<strong><em>pearson</em></strong> is the only really enforceable correlation type in <strong><em>Stata</em></strong> and, therefore, it is maintained as such in <strong><em>R</em></strong>.</li>
+<strong><em>pearson</em></strong> is the only really enforceable
+correlation type in <strong><em>Stata</em></strong> and, therefore, it
+is maintained as such in <strong><em>R</em></strong>.</li>
 <li>
-<strong><em>diagonal</em></strong>, in both <strong><em>Stata</em></strong> and <strong><em>R</em></strong>, sets all off-diagonal elements to zero, making <strong><em>wb</em></strong> independent of any item correlations.</li>
+<strong><em>diagonal</em></strong>, in both
+<strong><em>Stata</em></strong> and <strong><em>R</em></strong>, sets
+all off-diagonal elements to zero, making <strong><em>wb</em></strong>
+independent of any item correlations.</li>
 </ul>
 </li>
 </ul>
 <p><img src="what_is_different_from_stata_files/figure-html/Fig_wa_wb_R-1.png" width="680.314960629921"></p>
 <p><img src="what_is_different_from_stata_files/figure-html/Fig_wa_wb_Stata-1.png" width="680.314960629921"></p>
 <ul>
-<li><p><code>mdepriv</code> in <strong><em>R</em></strong> admits both non-integer and integer sampling weights for all <strong><em>method</em></strong>s. <strong><em>mdepriv</em></strong> in <strong><em>Stata</em></strong> admits integer frequency weights for all <strong><em>method</em></strong>s, as well as non-integer analytic weights for <strong><em>method</em></strong>s without double-weighting (which include <strong><em>method</em></strong> = <strong><em>cz</em></strong>, <strong><em>ds</em></strong> or <strong><em>equal</em></strong>).</p></li>
-<li><p>The option <strong><em>force</em></strong> allowing calculations in <strong><em>Stata</em></strong>, even if items are not limited to the [0, 1] range, is not implemented; such item sets produce invalid aggregate deprivation statistics. In <strong><em>R</em></strong> therefore, in preparation, any item with values on [0, max], where max &gt; 1, has to be transformed. For more detailed information on suitable transformations have a look at the section ‘Details’ on <code>mepriv</code>’s help page.</p></li>
+<li><p><code>mdepriv</code> in <strong><em>R</em></strong> admits both
+non-integer and integer sampling weights for all
+<strong><em>method</em></strong>s. <strong><em>mdepriv</em></strong> in
+<strong><em>Stata</em></strong> admits integer frequency weights for all
+<strong><em>method</em></strong>s, as well as non-integer analytic
+weights for <strong><em>method</em></strong>s without double-weighting
+(which include <strong><em>method</em></strong> =
+<strong><em>cz</em></strong>, <strong><em>ds</em></strong> or
+<strong><em>equal</em></strong>).</p></li>
+<li><p>The option <strong><em>force</em></strong> allowing calculations
+in <strong><em>Stata</em></strong>, even if items are not limited to the
+[0, 1] range, is not implemented; such item sets produce invalid
+aggregate deprivation statistics. In <strong><em>R</em></strong>
+therefore, in preparation, any item with values on [0, max], where max
+&gt; 1, has to be transformed. For more detailed information on suitable
+transformations have a look at the section ‘Details’ on
+<code>mepriv</code>’s help page.</p></li>
 </ul>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/help.html">help</a></span><span class="op">(</span><span class="st">"mdepriv"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="st">"mdepriv"</span><span class="op">)</span></span></code></pre></div>
 <ul>
-<li><p>Differently from <strong><em>Stata</em></strong>, in <strong><em>R</em></strong> observations with missing item values have to be removed in preparation. Rationale and code can be found under section <a href="./mdepriv_get_started.html#handling-missing-values"><strong><em>Handling Missing Values</em></strong></a> in the vignette <strong><em>Get Started with <code>mdepriv</code></em></strong>.</p></li>
+<li><p>Differently from <strong><em>Stata</em></strong>, in
+<strong><em>R</em></strong> observations with missing item values have
+to be removed in preparation. Rationale and code can be found under
+section <a href="./mdepriv_get_started.html#handling-missing-values"><strong><em>Handling
+Missing Values</em></strong></a> in the vignette <strong><em>Get Started
+with <code>mdepriv</code></em></strong>.</p></li>
 <li>
-<p>Models with double-weighting work with an internal parameter known as <strong><em>rhoH</em></strong>. <strong><em>rhoH</em></strong> is determined by the central point in the largest gap in the ordered sequence of distinct correlation coefficients between all item / indicator pairs. As such, by default, <strong><em>rhoH</em></strong> is a data-driven quantity. The user has the option to set a value for <strong><em>rhoH</em></strong>; this is rarely called for, except when a constant <strong><em>rhoH</em></strong> is desired for the comparison of several such models. The implementation between <strong><em>Stata</em></strong> and <strong><em>R</em></strong> differs:</p>
+<p>Models with double-weighting work with an internal parameter
+known as <strong><em>rhoH</em></strong>. <strong><em>rhoH</em></strong>
+is determined by the central point in the largest gap in the ordered
+sequence of distinct correlation coefficients between all item /
+indicator pairs. As such, by default, <strong><em>rhoH</em></strong> is
+a data-driven quantity. The user has the option to set a value for
+<strong><em>rhoH</em></strong>; this is rarely called for, except when a
+constant <strong><em>rhoH</em></strong> is desired for the comparison of
+several such models. The implementation between
+<strong><em>Stata</em></strong> and <strong><em>R</em></strong>
+differs:</p>
 <ul>
-<li>By default, <strong><em>Stata</em></strong> uses -2 as starting value for the computation of <strong><em>rhoH</em></strong>. In <strong><em>R</em></strong>, the default value is NA, causing <code>mdepriv</code> to calculate the data-driven value in models with double-weighting, or else leave it as NA.</li>
-<li>Optional values in <strong><em>Stata</em></strong> must fall in the interval [-<span class="math inline">\(\infty\)</span>, +1]. In <strong><em>R</em></strong>, they are limited to [-1,+1], the range of correlation coefficients.</li>
+<li>By default, <strong><em>Stata</em></strong> uses -2 as starting
+value for the computation of <strong><em>rhoH</em></strong>. In
+<strong><em>R</em></strong>, the default value is NA, causing
+<code>mdepriv</code> to calculate the data-driven value in models with
+double-weighting, or else leave it as NA.</li>
+<li>Optional values in <strong><em>Stata</em></strong> must fall in the
+interval [-<span class="math inline">\(\infty\)</span>, +1]. In
+<strong><em>R</em></strong>, they are limited to [-1,+1], the range of
+correlation coefficients.</li>
 </ul>
 </li>
-<li><p>The <strong><em>Stata</em></strong> option <strong><em>vec</em></strong> for passing user-defined weights to items is called <strong><em>user_def_weights</em></strong> for a more intuitive argument in <strong><em>R</em></strong>.</p></li>
+<li><p>The <strong><em>Stata</em></strong> option
+<strong><em>vec</em></strong> for passing user-defined weights to items
+is called <strong><em>user_def_weights</em></strong> for a more
+intuitive argument in <strong><em>R</em></strong>.</p></li>
 </ul>
-<div id="references" class="section level2">
-<h2 class="hasAnchor">
-<a href="#references" class="anchor"></a>References</h2>
-<p>Pi Alperin, M. N. and Van Kerm, P. (2009), ‘mdepriv - Synthetic indicators of multiple deprivation’, v2.0 (revised March 2014), CEPS/INSTEAD, Esch/Alzette, Luxembourg. <a href="http://medim.ceps.lu/stata/mdepriv_v3.pdf" class="uri">http://medim.ceps.lu/stata/mdepriv_v3.pdf</a> (2020-01-02).</p>
+<div class="section level2">
+<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
+<p>Pi Alperin, M. N. and Van Kerm, P. (2009), ‘mdepriv - Synthetic
+indicators of multiple deprivation’, v2.0 (revised March 2014),
+CEPS/INSTEAD, Esch/Alzette, Luxembourg. <a href="http://medim.ceps.lu/stata/mdepriv_v3.pdf" class="external-link uri">http://medim.ceps.lu/stata/mdepriv_v3.pdf</a>
+(2020-01-02).</p>
 </div>
   </div>
 
@@ -166,11 +247,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Attilio Benini, Aldo Benini.</p>
+  <p></p>
+<p>Developed by Attilio Benini, Aldo Benini.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
@@ -178,6 +261,8 @@
 
   
 
+
+  
 
   </body>
 </html>
