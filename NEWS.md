@@ -1,3 +1,6 @@
+# mdepriv 0.0.4
+* minor fixes and improvements
+
 # mdepriv 0.0.3
 * some minor adjustments of code in vignette `mdepriv_get_started`
 * few code-simplifications of functions `mdepriv` and `corr_mat` with no effect on their functionality
