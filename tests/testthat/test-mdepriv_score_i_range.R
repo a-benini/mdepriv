@@ -1,7 +1,6 @@
 test_that("mdepriv: score_i range", {
   library(dplyr)
   library(stringr)
-  # library(magrittr)
   # library(visdat)
 
   # names(MSNA_HC)
