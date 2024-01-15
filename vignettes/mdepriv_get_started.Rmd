@@ -90,22 +90,34 @@ Chiefly we will use the simulated dataset `simul_data` with 100 observations, wh
 
 Packages used in the following: 
 
-``` {r}
-# install package devtools if not yet installed
-# install.packages("devtools")
+``` {r echo=FALSE, results='asis', message=FALSE}
+library(mdepriv)
 
-# install fast from GitHub without vignettes (not recommanded)
-# devtools::install_github("a-benini/mdepriv")
+# only required tidyverse-pkgs
+library(dplyr)
+library(forcats)
+library(ggplot2)
+library(purrr)
+library(stringr)
+library(tibble)
+library(tidyr)   
 
-# recommended: installation at a slower pace from GitHub including vignettes:
-# pkgs_4_vignettes <- c("tidyverse", "kableExtra", "knitr", "rmarkdown", "visdat")
-# packages required to build mdepriv's vignettes from GitHup repository
-# new_pkgs_4_vignettes <- pkgs_4_vignettes[!pkgs_4_vignettes %in% installed.packages()]
-# among these packages the ones not yet installed
-# if(length(new_pkgs_4_vignettes) > 0){install.packages(new_pkgs_4_vignettes)}
-# install the still missing packages
-# devtools::install_github("a-benini/mdepriv", build_vignettes = TRUE)
-# install mdepriv from GitHup with its vignettes
+library(visdat) 
+```
+
+``` {r eval=FALSE}
+# install package remotes if not yet installed
+# install.packages("remotes")
+
+# install fast from GitHub without vignettes (not recommended)
+# remotes::install_github("a-benini/mdepriv")
+
+# recommended: installation from GitHub including vignettes:
+# remotes::install_github(
+#   "a-benini/mdepriv",
+#   build_vignettes = TRUE,
+#   dependencies = c("Imports", "Suggests")
+#   )
 
 library(mdepriv)
 help(package = "mdepriv") # mdepriv package documentation
@@ -114,7 +126,7 @@ help(package = "mdepriv") # mdepriv package documentation
 library(tidyverse) # includes packages for data handling and graphics
 
 # install.packages("visdat")
-library(visdat) # package for preliminary visualisation of data
+library(visdat) # package for preliminary visualization of data
 ```
 
 ## A Minimalist Start
