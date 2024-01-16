@@ -26,11 +26,9 @@ degrees.
 Also, the measures produced under mdepriv do not presume normative
 standards (e.g., poverty lines). There are no a-priori cut-offs of the
 kind that are fundamental to multi-dimensional poverty measures in the
-Alkire-Foster tradition (implemented in R for example in the functions
-`svyafc` and `svyafcdec` of the package
-[`convey`](https://CRAN.R-project.org/package=convey)). Shortfall
-indicators (e.g., years of basic education missed) can be used the same
-way as non-normative ones (e.g., workdays lost to illness).
+Alkire-Foster tradition. Shortfall indicators (e.g., years of basic
+education missed) can be used the same way as non-normative ones (e.g.,
+workdays lost to illness).
 
 ## Installation
 
@@ -100,10 +98,6 @@ walks one through these manifold options.
 Alkire, S., J. Foster, S. Seth, J. M. Roche and M. E. Santos (2015).
 Multidimensional poverty measurement and analysis, Oxford University
 Press, USA.
-
-Pessoa, Djalma, et.al., convey - Income Concentration Analysis with
-Complex Survey Samples, version 0.2.3.,
-<https://CRAN.R-project.org/package=convey> (2021-03-18).
 
 Pi Alperin, M. N. and Van Kerm, P. (2009), ‘mdepriv - Synthetic
 indicators of multiple deprivation’, v2.0 (revised March 2014),
