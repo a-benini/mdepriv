@@ -23,22 +23,18 @@ Imports:
     wCorr (>= 1.9.1),
     Weighted.Desc.Stat (>= 1.0)
 Suggests: 
-    devtools,
     dplyr,
     forcats,
     ggplot2,
     graphics,
-    httr,
     kableExtra,
     knitr,
     purrr,
-    readxl,
     rmarkdown,
     stringr,
     testthat (>= 2.1.0),
     tibble,
     tidyr,
-    tidyverse,
     utils,
     visdat
 URL: https://github.com/a-benini/mdepriv, https://a-benini.github.io/mdepriv
