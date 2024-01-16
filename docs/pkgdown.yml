@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   mdepriv_get_started: mdepriv_get_started.html
   what_is_different_from_stata: what_is_different_from_stata.html
-last_built: 2023-11-26T11:34Z
+last_built: 2024-01-16T20:00Z
 urls:
   reference: https://a-benini.github.io/mdepriv/reference
   article: https://a-benini.github.io/mdepriv/articles
