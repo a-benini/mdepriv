@@ -25,22 +25,19 @@ Also, the measures produced under mdepriv do not presume normative standards (e.
 
 ## Installation
 
-``` {r eval = FALSE}
-# install package devtools if not yet installed
-#   install.packages("devtools")
+``` r
+# install package remotes if not yet installed
+# install.packages("remotes")
 
-# install fast from GitHub without vignettes (not recommanded)
-#   devtools::install_github("a-benini/mdepriv")
+# install fast from GitHub without vignettes (not recommended)
+# remotes::install_github("a-benini/mdepriv")
 
-# recommended: installation at a slower pace from GitHub including vignettes:
- pkgs_4_vignettes <- c("tidyverse", "kableExtra", "knitr", "rmarkdown", "visdat")
- # packages required to build mdepriv's vignettes from GitHup repository
- new_pkgs_4_vignettes <- pkgs_4_vignettes[!pkgs_4_vignettes %in% installed.packages()]
- # among these packages the ones not yet installed
- if(length(new_pkgs_4_vignettes) > 0){install.packages(new_pkgs_4_vignettes)}
- # install the still missing packages
- devtools::install_github("a-benini/mdepriv", build_vignettes = TRUE)
- # install mdepriv from GitHup with its vignettes
+# recommended: installation from GitHub including vignettes:
+remotes::install_github(
+  "a-benini/mdepriv",
+  build_vignettes = TRUE,
+  dependencies = c("Imports", "Suggests")
+  )
 ```
 
 ## Usage
