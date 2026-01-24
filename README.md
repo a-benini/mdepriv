@@ -43,7 +43,7 @@ workdays lost to illness).
 remotes::install_github(
   "a-benini/mdepriv",
   build_vignettes = TRUE,
-  dependencies = c("Imports", "Suggests")
+  dependencies = TRUE
   )
 ```
 
