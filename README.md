@@ -1,6 +1,11 @@
 
 # mdepriv: Synthetic scores of multiple deprivation
 
+<!-- badges: start -->
+
+[![R-CMD-check](https://github.com/a-benini/mdepriv/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/a-benini/mdepriv/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
 ## Purpose
 
 `mdepriv` is a R package for combining binary, continuous and suitably
