@@ -1,3 +1,6 @@
+# mdepriv 0.0.6
+* minor updates
+
 # mdepriv 0.0.5
 * improve installation instruction
 * streamline suggested packages
