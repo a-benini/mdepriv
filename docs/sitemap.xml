@@ -1,39 +1,15 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://a-benini.github.io/mdepriv/404.html</loc>
-  </url>
-  <url>
-    <loc>https://a-benini.github.io/mdepriv/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://a-benini.github.io/mdepriv/articles/mdepriv_get_started.html</loc>
-  </url>
-  <url>
-    <loc>https://a-benini.github.io/mdepriv/articles/what_is_different_from_stata.html</loc>
-  </url>
-  <url>
-    <loc>https://a-benini.github.io/mdepriv/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://a-benini.github.io/mdepriv/index.html</loc>
-  </url>
-  <url>
-    <loc>https://a-benini.github.io/mdepriv/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://a-benini.github.io/mdepriv/reference/MSNA_HC.html</loc>
-  </url>
-  <url>
-    <loc>https://a-benini.github.io/mdepriv/reference/corr_mat.html</loc>
-  </url>
-  <url>
-    <loc>https://a-benini.github.io/mdepriv/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://a-benini.github.io/mdepriv/reference/mdepriv.html</loc>
-  </url>
-  <url>
-    <loc>https://a-benini.github.io/mdepriv/reference/simul_data.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://a-benini.github.io/mdepriv/404.html</loc></url>
+<url><loc>https://a-benini.github.io/mdepriv/articles/index.html</loc></url>
+<url><loc>https://a-benini.github.io/mdepriv/articles/mdepriv_get_started.html</loc></url>
+<url><loc>https://a-benini.github.io/mdepriv/articles/what_is_different_from_stata.html</loc></url>
+<url><loc>https://a-benini.github.io/mdepriv/authors.html</loc></url>
+<url><loc>https://a-benini.github.io/mdepriv/index.html</loc></url>
+<url><loc>https://a-benini.github.io/mdepriv/news/index.html</loc></url>
+<url><loc>https://a-benini.github.io/mdepriv/reference/corr_mat.html</loc></url>
+<url><loc>https://a-benini.github.io/mdepriv/reference/index.html</loc></url>
+<url><loc>https://a-benini.github.io/mdepriv/reference/mdepriv.html</loc></url>
+<url><loc>https://a-benini.github.io/mdepriv/reference/MSNA_HC.html</loc></url>
+<url><loc>https://a-benini.github.io/mdepriv/reference/simul_data.html</loc></url>
 </urlset>
+
