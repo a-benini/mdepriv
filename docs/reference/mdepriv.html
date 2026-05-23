@@ -20,7 +20,7 @@ Several alternative weighting methods are available, notably Betti &amp;amp; Ver
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mdepriv</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.7</span>
       </span>
     </div>
 
@@ -282,9 +282,11 @@ Item weights are proportionate to (1 - \(mean(yj)\)) for the Desai-Shah scheme,
 to \(log\)(1 / \(mean(yj)\)) for Cerioli-Zani, and to the coefficients of variation [i.e., \(std.dev(xj)\) / \(mean(xj)\)] for Betti-Verma.</p>
 <p>Differently from the other three methods, Betti-Verma also controls for redundancy among items by lowering the weights of items that are highly correlated with many items.</p>
 <p>Formulas and literature references are provided in <a href="http://medim.ceps.lu/stata/mdepriv_v3.pdf" class="external-link">Pi Alperin &amp; Van Kerm (2009)</a>.
-<code>"cz"</code> and <code>"ds"</code> are built on the function <code><a href="https://rdrr.io/pkg/Weighted.Desc.Stat/man/w.mean.html" class="external-link">w.mean</a></code>.
-Whereas <code>"bv"</code> relies for its 1st factor (<code>wa</code>) on <code><a href="https://rdrr.io/pkg/Weighted.Desc.Stat/man/w.cv.html" class="external-link">w.cv</a></code>.
+<code>"cz"</code> and <code>"ds"</code> are built on the function <code><a href="https://rdrr.io/pkg/Weighted.Desc.Stat/man/w.mean.html" class="external-link">Weighted.Desc.Stat::w.mean()</a></code>.
+Whereas <code>"bv"</code> relies for its 1st factor (<code>wa</code>) on <code><a href="https://rdrr.io/pkg/Weighted.Desc.Stat/man/w.cv.html" class="external-link">Weighted.Desc.Stat::w.cv()</a></code>.
 <code>"bv"</code>'s 2nd factor (<code>wb</code>) as well as any specification of <code>wb</code> but <code>"diagonal"</code> rely on <code><a href="https://american-institutes-for-research.github.io/wCorr/reference/weightedCorr.html" class="external-link">weightedCorr</a></code>.</p>
+<p>Note that the package <a href="https://CRAN.R-project.org/package=Weighted.Desc.Stat" class="external-link"><code>Weighted.Desc.Stat</code></a> was removed from the CRAN repository and archived on 2026-04-30.
+The code of the a.m. <code>Weighted.Desc.Stat</code> functions was added as undocumented helper functions to <code>mdepriv</code>'s script utils.R.</p>
 <p>When setting the argument <code>bv_corr_type</code>, respectively <code>wb</code> to <code>"mixed"</code>,
 the appropriate correlation type <code>"pearson"</code>, <code>"polyserial"</code> or <code>"polychoric"</code>
 is automatically detected for each pair of items by the following rules:</p><ul><li><p><code>"pearson"</code>: both items have &gt; 10 distinct values.</p></li>
