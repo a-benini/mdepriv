@@ -162,9 +162,12 @@
 #' Differently from the other three methods, Betti-Verma also controls for redundancy among items by lowering the weights of items that are highly correlated with many items.
 #'
 #' Formulas and literature references are provided in \href{http://medim.ceps.lu/stata/mdepriv_v3.pdf}{Pi Alperin & Van Kerm (2009)}.
-#' \code{"cz"} and \code{"ds"} are built on the function \code{\link[Weighted.Desc.Stat]{w.mean}}.
-#' Whereas \code{"bv"} relies for its 1st factor (\code{wa}) on \code{\link[Weighted.Desc.Stat]{w.cv}}.
+#' \code{"cz"} and \code{"ds"} are built on the function \code{Weighted.Desc.Stat::w.mean()}.
+#' Whereas \code{"bv"} relies for its 1st factor (\code{wa}) on \code{Weighted.Desc.Stat::w.cv()}.
 #' \code{"bv"}'s 2nd factor (\code{wb}) as well as any specification of \code{wb} but \code{"diagonal"} rely on \code{\link[wCorr]{weightedCorr}}.
+#'
+#' Note that the package \href{https://CRAN.R-project.org/package=Weighted.Desc.Stat}{\code{Weighted.Desc.Stat}} was removed from the CRAN repository and archived on 2026-04-30.
+#' The code of the a.m. \code{Weighted.Desc.Stat} functions was added as undocumented helper functions to \code{mdepriv}'s script utils.R.
 #'
 #' When setting the argument \code{bv_corr_type}, respectively \code{wb} to \code{"mixed"},
 #' the appropriate correlation type \code{"pearson"}, \code{"polyserial"} or \code{"polychoric"}
@@ -188,8 +191,6 @@
 #' Pi Alperin, M. N. & Van Kerm, P. (2009), 'mdepriv - Synthetic indicators of multiple deprivation', v2.0 (revised March 2014), CEPS/INSTEAD, Esch/Alzette, Luxembourg. \url{http://medim.ceps.lu/stata/mdepriv_v3.pdf} (2019-MM-DD).
 #' @export
 #'
-#' @importFrom Weighted.Desc.Stat w.mean
-#' @importFrom Weighted.Desc.Stat w.cv
 #' @importFrom wCorr weightedCorr
 #' @importFrom stats aggregate
 #' @importFrom stats sd
@@ -486,11 +487,11 @@ mdepriv <- function(data,
     }
     # ------------------------------------------------------------------------
     if (wa == "cz") {
-      WA <- vapply(items, function(x) {log(1 / Weighted.Desc.Stat::w.mean(data[[x]], mu = sampling_weights))}, numeric(1))
+      WA <- vapply(items, function(x) {log(1 / w.mean(data[[x]], mu = sampling_weights))}, numeric(1))
     } else if (wa == "ds") {
-      WA <- vapply(items, function(x) {(1 - Weighted.Desc.Stat::w.mean(data[[x]], mu = sampling_weights))}, numeric(1))
+      WA <- vapply(items, function(x) {(1 - w.mean(data[[x]], mu = sampling_weights))}, numeric(1))
     } else if (wa == "bv") {
-      WA <- vapply(items, function(x) {Weighted.Desc.Stat::w.cv(data[[x]], mu = sampling_weights)}, numeric(1))
+      WA <- vapply(items, function(x) {w.cv(data[[x]], mu = sampling_weights)}, numeric(1))
     } else if (wa == "equal") {
       WA <- rep(1 / length(items), length(items))
     }
@@ -541,7 +542,7 @@ mdepriv <- function(data,
   # ------------------------------------------------------------------------
   K         <- length(dim)
   Dimension <- rep(names(dim), lengths(dim))
-  Index     <- vapply(items, function(x) {Weighted.Desc.Stat::w.mean(data[[x]], mu = sampling_weights)}, numeric(1))
+  Index     <- vapply(items, function(x) {w.mean(data[[x]], mu = sampling_weights)}, numeric(1))
   Weight    <- unlist(lapply(seq_along(dim), function(x) {w[dim[[x]]] / sum(w[dim[[x]]]) / K}))
   Contri    <- Index * Weight
   aggregate_deprivation_level <- sum(Contri)

@@ -195,9 +195,12 @@ to \eqn{log}(1 / \eqn{mean(yj)}) for Cerioli-Zani, and to the coefficients of va
 Differently from the other three methods, Betti-Verma also controls for redundancy among items by lowering the weights of items that are highly correlated with many items.
 
 Formulas and literature references are provided in \href{http://medim.ceps.lu/stata/mdepriv_v3.pdf}{Pi Alperin & Van Kerm (2009)}.
-\code{"cz"} and \code{"ds"} are built on the function \code{\link[Weighted.Desc.Stat]{w.mean}}.
-Whereas \code{"bv"} relies for its 1st factor (\code{wa}) on \code{\link[Weighted.Desc.Stat]{w.cv}}.
+\code{"cz"} and \code{"ds"} are built on the function \code{Weighted.Desc.Stat::w.mean()}.
+Whereas \code{"bv"} relies for its 1st factor (\code{wa}) on \code{Weighted.Desc.Stat::w.cv()}.
 \code{"bv"}'s 2nd factor (\code{wb}) as well as any specification of \code{wb} but \code{"diagonal"} rely on \code{\link[wCorr]{weightedCorr}}.
+
+Note that the package \href{https://CRAN.R-project.org/package=Weighted.Desc.Stat}{\code{Weighted.Desc.Stat}} was removed from the CRAN repository and archived on 2026-04-30.
+The code of the a.m. \code{Weighted.Desc.Stat} functions was added as undocumented helper functions to \code{mdepriv}'s script utils.R.
 
 When setting the argument \code{bv_corr_type}, respectively \code{wb} to \code{"mixed"},
 the appropriate correlation type \code{"pearson"}, \code{"polyserial"} or \code{"polychoric"}

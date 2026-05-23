@@ -103,3 +103,18 @@ wb_general_ <- function(data, items, corr_type, sampling_weights, rhoH) {
   }
 }
 # ------------------------------------------------------------------------
+# replaces Weighted.Desc.Stat::w.cv()
+w.cv <- function(x, mu) {
+  w.sd(x, mu) / w.mean(x, mu)
+}
+# ------------------------------------------------------------------------
+# replaces Weighted.Desc.Stat::w.mean()
+w.mean <- function(x, mu) {
+  sum(mu * x) / sum(mu)
+}
+# ------------------------------------------------------------------------
+# corresponds to Weighted.Desc.Stat::w.sd(), built into w.cv (see above)
+w.sd <- function(x, mu) {
+  ((sum(mu * x * x) / sum(mu)) - w.mean(x, mu)^2)^0.5
+}
+# ------------------------------------------------------------------------
