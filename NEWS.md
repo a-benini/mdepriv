@@ -1,3 +1,7 @@
+# mdepriv 0.0.7
+* dependency on [`Weighted.Desc.Stat`](https://CRAN.R-project.org/package=Weighted.Desc.Stat) package dropped due to its removal from the CRAN repository.
+It was archived on 2026-04-30. Code of previously used `Weighted.Desc.Stat` functions is saved as undocumented functions in R file `utils.R`.
+
 # mdepriv 0.0.6
 * minor updates
 
